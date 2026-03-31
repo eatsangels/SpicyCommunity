@@ -16,7 +16,7 @@
     "live_tournament": "Live Tournament",
     "view_bracket": "View Bracket",
     "real_time_update": "Real-time updates",
-    "players": "{count} players",
+    "players": "{count} teams",
     "in_progress": "In Progress"
   },
   "Tournament": {
@@ -26,7 +26,7 @@
     "description_label": "Description",
     "type_label": "Tournament Type",
     "participants_label": "Participants (one per line or comma-separated)",
-    "participants": "{count, plural, =0 {No players} =1 {# Player} other {# Players}}",
+    "participants": "{count, plural, =0 {No teams} =1 {# Team} other {# Teams}}",
     "single_elimination": "Single Elimination",
     "double_elimination": "Double Elimination",
     "waiting": "Waiting",
@@ -56,7 +56,7 @@
     "confirm_password": "Confirm Password",
     "submit_login": "Deal",
     "submit_register": "Join table",
-    "no_account": "New player?",
+    "no_account": "New team?",
     "has_account": "Already have a card?",
     "forgot_password": "Forgot your password?",
     "recover_password": "Recover Password",

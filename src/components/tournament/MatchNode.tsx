@@ -85,7 +85,7 @@ export default function MatchNode({
             )}
           </div>
           <div className="flex flex-col min-w-0 leading-tight">
-            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">P1</span>
+            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">T1</span>
             <span className={cn(
               "font-black text-[9px] md:text-[10px] uppercase truncate max-w-[50px] md:max-w-[70px]",
               match.participant_a ? "text-white/80" : "text-white/20 italic"
@@ -98,14 +98,16 @@ export default function MatchNode({
         {isAdmin ? (
           <input
             type="number"
+            inputMode="numeric"
             disabled={isCompleted}
-            className="w-7 h-5 md:w-8 md:h-6 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#ff5555] transition-all text-white flex-shrink-0"
-            value={match.score_a || 0}
-            onChange={(e) => onUpdateScore?.(match.id, parseInt(e.target.value) || 0, match.score_b || 0)}
+            placeholder="0"
+            className="w-8 h-6 md:w-10 md:h-8 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#ff5555] transition-all text-white flex-shrink-0"
+            value={match.score_a === 0 ? '' : (match.score_a ?? '')}
+            onChange={(e) => onUpdateScore?.(match.id, e.target.value === '' ? 0 : parseInt(e.target.value), match.score_b || 0)}
           />
         ) : (
-          <div className="w-7 h-5 md:w-8 md:h-6 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
-            {match.score_a || 0}
+          <div className="w-8 h-6 md:w-10 md:h-8 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
+            {match.score_a ?? 0}
           </div>
         )}
       </div>
@@ -123,7 +125,7 @@ export default function MatchNode({
             )}
           </div>
           <div className="flex flex-col min-w-0 leading-tight">
-            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">P2</span>
+            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">T2</span>
             <span className={cn(
               "font-black text-[9px] md:text-[10px] uppercase truncate max-w-[50px] md:max-w-[70px]",
               match.participant_b ? "text-white/80" : "text-white/20 italic"
@@ -136,14 +138,16 @@ export default function MatchNode({
         {isAdmin ? (
           <input
             type="number"
+            inputMode="numeric"
             disabled={isCompleted}
-            className="w-7 h-5 md:w-8 md:h-6 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#5555ff] transition-all text-white flex-shrink-0"
-            value={match.score_b || 0}
-            onChange={(e) => onUpdateScore?.(match.id, match.score_a || 0, parseInt(e.target.value) || 0)}
+            placeholder="0"
+            className="w-8 h-6 md:w-10 md:h-8 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#5555ff] transition-all text-white flex-shrink-0"
+            value={match.score_b === 0 ? '' : (match.score_b ?? '')}
+            onChange={(e) => onUpdateScore?.(match.id, match.score_a || 0, e.target.value === '' ? 0 : parseInt(e.target.value))}
           />
         ) : (
-          <div className="w-7 h-5 md:w-8 md:h-6 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
-            {match.score_b || 0}
+          <div className="w-8 h-6 md:w-10 md:h-8 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
+            {match.score_b ?? 0}
           </div>
         )}
       </div>

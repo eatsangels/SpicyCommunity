@@ -9,6 +9,15 @@ const intlMiddleware = createMiddleware({
 });
 
 export default async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Redirect any /es legacy paths to /en
+  if (pathname.startsWith('/es')) {
+    const newUrl = request.nextUrl.clone();
+    newUrl.pathname = pathname.replace(/^\/es/, '/en');
+    return Response.redirect(newUrl, 301);
+  }
+
   // 1. Refresh supabase session
   const supabaseResponse = await updateSession(request);
   

@@ -102,10 +102,10 @@ export default function Navbar() {
         <div className="flex lg:container h-full relative flex-none w-full">
 
           {/* Main Navigation Slot (Logo + Links) */}
-          <div className="flex-none h-full px-6 lg:px-14 relative w-full lg:w-auto">
+          <div className="flex-none h-full px-4 lg:px-14 relative w-full lg:w-auto flex items-center">
             <Frame
               enableBackdropBlur
-              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.15)]"
+              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.15)] hidden lg:block"
               paths={JSON.parse(
                 `[{
                   "show":true,
@@ -123,24 +123,29 @@ export default function Navbar() {
               )}
             />
 
-            <div className="flex items-center mt-2.5 relative">
+            {/* Mobile frame header — simpler and non-cutting */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#ffaa00]/20 to-transparent border-b border-[#ffaa00]/10 lg:hidden" />
+
+            <div className="flex items-center relative w-full justify-between">
               {/* Logo Area */}
-              <Link href="/" className="flex items-center gap-3 cursor-pointer group me-12">
-                <div className="relative w-8 h-8">
-                  <Image src="/logo.png" alt="Spicy" fill sizes="32px" className="object-contain group-hover:scale-110 transition-transform" />
+              <Link href="/" className="flex items-center gap-2 cursor-pointer group shrink-0">
+                <div className="relative w-8 h-8 md:w-10 md:h-10">
+                  <Image src="/logo.png" alt="Spicy" fill sizes="40px" className="object-contain group-hover:scale-110 transition-transform" />
                 </div>
-                <span className="text-[14px] font-black italic tracking-tighter text-[#ffaa00] uppercase hidden sm:inline">SPICY COMMUNITY</span>
+                <span className="text-[12px] md:text-[14px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate max-w-[120px] sm:max-w-none">
+                  SPICY COMMUNITY
+                </span>
               </Link>
 
               {/* Desktop Nav Links */}
-              <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] items-center">
-                <Link href="/tournaments" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+              <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] items-center ml-10">
+                <Link href="/tournaments" className="text-white/40 hover:text-white transition-colors flex items-center gap-2 uppercase">
                   <Trophy size={12} className="text-[#ffaa00]" /> {tc('tournament')}
                 </Link>
-                <Link href="/winners" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <Link href="/winners" className="text-white/40 hover:text-white transition-colors flex items-center gap-2 uppercase">
                   <Trophy size={12} className="text-[#ffaa00]" /> {tc('winners')}
                 </Link>
-                <Link href="/" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                <Link href="/" className="text-white/40 hover:text-white transition-colors flex items-center gap-2 uppercase">
                   {tc('home')}
                 </Link>
                 {user && role === 'admin' && (
@@ -148,15 +153,12 @@ export default function Navbar() {
                     ADMIN
                   </Link>
                 )}
-                <div className="ml-2 scale-75 origin-left">
-                  <LocaleSwitcher />
-                </div>
               </div>
 
               {/* Mobile Menu Toggle */}
               <div
                 onClick={() => setShowMenu(!showMenu)}
-                className="cursor-pointer ms-auto flex items-center gap-2 lg:hidden font-black text-[10px] uppercase tracking-widest text-[#ffaa00]"
+                className="cursor-pointer flex items-center gap-2 lg:hidden font-black text-[10px] uppercase tracking-widest text-[#ffaa00] bg-black/40 px-3 py-1.5 rounded-full border border-[#ffaa00]/30 shadow-lg"
               >
                 <Zap className="size-4 animate-pulse" />
                 MENU
