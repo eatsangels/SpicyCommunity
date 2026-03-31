@@ -3,7 +3,10 @@ import { routing } from './i18n/routing';
 import { updateSession } from '@/lib/supabase/middleware';
 import { NextRequest } from 'next/server';
 
-const intlMiddleware = createMiddleware(routing);
+const intlMiddleware = createMiddleware({
+  ...routing,
+  localeDetection: false, // Always use defaultLocale ('en') — no browser language sniffing
+});
 
 export default async function middleware(request: NextRequest) {
   // 1. Refresh supabase session

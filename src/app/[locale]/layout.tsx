@@ -21,6 +21,16 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Spicy Community - Tournament Management",
   description: "Advanced tournament management system for the Spicy Community.",
+  icons: {
+    icon: [
+      { url: "/logo_new.png", type: "image/png" },
+    ],
+    apple: "/logo_new.png",
+    shortcut: "/logo_new.png",
+  },
+  other: {
+    google: "notranslate",
+  },
 };
 
 export default async function RootLayout({
@@ -39,8 +49,8 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="dark" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-[#ffaa00] selection:text-black`}>
+    <html lang={locale} className="dark" translate="no" suppressHydrationWarning>
+      <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-[#ffaa00] selection:text-black`}>
         <NextIntlClientProvider messages={messages}>
           <UnoAlertProvider>
             <Navbar />
