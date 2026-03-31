@@ -16,7 +16,7 @@ export const MobileMenuContext = createContext<{
   setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }>({
   showMenu: false,
-  setShowMenu: () => {},
+  setShowMenu: () => { },
 });
 
 export default function Navbar() {
@@ -24,7 +24,7 @@ export default function Navbar() {
   const ta = useTranslations("Auth");
   const router = useRouter();
   const supabase = createClient();
-  
+
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<string>('user');
   const [loading, setLoading] = useState(true);
@@ -79,7 +79,7 @@ export default function Navbar() {
   return (
     <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
       <nav className="fixed top-0 w-full z-50 flex h-20 px-2 lg:px-6 bg-black/40 backdrop-blur-md">
-        
+
         {/* Left Decorative Wing (Desktop) */}
         <div className="size-full relative -mr-[11px] hidden lg:block flex-shrink">
           <Frame
@@ -100,7 +100,7 @@ export default function Navbar() {
 
         {/* Global Navbar Container */}
         <div className="flex lg:container h-full relative flex-none w-full">
-          
+
           {/* Main Navigation Slot (Logo + Links) */}
           <div className="flex-none h-full px-6 lg:px-14 relative w-full lg:w-auto">
             <Frame
@@ -122,7 +122,7 @@ export default function Navbar() {
                 }]`,
               )}
             />
-            
+
             <div className="flex items-center mt-2.5 relative">
               {/* Logo Area */}
               <Link href="/" className="flex items-center gap-3 cursor-pointer group me-12">
@@ -141,7 +141,7 @@ export default function Navbar() {
                   <Trophy size={12} className="text-[#ffaa00]" /> {tc('winners')}
                 </Link>
                 <Link href="/" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
-                   {tc('home')}
+                  {tc('home')}
                 </Link>
                 {user && role === 'admin' && (
                   <Link href="/admin" className="text-[#ffaa00] hover:brightness-110 transition-all border-b border-[#ffaa00]/0 hover:border-[#ffaa00]/100">
@@ -181,24 +181,24 @@ export default function Navbar() {
                 }]`,
               )}
             />
-            
+
             <div className="flex items-center -mt-3.5 gap-4">
               {loading ? (
                 <div className="w-4 h-4 border-2 border-[#ffaa00]/20 border-t-[#ffaa00] rounded-full animate-spin" />
               ) : user ? (
                 <div className="flex items-center gap-4">
                   <span className="text-[9px] font-bold uppercase tracking-widest text-white/30 max-w-[120px] truncate">{user.email}</span>
-                  
+
                   {role === 'admin' && (
                     <Link href="/tournaments/create">
-                       <FutureButton shape="flat" className="py-[0.4rem] px-6 text-[9px] uppercase tracking-widest text-black">
-                         {tc('create')}
-                       </FutureButton>
+                      <FutureButton shape="flat" className="py-[0.4rem] px-6 text-[9px] uppercase tracking-widest text-black">
+                        {tc('create')}
+                      </FutureButton>
                     </Link>
                   )}
 
-                  <FutureButton 
-                    shape="flat" 
+                  <FutureButton
+                    shape="flat"
                     onClick={handleLogout}
                     className="py-[0.4rem] px-5 text-[9px] uppercase tracking-widest text-white hover:text-red-500"
                   >

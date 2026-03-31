@@ -46,7 +46,7 @@ export default async function TournamentsPage() {
               >
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ffaa00]/60 to-transparent" />
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-lg font-black italic tracking-tight uppercase group-hover:text-[#ffaa00] transition-colors line-clamp-2">
+                  <h3 className="text-lg font-black italic tracking-tight uppercase group-hover:text-[#ffaa00] transition-colors break-words leading-tight">
                     {t.name}
                   </h3>
                   <Trophy size={18} className="text-[#ffaa00] shrink-0 mt-0.5" />
@@ -87,7 +87,7 @@ export default async function TournamentsPage() {
                 className="group relative overflow-hidden rounded-lg border border-white/5 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04] transition-all duration-300 p-6 flex flex-col gap-4"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-base font-black italic tracking-tight uppercase text-white/50 group-hover:text-white transition-colors line-clamp-2">
+                  <h3 className="text-base font-black italic tracking-tight uppercase text-white/50 group-hover:text-white transition-colors break-words leading-tight">
                     {t.name}
                   </h3>
                   <Trophy size={16} className="text-white/20 shrink-0 mt-0.5" />

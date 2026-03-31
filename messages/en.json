@@ -11,7 +11,13 @@
     "cancel": "Cancel",
     "winners": "Winners",
     "home": "Home",
-    "tournament": "Tournament"
+    "tournament": "Tournament",
+    "live_now": "Live",
+    "live_tournament": "Live Tournament",
+    "view_bracket": "View Bracket",
+    "real_time_update": "Real-time updates",
+    "players": "{count} players",
+    "in_progress": "In Progress"
   },
   "Tournament": {
     "create_title": "Create New Tournament",
@@ -35,7 +41,9 @@
       "same_score": "Both players have the same score or are at zero. You must set a higher score for the winner to advance.",
       "missing_participants": "Missing participants in this match to be able to close it.",
       "error_advancing": "Something went wrong while trying to advance the round."
-    }
+    },
+    "delete_confirm_msg": "Are you sure you want to delete this tournament? This action cannot be undone.",
+    "confirm_delete_tournament": "Are you sure you want to delete this tournament?"
   },
   "Auth": {
     "login": "Login",
@@ -86,7 +94,9 @@
     "subtitle": "The undisputed champions of Spicy Community",
     "total_champions": "Total Champions",
     "empty_title": "No history written yet",
-    "empty_description": "Complete a tournament to see the first champion here."
+    "empty_description": "Complete a tournament to see the first champion here.",
+    "one_win": "1 Tournament Won",
+    "many_wins": "{count} Tournaments Won"
   },
   "WinnerCard": {
     "title": "Tournament Champion",

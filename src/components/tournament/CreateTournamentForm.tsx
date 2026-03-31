@@ -54,7 +54,7 @@ export default function CreateTournamentForm() {
   const [allTeams, setAllTeams] = useState<Team[]>([]);
   const [teamsLoading, setTeamsLoading] = useState(true);
   const [teamSearch, setTeamSearch] = useState('');
-  const [slots, setSlots] = useState<ParticipantSlot[]>([newSlot(), newSlot()]);
+  const [slots, setSlots] = useState<ParticipantSlot[]>([]);
 
   const loadTeams = useCallback(async () => {
     setTeamsLoading(true);

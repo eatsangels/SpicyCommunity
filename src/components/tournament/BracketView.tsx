@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import MatchNode from './MatchNode';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { useTranslations } from 'next-intl';
-import { Trophy, Users, Zap } from 'lucide-react';
+import { Trophy, Users, Zap, Radio } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 export default function BracketView({ tournament, isAdmin = false }: { tournament: any, isAdmin?: boolean }) {
   const { toast } = useAlert();
@@ -14,6 +15,75 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const tWinner = useTranslations('WinnerCard');
   const [data, setData] = useState(tournament);
   const [isFinishing, setIsFinishing] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const supabase = createClient();
+
+  // ─── Supabase Realtime: auto-refresh bracket for all viewers ───
+  const refreshTournament = useCallback(async () => {
+    const { data: fresh } = await supabase
+      .from('tournaments')
+      .select(`
+        *,
+        participants (*),
+        rounds (
+          *,
+          matches (
+            *,
+            participant_a:participants!participant_a_id(*),
+            participant_b:participants!participant_b_id(*)
+          )
+        )
+      `)
+      .eq('id', tournament.id)
+      .single();
+
+    if (fresh) {
+      setData(fresh);
+      setLastUpdate(new Date());
+    }
+  }, [tournament.id, supabase]);
+
+  useEffect(() => {
+    // Strategy: postgres_changes (no filter = avoids RLS broadcast issues)
+    // + polling every 5s as fallback guarantee for ALL viewers
+    const channel = supabase
+      .channel(`bracket-${tournament.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'matches' },
+        (payload: any) => {
+          // Only refresh if this match belongs to our tournament
+          if (
+            payload?.new?.tournament_id === tournament.id ||
+            payload?.old?.tournament_id === tournament.id
+          ) {
+            refreshTournament();
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'tournaments' },
+        (payload: any) => {
+          if (payload?.new?.id === tournament.id) {
+            refreshTournament();
+          }
+        }
+      )
+      .subscribe((status) => {
+        console.log('[Bracket Realtime]', status);
+      });
+
+    // Polling fallback: refresh every 5 seconds in case websocket events miss
+    const poller = setInterval(() => {
+      refreshTournament();
+    }, 5000);
+
+    return () => {
+      supabase.removeChannel(channel);
+      clearInterval(poller);
+    };
+  }, [tournament.id, refreshTournament, supabase]);
 
   // Auto-Adjustment / Dual-Axis Scaling Logic
   const containerRef = useRef<HTMLDivElement>(null);
@@ -87,7 +157,8 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         body: JSON.stringify({ winnerId, score_a, score_b })
       });
       if (resp.ok) {
-        window.location.reload();
+        // Refresh data in-place — no page reload needed
+        await refreshTournament();
       } else {
         const errorData = await resp.json();
         toast(errorData.error || t('alerts.error_advancing'), 'error');
@@ -129,7 +200,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         <header className="flex flex-col md:flex-row justify-between items-end gap-1.5 border-b border-white/5 pb-2 shrink-0">
             <div className="flex flex-col gap-0 items-center md:items-start text-center md:text-left w-full md:w-auto">
                 <div className="flex items-center gap-2 mb-1.5">
-                    {(data.status === 'active' || data.status === 'live') && (
+                    {data.status === 'in_progress' && (
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded backdrop-blur-md">
                             <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]" />
                             <span className="text-[7px] md:text-[8px] font-black text-red-500 uppercase tracking-tighter italic leading-none">EN VIVO</span>
@@ -151,6 +222,19 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     {data.name}
                     <div className="h-px w-12 md:w-24 bg-gradient-to-r from-white/20 to-transparent hidden md:block" />
                 </h1>
+                {/* Realtime indicator */}
+                {lastUpdate && (
+                  <motion.div
+                    key={lastUpdate.toISOString()}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex items-center gap-1.5 text-[8px] font-bold text-[#ffaa00]/60 uppercase tracking-widest"
+                  >
+                    <Radio size={8} className="text-[#ffaa00] animate-pulse" />
+                    Actualizado {lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                  </motion.div>
+                )}
             </div>
             
             <div className="flex gap-2 flex-wrap justify-center mb-1.5">

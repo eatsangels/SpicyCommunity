@@ -11,7 +11,13 @@
     "cancel": "Cancelar",
     "winners": "Ganadores",
     "home": "Inicio",
-    "tournament": "Torneo"
+    "tournament": "Torneo",
+    "live_now": "En Vivo",
+    "live_tournament": "Torneo En Vivo",
+    "view_bracket": "Ver Bracket",
+    "real_time_update": "Actualización en tiempo real",
+    "players": "{count} jugadores",
+    "in_progress": "En Progreso"
   },
   "Tournament": {
     "create_title": "Crear Nuevo Torneo",
@@ -35,7 +41,9 @@
       "same_score": "Ambos jugadores tienen los mismos puntos o están en cero. Debes poner una puntuación mayor en el ganador para avanzar.",
       "missing_participants": "Faltan jugadores en esta partida para poder cerrarla.",
       "error_advancing": "Algo falló al intentar avanzar la ronda."
-    }
+    },
+    "delete_confirm_msg": "¿Estás seguro de que quieres eliminar este torneo? Esta acción no se puede deshacer.",
+    "confirm_delete_tournament": "¿Estás seguro de que quieres eliminar este torneo?"
   },
   "Auth": {
     "login": "Iniciar Sesión",
@@ -86,7 +94,9 @@
     "subtitle": "Los campeones indiscutibles de Spicy Community",
     "total_champions": "Total Campeones",
     "empty_title": "Aún no hay historia escrita",
-    "empty_description": "Completa un torneo para ver al primer campeón aquí."
+    "empty_description": "Completa un torneo para ver al primer campeón aquí.",
+    "one_win": "1 Torneo Ganado",
+    "many_wins": "{count} Torneos Ganados"
   },
   "WinnerCard": {
     "title": "Campeón del Torneo",

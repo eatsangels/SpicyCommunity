@@ -6,6 +6,7 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
+import SpicyFooter from "@/components/layout/SpicyFooter";
 import { UnoAlertProvider } from "@/components/ui/UnoAlertSystem";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,6 +47,7 @@ export default async function RootLayout({
             <main className="pt-24 min-h-screen">
               {children}
             </main>
+            <SpicyFooter />
           </UnoAlertProvider>
         </NextIntlClientProvider>
       </body>
