@@ -54,7 +54,7 @@ export default async function RootLayout({
         <NextIntlClientProvider messages={messages}>
           <UnoAlertProvider>
             <Navbar />
-            <main className="pt-24 min-h-screen">
+            <main className="pt-32 min-h-screen relative z-0">
               {children}
             </main>
             <SpicyFooter />

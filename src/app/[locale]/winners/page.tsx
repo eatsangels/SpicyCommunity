@@ -20,11 +20,12 @@ interface GroupedChampion {
   wins: { tournament_id: string; tournament_name: string | null; tournament_date: string | null }[];
 }
 
-export default async function WinnersPage() {
+export default async function WinnersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const t = await getTranslations('Winners');
   const supabase = await createClient();
 
-  // Fetch ALL wins (no pagination — we group client-side, pagination on grouped results)
+  // Fetch ALL wins
   const { data: rawWinners } = await supabase
     .from('tournament_champions')
     .select('*')
@@ -61,11 +62,24 @@ export default async function WinnersPage() {
     .select('*', { count: 'exact', head: true })
     .eq('status', 'completed');
 
+  const heroTranslations = {
+    title: t('title'),
+    subtitle: t('subtitle'),
+    allTimeChampions: t('total_champions'),
+    tournamentsPlayed: "Tournaments Played", // Fallback if not in JSON
+    realTimeBrackets: "Brackets",
+    engine: "Engine"
+  };
+
   return (
     <div className="min-h-screen bg-black text-white selection:bg-[#ffaa00] selection:text-black">
 
       {/* Hero with WebGL lightning */}
-      <HallOfFameHero totalChampions={totalChampions} totalTournaments={totalTournaments ?? 0} />
+      <HallOfFameHero 
+        totalChampions={totalChampions} 
+        totalTournaments={totalTournaments ?? 0} 
+        translations={heroTranslations}
+      />
 
       <div className="max-w-7xl mx-auto space-y-12 px-8 md:px-16 py-16">
 
@@ -148,7 +162,7 @@ export default async function WinnersPage() {
                         <div className="flex items-center gap-1 text-[9px] font-bold text-white/30 shrink-0">
                           <Calendar size={9} />
                           {win.tournament_date
-                            ? new Date(win.tournament_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+                            ? new Date(win.tournament_date).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })
                             : '—'}
                         </div>
                       </Link>

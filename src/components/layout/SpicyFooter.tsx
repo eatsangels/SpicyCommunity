@@ -11,23 +11,26 @@ import {
 } from "lucide-react";
 import { FooterBackgroundGradient, TextHoverEffect } from "@/components/ui/hover-footer";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 function SpicyFooter() {
-  const footerLinks = [
+  const tf = useTranslations("Footer");
+  
+  const footerLinks: { title: string, links: { label: string, href: string, pulse?: boolean }[] }[] = [
     {
-      title: "Platform",
+      title: tf("platform"),
       links: [
-        { label: "Tournaments", href: "/tournaments" },
-        { label: "Hall of Fame", href: "/winners" },
-        { label: "Home", href: "/" },
+        { label: tf("tournaments"), href: "/tournaments" },
+        { label: tf("hall_of_fame"), href: "/winners" },
+        { label: tf("home"), href: "/" },
       ],
     },
     {
-      title: "Community",
+      title: tf("community"),
       links: [
         { label: "Discord", href: "#" },
         { label: "Reddit", href: "#" },
-        { label: "Live Chat", href: "#", pulse: true },
+        { label: tf("live_chat"), href: "#", pulse: true },
       ],
     },
   ];
@@ -61,7 +64,7 @@ function SpicyFooter() {
               </span>
             </div>
             <p className="text-sm leading-relaxed text-white/40">
-              The ultimate UNO tournament engine. Create brackets, track scores, and crown champions in real-time.
+              {tf("engine_desc")}
             </p>
             {/* Social icons */}
             <div className="flex gap-4 text-white/30 pt-2">
@@ -105,7 +108,7 @@ function SpicyFooter() {
           {/* Contact */}
           <div>
             <h4 className="text-white text-sm font-black uppercase tracking-widest mb-6">
-              Contact
+              {tf("contact")}
             </h4>
             <ul className="space-y-4 text-sm">
               {contactInfo.map((item, i) => (
@@ -135,10 +138,12 @@ function SpicyFooter() {
         {/* Bottom bar */}
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/20 gap-4">
           <p>
-            &copy; {new Date().getFullYear()} Spicy Community. All rights reserved.
+            &copy; {new Date().getFullYear()} Spicy Community. {tf("all_rights_reserved")}
           </p>
           <p className="uppercase font-black tracking-widest text-[8px]">
-            Built with ⚡ for UNO masters
+            {tf.rich("built_for", {
+              icon: () => <span className="inline-block align-middle pb-0.5">⚡</span>
+            })}
           </p>
         </div>
       </div>

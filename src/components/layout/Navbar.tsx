@@ -161,7 +161,7 @@ export default function Navbar() {
                 className="cursor-pointer flex items-center gap-2 lg:hidden font-black text-[10px] uppercase tracking-widest text-[#ffaa00] bg-black/40 px-3 py-1.5 rounded-full border border-[#ffaa00]/30 shadow-lg"
               >
                 <Zap className="size-4 animate-pulse" />
-                MENU
+                {tc('menu')}
               </div>
             </div>
           </div>
@@ -250,12 +250,12 @@ export default function Navbar() {
         <div className="fixed inset-0 z-[200] bg-black flex flex-col lg:hidden">
           {/* Top bar */}
           <div className="flex justify-between items-center px-8 py-6 border-b border-white/10">
-            <span className="text-[#ffaa00] font-black italic tracking-widest text-sm">MENU</span>
+            <span className="text-[#ffaa00] font-black italic tracking-widest text-sm">{tc('menu')}</span>
             <button
               onClick={() => setShowMenu(false)}
               className="text-white/40 hover:text-white uppercase font-bold text-xs tracking-widest"
             >
-              CLOSE ✕
+              {tc('close')} ✕
             </button>
           </div>
 
@@ -289,7 +289,7 @@ export default function Navbar() {
                 onClick={() => setShowMenu(false)}
                 className="text-3xl font-black uppercase italic tracking-tighter text-[#ffaa00] py-3 border-b border-white/5"
               >
-                Admin Panel
+                {tc('admin_panel')}
               </Link>
             )}
           </div>

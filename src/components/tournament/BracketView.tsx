@@ -12,6 +12,7 @@ import { createClient } from '@/lib/supabase/client';
 export default function BracketView({ tournament, isAdmin = false }: { tournament: any, isAdmin?: boolean }) {
   const { toast } = useAlert();
   const t = useTranslations('Tournament');
+  const tc = useTranslations('Common');
   const tWinner = useTranslations('WinnerCard');
   const [data, setData] = useState(tournament);
   const [isFinishing, setIsFinishing] = useState<string | null>(null);
@@ -126,9 +127,9 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const activeRoundId = activeRound?.id;
   const totalRounds = sortedRounds.length;
   const activeRoundIdx = sortedRounds.findIndex((r: any) => r.id === activeRoundId);
-  let activeStageName = `Round ${activeRound?.round_number}`;
-  if (activeRoundIdx === totalRounds - 1) activeStageName = "Final";
-  else if (activeRoundIdx === totalRounds - 2) activeStageName = "Semifinal";
+  let activeStageName = t('round', { number: activeRound?.round_number });
+  if (activeRoundIdx === totalRounds - 1) activeStageName = t('final');
+  else if (activeRoundIdx === totalRounds - 2) activeStageName = t('semifinal');
 
   const handleUpdateScore = async (matchId: string, scoreA: number, scoreB: number) => {
     setData((prev: any) => {
@@ -188,7 +189,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
     (data.participants || []).find((p: any) => p.id === finalMatch.winner_id) : null;
 
   return (
-    <div translate="no" className="fixed inset-0 bg-zinc-950 text-white selection:bg-[#ffaa00] flex flex-col pt-[72px] md:pt-[82px] p-2 md:p-4 overflow-hidden">
+    <div translate="no" className="fixed inset-0 bg-zinc-950 text-white selection:bg-[#ffaa00] flex flex-col pt-[88px] md:pt-[96px] p-2 md:p-4 overflow-hidden">
       {/* BACKGROUND DECOR */}
       <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
           <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-[#ff5555] blur-[150px] rounded-full" />
@@ -203,7 +204,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     {data.status === 'in_progress' && (
                         <div className="flex items-center gap-1.5 px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded backdrop-blur-md">
                             <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]" />
-                            <span className="text-[7px] md:text-[8px] font-black text-red-500 uppercase tracking-tighter italic leading-none">EN VIVO</span>
+                            <span className="text-[7px] md:text-[8px] font-black text-red-500 uppercase tracking-tighter italic leading-none">{tc('live')}</span>
                         </div>
                     )}
                     <div className="px-1.5 py-0.5 bg-[#ff5555]/20 border border-[#ff5555]/40 text-[#ff5555] text-[6px] md:text-[7px] font-black uppercase tracking-widest rounded flex items-center gap-1.5 backdrop-blur-sm leading-none">
@@ -232,7 +233,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     className="flex items-center gap-1.5 text-[8px] font-bold text-[#ffaa00]/60 uppercase tracking-widest"
                   >
                     <Radio size={8} className="text-[#ffaa00] animate-pulse" />
-                    Actualizado {lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    {tc('updated_at', { time: lastUpdate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) })}
                   </motion.div>
                 )}
             </div>

@@ -170,11 +170,20 @@ const StatItem: React.FC<StatItemProps> = ({ label, value, position }) => (
 interface HallOfFameHeroProps {
   totalChampions?: number;
   totalTournaments?: number;
+  translations: {
+    title: string;
+    subtitle: string;
+    allTimeChampions: string;
+    tournamentsPlayed: string;
+    realTimeBrackets: string;
+    engine: string;
+  };
 }
 
 export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
   totalChampions = 0,
   totalTournaments = 0,
+  translations,
 }) => {
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -219,16 +228,16 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
         className="absolute inset-0 z-20 pointer-events-none"
       >
         <motion.div variants={itemVariants}>
-          <StatItem label="All-time Champions" value={`${totalChampions}`} position="left-8 md:left-20 top-1/3" />
+          <StatItem label={translations.allTimeChampions} value={`${totalChampions}`} position="left-8 md:left-20 top-1/3" />
         </motion.div>
         <motion.div variants={itemVariants}>
-          <StatItem label="Tournaments Played" value={`${totalTournaments}`} position="left-1/4 top-1/4" />
+          <StatItem label={translations.tournamentsPlayed} value={`${totalTournaments}`} position="left-1/4 top-1/4" />
         </motion.div>
         <motion.div variants={itemVariants}>
-          <StatItem label="Real-time Brackets" value="LIVE" position="right-1/4 top-1/4" />
+          <StatItem label={translations.realTimeBrackets} value="LIVE" position="right-1/4 top-1/4" />
         </motion.div>
         <motion.div variants={itemVariants}>
-          <StatItem label="Engine" value="UNO" position="right-8 md:right-20 top-1/3" />
+          <StatItem label={translations.engine} value="UNO" position="right-8 md:right-20 top-1/3" />
         </motion.div>
       </motion.div>
 
@@ -252,14 +261,14 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
           className="text-5xl md:text-7xl lg:text-8xl font-black italic uppercase tracking-tighter leading-none mb-3"
           style={{ textShadow: "0 0 80px rgba(255,170,0,0.3)" }}
         >
-          Hall of Fame
+          {translations.title}
         </motion.h1>
 
         <motion.p
           variants={itemVariants}
           className="text-white/40 text-sm md:text-base font-medium max-w-md"
         >
-          The undisputed champions of the UNO arena — legends etched in history.
+          {translations.subtitle}
         </motion.p>
       </motion.div>
     </div>

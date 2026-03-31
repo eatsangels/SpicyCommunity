@@ -1,7 +1,29 @@
 {
   "Index": {
     "title": "Welcome to Spicy Community",
-    "description": "The best tournament management system."
+    "description": "The best tournament management system.",
+    "hero_badge": "Master the Deck",
+    "hero_title_1": "Wild",
+    "hero_title_2": "Glory",
+    "hero_subtitle": "The ultimate tournament engine for UNO masters. Create brackets, track scores, and shout UNO! in real-time.",
+    "scroll_explore": "Scroll to explore",
+    "live_arena": "Live Arena",
+    "joined_table": "Recently joined the table",
+    "waiting_challengers": "Waiting for challengers...",
+    "hero": {
+      "trending": "Trending Now",
+      "view_bracket": "View Bracket",
+      "no_live": "No Live Tournaments Currently"
+    },
+    "features": {
+      "sync_title": "Real-time Sync",
+      "sync_desc": "Instant updates across all spectators and teams.",
+      "teams_title": "Unlimited Teams",
+      "teams_desc": "Scale from 4 to 4,000 without missing a beat.",
+      "stats_title": "Pro Analytics",
+      "stats_desc": "In-depth stats and performance tracking for every game."
+    },
+    "footer_built": "Built for Champions"
   },
   "Common": {
     "create": "Create",
@@ -12,14 +34,37 @@
     "winners": "Winners",
     "home": "Home",
     "tournament": "Tournament",
+    "tournaments": "Tournaments",
     "live_now": "Live",
     "live_tournament": "Live Tournament",
     "view_bracket": "View Bracket",
     "real_time_update": "Real-time updates",
     "players": "{count} teams",
-    "in_progress": "In Progress"
+    "in_progress": "In Progress",
+    "joined_at": "Joined {time}",
+    "menu": "Menu",
+    "close": "Close",
+    "admin_panel": "Admin Panel",
+    "live": "Live",
+    "updated_at": "Updated {time}",
+    "view_results": "View Results"
+  },
+  "Footer": {
+    "platform": "Platform",
+    "community": "Community",
+    "contact": "Contact",
+    "tournaments": "Tournaments",
+    "hall_of_fame": "Hall of Fame",
+    "home": "Home",
+    "live_chat": "Live Chat",
+    "engine_desc": "The ultimate UNO tournament engine. Create brackets, track scores, and crown champions in real-time.",
+    "all_rights_reserved": "All rights reserved.",
+    "built_for": "Built with {icon} for UNO masters"
   },
   "Tournament": {
+    "round": "Round {number}",
+    "final": "Final",
+    "semifinal": "Semifinal",
     "create_title": "Create New Tournament",
     "create_button": "Create Tournament",
     "name_label": "Tournament Name",
@@ -35,11 +80,12 @@
     "advances": "Advances!",
     "status": {
       "completed": "Completed",
-      "active": "Active"
+      "active": "Active",
+      "draft": "Draft"
     },
     "alerts": {
-      "same_score": "Both players have the same score or are at zero. You must set a higher score for the winner to advance.",
-      "missing_participants": "Missing participants in this match to be able to close it.",
+      "same_score": "Both teams have the same score or are at zero. You must set a higher score for the winner to advance.",
+      "missing_participants": "Missing teams in this match to be able to close it.",
       "error_advancing": "Something went wrong while trying to advance the round."
     },
     "delete_confirm_msg": "Are you sure you want to delete this tournament? This action cannot be undone.",

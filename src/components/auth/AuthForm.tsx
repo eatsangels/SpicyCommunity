@@ -31,42 +31,47 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
     setLoading(true);
     setError(null);
 
-    if (mode === 'register') {
-      if (password !== confirmPassword) {
-        setError(t('passwords_dont_match'));
-        setLoading(false);
-        return;
-      }
-      if (!isPasswordStrong(password)) {
-        setError(t('password_weak'));
-        setLoading(false);
-        return;
-      }
-    }
-
-    const { error: authError } = mode === 'login' 
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ 
-          email, 
-          password,
-          options: {
-            data: {
-              username,
-              team_name: teamName
-            }
-          }
-        });
-
-    if (authError) {
-      setError(authError.message);
-      setLoading(false);
-    } else {
+    try {
       if (mode === 'register') {
-        setSuccess(true);
-      } else {
-        router.push('/');
-        router.refresh();
+        if (password !== confirmPassword) {
+          setError(t('passwords_dont_match'));
+          setLoading(false);
+          return;
+        }
+        if (!isPasswordStrong(password)) {
+          setError(t('password_weak'));
+          setLoading(false);
+          return;
+        }
       }
+
+      const { error: authError } = mode === 'login' 
+        ? await supabase.auth.signInWithPassword({ email, password })
+        : await supabase.auth.signUp({ 
+            email, 
+            password,
+            options: {
+              data: {
+                username,
+                team_name: teamName
+              }
+            }
+          });
+
+      if (authError) {
+        setError(authError.message);
+      } else {
+        if (mode === 'register') {
+          setSuccess(true);
+        } else {
+          router.push('/');
+          router.refresh();
+        }
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
