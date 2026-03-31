@@ -83,7 +83,7 @@ export default function Navbar() {
         {/* Left Decorative Wing (Desktop) */}
         <div className="size-full relative -mr-[11px] hidden lg:block flex-shrink">
           <Frame
-            className="drop-shadow-[0_0_15px_rgba(255,170,0,0.2)]"
+            className="drop-shadow-[0_0_10px_rgba(255,170,0,0.1)] pointer-events-none"
             paths={JSON.parse(
               `[{
                 "show": true,
@@ -170,7 +170,7 @@ export default function Navbar() {
           <div className="w-full relative -ml-[25px] lg:flex justify-end pe-8 hidden">
             <Frame
               enableBackdropBlur
-              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.1)]"
+              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.1)] pointer-events-none"
               paths={JSON.parse(
                 `[{
                   "show":true,
@@ -209,10 +209,8 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex items-center gap-4">
-                  <Link href="/auth/login">
-                    <button className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-[#ffaa00] transition-colors">
-                      {ta('login')}
-                    </button>
+                  <Link href="/auth/login" className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-[#ffaa00] transition-colors translate-y-[2px]">
+                    {ta('login')}
                   </Link>
                   <Link href="/auth/register">
                     <FutureButton shape="flat" className="py-[0.4rem] px-8 text-[10px] uppercase tracking-widest text-black">
