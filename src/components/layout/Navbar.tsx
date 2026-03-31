@@ -1,23 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { createContext, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Github, Zap, User, LogOut, LayoutDashboard, Trophy, Home, Settings } from "lucide-react";
+import { Frame } from "@/components/ui/future-navbar";
+import FutureButton from "@/components/ui/future-navbar";
 import { Link, useRouter } from "@/i18n/routing";
 import { createClient } from '@/lib/supabase/client';
 import LocaleSwitcher from '@/components/i18n/LocaleSwitcher';
-
 import Image from 'next/image';
+import { twMerge } from "tailwind-merge";
+
+export const MobileMenuContext = createContext<{
+  showMenu: boolean;
+  setShowMenu: React.Dispatch<React.SetStateAction<boolean>>;
+}>({
+  showMenu: false,
+  setShowMenu: () => {},
+});
 
 export default function Navbar() {
   const tc = useTranslations("Common");
   const ta = useTranslations("Auth");
   const router = useRouter();
   const supabase = createClient();
+  
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<string>('user');
   const [loading, setLoading] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
 
+  // --- Auth & Role Logic ---
   useEffect(() => {
     const fetchUserAndRole = async (currentUser: any) => {
       setUser(currentUser);
@@ -48,73 +61,213 @@ export default function Navbar() {
     router.refresh();
   };
 
-  return (
-    <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-8 md:px-16 py-4 bg-black border-b border-white/10">
-        <div className="flex items-center gap-12">
-            <div className="text-2xl font-black tracking-tighter italic flex items-center gap-4 cursor-pointer group" onClick={() => router.push('/')}>
-                <div className="relative w-10 h-10 overflow-hidden">
-                    <Image 
-                      src="/logo.png" 
-                      alt="Spicy Logo" 
-                      fill 
-                      className="object-contain"
-                    />
-                </div>
-                <span className="text-[#ffaa00] uppercase tracking-tight group-hover:brightness-110 transition-all border-b-2 border-transparent group-hover:border-[#ffaa00]/40">SPICY COMMUNITY</span>
-            </div>
-            <div className="hidden lg:block ml-4">
-                <LocaleSwitcher />
-            </div>
-        </div>
-        
-        <div className="flex items-center gap-10">
-            <div className="hidden md:flex gap-10 text-[11px] font-bold uppercase tracking-[0.2em]">
-                <Link href="/winners" className="text-white/60 hover:text-white transition-colors">{tc('winners')}</Link>
-                <Link href="/" className="text-white/60 hover:text-white transition-colors">{tc('home')}</Link>
-                {user && role === 'admin' && (
-                    <Link href="/admin" className="text-[#ffaa00] hover:brightness-110 transition-all border-b border-[#ffaa00]/0 hover:border-[#ffaa00]/100 pb-1">
-                        Admin
-                    </Link>
-                )}
-            </div>
+  // 🎨 Spicy Brand Colors
+  const primaryStroke = "#ffaa00"; // Spicy Gold
+  const primaryFill = "rgba(255, 170, 0, 0.12)";
+  const glowStroke = "rgba(255, 170, 0, 0.35)";
 
-            <div className="flex items-center gap-6 min-w-[220px] justify-end">
-                {loading ? (
-                    <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-white animate-spin" />
-                ) : user ? (
-                    <div className="flex items-center gap-6">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 hidden sm:inline">{user.email}</span>
-                        <Button 
-                            variant="ghost" 
-                            onClick={handleLogout}
-                            className="h-10 px-4 rounded-xl text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-red-500 hover:bg-red-500/10"
-                        >
-                            {ta('logout')}
-                        </Button>
-                        {role === 'admin' && (
-                            <Link href="/tournaments/create">
-                                <Button className="bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black px-6 h-10 rounded-full font-black uppercase text-[10px] tracking-widest shadow-lg active:scale-95 transition-all">
-                                    {tc('create')}
-                                </Button>
-                            </Link>
-                        )}
-                    </div>
-                ) : (
-                    <div className="flex items-center gap-6">
-                        <Link href="/auth/login">
-                            <Button variant="ghost" className="text-[11px] font-bold uppercase tracking-widest text-white/60 hover:text-white p-0">
-                                {ta('login')}
-                            </Button>
-                        </Link>
-                        <Link href="/auth/register">
-                            <Button className="bg-white text-black hover:bg-white/90 px-8 h-10 rounded-full font-black uppercase text-[11px] tracking-widest shadow-xl active:scale-95 transition-all">
-                                {ta('register')}
-                            </Button>
-                        </Link>
-                    </div>
-                )}
-            </div>
+  return (
+    <MobileMenuContext.Provider value={{ showMenu, setShowMenu }}>
+      <nav className="fixed top-0 w-full z-50 flex h-20 px-2 lg:px-6 bg-black/40 backdrop-blur-md">
+        
+        {/* Left Decorative Wing (Desktop) */}
+        <div className="size-full relative -mr-[11px] hidden lg:block flex-shrink">
+          <Frame
+            className="drop-shadow-[0_0_15px_rgba(255,170,0,0.2)]"
+            paths={JSON.parse(
+              `[{
+                "show": true,
+                "style": {"strokeWidth": "1", "stroke": "${primaryStroke}", "fill": "rgba(255,170,0,0.06)"},
+                "path":[["M","0","0"],["L","100% - 6","0"],["L","100% - 11","100% - 64"],["L","100% + 0","0% + 29"],["L","0","11"],["L","0","0"]]
+              },{
+                "show": true,
+                "style": {"strokeWidth": "1", "stroke": "${glowStroke}", "fill": "transparent"},
+                "path":[["M","0","14"],["L","100% - 7","33"]]
+              }]`,
+            )}
+          />
         </div>
-    </nav>
+
+        {/* Global Navbar Container */}
+        <div className="flex lg:container h-full relative flex-none w-full">
+          
+          {/* Main Navigation Slot (Logo + Links) */}
+          <div className="flex-none h-full px-14 relative w-full lg:w-auto min-w-[400px]">
+            <Frame
+              enableBackdropBlur
+              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.15)]"
+              paths={JSON.parse(
+                `[{
+                  "show":true,
+                  "style":{"strokeWidth":"1","stroke":"${primaryStroke}","fill":"${primaryFill}"},
+                  "path":[["M","6","0"],["L","100% - 6.5","0"],["L","100% + 0","0% + 9"],["L","100% - 28","100% - 15"],["L","162","100% - 15"],["L","164","100% - 30"],["L","153","100% - 15"],["L","27","100% - 15"],["L","0","0% + 8"],["L","6","0"]]
+                },{
+                  "show":true,
+                  "style":{"strokeWidth":"1","stroke":"${primaryStroke}CC","fill":"transparent"},
+                  "path":[["M","32","100% - 15"],["L","0% + 152.5","100% - 15"],["L","0% + 163.5","100% - 29"],["L","0% + 161.5","100% - 15"],["L","100% - 32.5","100% - 15"],["L","100% - 36.5","100% - 7"],["L","0% + 163.5","100% - 7"],["L","0% + 165.5","100% - 23"],["L","0% + 152.5","100% - 7"],["L","37","100% - 7"],["L","32","100% - 15"]]
+                },{
+                  "show":true,
+                  "style":{"strokeWidth":"1","stroke":"${glowStroke}","fill":"transparent"},
+                  "path":[["M","0","0% + 33"],["M","4","0% + 33"],["L","0% + 18.5","100% - 12"],["L","0% + 23.5","100% - 12"],["L","29","100% + 0"],["L","155","100% - 0"],["L","160","100% - 8"],["L","161","100% - 0"],["L","100% - 28","100% + 0"],["L","100% - 23","100% - 11"],["L","100% - 17","100% - 11"],["L","100% - 14","100% - 14"],["L","100% + 0","100% - 14"]]
+                }]`,
+              )}
+            />
+            
+            <div className="flex items-center mt-2.5 relative">
+              {/* Logo Area */}
+              <Link href="/" className="flex items-center gap-3 cursor-pointer group me-12">
+                <div className="relative w-8 h-8">
+                  <Image src="/logo.png" alt="Spicy" fill className="object-contain group-hover:scale-110 transition-transform" />
+                </div>
+                <span className="text-[14px] font-black italic tracking-tighter text-[#ffaa00] uppercase hidden sm:inline">SPICY COMMUNITY</span>
+              </Link>
+
+              {/* Desktop Nav Links */}
+              <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] items-center">
+                <Link href="/winners" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                  <Trophy size={12} className="text-[#ffaa00]" /> {tc('winners')}
+                </Link>
+                <Link href="/" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                   {tc('home')}
+                </Link>
+                {user && role === 'admin' && (
+                  <Link href="/admin" className="text-[#ffaa00] hover:brightness-110 transition-all border-b border-[#ffaa00]/0 hover:border-[#ffaa00]/100">
+                    ADMIN
+                  </Link>
+                )}
+                <div className="ml-2 scale-75 origin-left">
+                  <LocaleSwitcher />
+                </div>
+              </div>
+
+              {/* Mobile Menu Toggle */}
+              <div
+                onClick={() => setShowMenu(!showMenu)}
+                className="cursor-pointer ms-auto flex items-center gap-2 lg:hidden font-black text-[10px] uppercase tracking-widest text-[#ffaa00]"
+              >
+                <Zap className="size-4 animate-pulse" />
+                MENU
+              </div>
+            </div>
+          </div>
+
+          {/* Right Action Slot (Search / Auth) */}
+          <div className="w-full relative -ml-[25px] lg:flex justify-end pe-8 hidden">
+            <Frame
+              enableBackdropBlur
+              className="drop-shadow-[0_0_20px_rgba(255,170,0,0.1)]"
+              paths={JSON.parse(
+                `[{
+                  "show":true,
+                  "style":{"strokeWidth":"1","stroke":"${primaryStroke}80","fill":"rgba(255,170,0,0.06)"},
+                  "path":[["M","19","0"],["L","100% - 5","0"],["L","100% + 0","0% + 7"],["L","100% - 36","100% - 20"],["L","0","100% - 20"],["L","25","8.999992370605469"],["L","19","1"]]
+                },{
+                  "show":true,
+                  "style":{"strokeWidth":"1","stroke":"${glowStroke}","fill":"transparent"},
+                  "path":[["M","25","100% - 14"],["L","100% - 32","100% - 13"],["L","100% - 15","36"]]
+                }]`,
+              )}
+            />
+            
+            <div className="flex items-center -mt-3.5 gap-4">
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-[#ffaa00]/20 border-t-[#ffaa00] rounded-full animate-spin" />
+              ) : user ? (
+                <div className="flex items-center gap-4">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-white/30 max-w-[120px] truncate">{user.email}</span>
+                  
+                  {role === 'admin' && (
+                    <Link href="/tournaments/create">
+                       <FutureButton shape="flat" className="py-[0.4rem] px-6 text-[9px] uppercase tracking-widest text-black">
+                         {tc('create')}
+                       </FutureButton>
+                    </Link>
+                  )}
+
+                  <FutureButton 
+                    shape="flat" 
+                    onClick={handleLogout}
+                    className="py-[0.4rem] px-5 text-[9px] uppercase tracking-widest text-white hover:text-red-500"
+                  >
+                    <LogOut className="size-3" />
+                  </FutureButton>
+                </div>
+              ) : (
+                <div className="flex items-center gap-4">
+                  <Link href="/auth/login">
+                    <button className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-[#ffaa00] transition-colors">
+                      {ta('login')}
+                    </button>
+                  </Link>
+                  <Link href="/auth/register">
+                    <FutureButton shape="flat" className="py-[0.4rem] px-8 text-[10px] uppercase tracking-widest text-black">
+                      {ta('register')}
+                    </FutureButton>
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Decorative Wing (Desktop) */}
+        <div className="size-full relative -ml-[18px] hidden lg:block flex-shrink">
+          <Frame
+            paths={JSON.parse(
+              `[{
+                "show":true,
+                "style":{"strokeWidth":"1","stroke":"${primaryStroke}E6","fill":"rgba(255,170,0,0.06)"},
+                "path":[["M","12","0"],["L","100% + 0","0"],["L","100% + 0","0% + 16"],["L","0","100% - 42"],["L","18","7"],["L","12","0"]]
+              },{
+                "show":true,
+                "style":{"strokeWidth":"1","stroke":"${glowStroke}","fill":"transparent"},
+                "path":[["M","3","100% - 36"],["L","100% + 0","20"]]
+              }]`,
+            )}
+          />
+        </div>
+
+        {/* --- Mobile Fullscreen Menu Overlay --- */}
+        {showMenu && (
+          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col p-12 lg:hidden">
+            <div className="flex justify-between items-center mb-16">
+              <span className="text-[#ffaa00] font-black italic tracking-widest">MENU</span>
+              <button onClick={() => setShowMenu(false)} className="text-white/40 hover:text-white uppercase font-bold text-xs tracking-widest">CLOSE</button>
+            </div>
+            
+            <div className="flex flex-col gap-10 mt-10">
+              <Link href="/" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors">{tc('home')}</Link>
+              <Link href="/winners" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors">{tc('winners')}</Link>
+              {user && role === 'admin' && (
+                <Link href="/admin" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter text-[#ffaa00] transition-colors">ADMIN PANEL</Link>
+              )}
+              
+              <div className="h-px w-20 bg-[#ffaa00]/20 my-4" />
+              
+              {user ? (
+                <>
+                  <span className="text-xs font-bold text-white/30 tracking-widest uppercase mb-4">{user.email}</span>
+                  <button 
+                    onClick={() => { handleLogout(); setShowMenu(false); }}
+                    className="text-2xl font-black uppercase italic tracking-tighter text-red-500 text-left"
+                  >
+                    {ta('logout')}
+                  </button>
+                </>
+              ) : (
+                <div className="flex flex-col gap-6">
+                  <Link href="/auth/login" onClick={() => setShowMenu(false)} className="text-2xl font-black uppercase italic tracking-tighter">{ta('login')}</Link>
+                  <Link href="/auth/register" onClick={() => setShowMenu(false)} className="text-[#ffaa00] text-2xl font-black uppercase italic tracking-tighter">{ta('register')}</Link>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-auto">
+               <LocaleSwitcher />
+            </div>
+          </div>
+        )}
+      </nav>
+    </MobileMenuContext.Provider>
   );
 }
