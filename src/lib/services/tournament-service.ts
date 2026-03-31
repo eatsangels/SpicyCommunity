@@ -123,5 +123,22 @@ export const TournamentService = {
       .single();
 
     return tournament;
+  },
+
+  async getAllTournaments() {
+    const supabase = await createClient();
+
+    const { data: tournaments } = await supabase
+      .from('tournaments')
+      .select(`
+        id,
+        name,
+        status,
+        created_at,
+        participants (id)
+      `)
+      .order('created_at', { ascending: false });
+
+    return tournaments;
   }
 };

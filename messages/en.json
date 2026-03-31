@@ -10,7 +10,8 @@
     "save": "Save",
     "cancel": "Cancel",
     "winners": "Winners",
-    "home": "Home"
+    "home": "Home",
+    "tournament": "Tournament"
   },
   "Tournament": {
     "create_title": "Create New Tournament",

@@ -35,6 +35,7 @@ export default function AdminSidebar() {
                   src="/logo.png" 
                   alt="Admin Logo" 
                   fill 
+                  sizes="32px"
                   className="object-contain p-1"
                 />
             </div>

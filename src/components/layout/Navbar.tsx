@@ -2,7 +2,7 @@
 
 import { createContext, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Github, Zap, User, LogOut, LayoutDashboard, Trophy, Home, Settings } from "lucide-react";
+import { Zap, LogOut, Trophy } from "lucide-react";
 import { Frame } from "@/components/ui/future-navbar";
 import FutureButton from "@/components/ui/future-navbar";
 import { Link, useRouter } from "@/i18n/routing";
@@ -29,6 +29,16 @@ export default function Navbar() {
   const [role, setRole] = useState<string>('user');
   const [loading, setLoading] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
+
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (showMenu) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showMenu]);
 
   // --- Auth & Role Logic ---
   useEffect(() => {
@@ -92,7 +102,7 @@ export default function Navbar() {
         <div className="flex lg:container h-full relative flex-none w-full">
           
           {/* Main Navigation Slot (Logo + Links) */}
-          <div className="flex-none h-full px-14 relative w-full lg:w-auto min-w-[400px]">
+          <div className="flex-none h-full px-6 lg:px-14 relative w-full lg:w-auto">
             <Frame
               enableBackdropBlur
               className="drop-shadow-[0_0_20px_rgba(255,170,0,0.15)]"
@@ -117,13 +127,16 @@ export default function Navbar() {
               {/* Logo Area */}
               <Link href="/" className="flex items-center gap-3 cursor-pointer group me-12">
                 <div className="relative w-8 h-8">
-                  <Image src="/logo.png" alt="Spicy" fill className="object-contain group-hover:scale-110 transition-transform" />
+                  <Image src="/logo.png" alt="Spicy" fill sizes="32px" className="object-contain group-hover:scale-110 transition-transform" />
                 </div>
                 <span className="text-[14px] font-black italic tracking-tighter text-[#ffaa00] uppercase hidden sm:inline">SPICY COMMUNITY</span>
               </Link>
 
               {/* Desktop Nav Links */}
               <div className="hidden lg:flex gap-10 text-[10px] font-bold uppercase tracking-[0.2em] items-center">
+                <Link href="/tournaments" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
+                  <Trophy size={12} className="text-[#ffaa00]" /> {tc('tournament')}
+                </Link>
                 <Link href="/winners" className="text-white/40 hover:text-white transition-colors flex items-center gap-2">
                   <Trophy size={12} className="text-[#ffaa00]" /> {tc('winners')}
                 </Link>
@@ -227,47 +240,103 @@ export default function Navbar() {
           />
         </div>
 
-        {/* --- Mobile Fullscreen Menu Overlay --- */}
-        {showMenu && (
-          <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col p-12 lg:hidden">
-            <div className="flex justify-between items-center mb-16">
-              <span className="text-[#ffaa00] font-black italic tracking-widest">MENU</span>
-              <button onClick={() => setShowMenu(false)} className="text-white/40 hover:text-white uppercase font-bold text-xs tracking-widest">CLOSE</button>
-            </div>
-            
-            <div className="flex flex-col gap-10 mt-10">
-              <Link href="/" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors">{tc('home')}</Link>
-              <Link href="/winners" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors">{tc('winners')}</Link>
-              {user && role === 'admin' && (
-                <Link href="/admin" onClick={() => setShowMenu(false)} className="text-4xl font-black uppercase italic tracking-tighter text-[#ffaa00] transition-colors">ADMIN PANEL</Link>
-              )}
-              
-              <div className="h-px w-20 bg-[#ffaa00]/20 my-4" />
-              
-              {user ? (
-                <>
-                  <span className="text-xs font-bold text-white/30 tracking-widest uppercase mb-4">{user.email}</span>
-                  <button 
-                    onClick={() => { handleLogout(); setShowMenu(false); }}
-                    className="text-2xl font-black uppercase italic tracking-tighter text-red-500 text-left"
+      </nav>
+
+      {/* --- Mobile Fullscreen Menu Overlay --- */}
+      {/* Rendered OUTSIDE of <nav> to avoid backdrop-blur creating a new containing block for fixed positioning */}
+      {showMenu && (
+        <div className="fixed inset-0 z-[200] bg-black flex flex-col lg:hidden">
+          {/* Top bar */}
+          <div className="flex justify-between items-center px-8 py-6 border-b border-white/10">
+            <span className="text-[#ffaa00] font-black italic tracking-widest text-sm">MENU</span>
+            <button
+              onClick={() => setShowMenu(false)}
+              className="text-white/40 hover:text-white uppercase font-bold text-xs tracking-widest"
+            >
+              CLOSE ✕
+            </button>
+          </div>
+
+          {/* Nav links */}
+          <div className="flex flex-col gap-2 px-8 py-8 flex-1 overflow-y-auto">
+            <Link
+              href="/"
+              onClick={() => setShowMenu(false)}
+              className="text-3xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors py-3 border-b border-white/5"
+            >
+              {tc('home')}
+            </Link>
+            <Link
+              href="/tournaments"
+              onClick={() => setShowMenu(false)}
+              className="text-3xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors py-3 border-b border-white/5 flex items-center gap-3"
+            >
+              <Trophy size={20} className="text-[#ffaa00]" />
+              {tc('tournament')}
+            </Link>
+            <Link
+              href="/winners"
+              onClick={() => setShowMenu(false)}
+              className="text-3xl font-black uppercase italic tracking-tighter hover:text-[#ffaa00] transition-colors py-3 border-b border-white/5"
+            >
+              {tc('winners')}
+            </Link>
+            {user && role === 'admin' && (
+              <Link
+                href="/admin"
+                onClick={() => setShowMenu(false)}
+                className="text-3xl font-black uppercase italic tracking-tighter text-[#ffaa00] py-3 border-b border-white/5"
+              >
+                Admin Panel
+              </Link>
+            )}
+          </div>
+
+          {/* Bottom section: auth + language */}
+          <div className="px-8 py-6 border-t border-white/10 flex flex-col gap-4">
+            {user ? (
+              <>
+                <span className="text-xs font-bold text-white/30 tracking-widest uppercase">{user.email}</span>
+                {role === 'admin' && (
+                  <Link
+                    href="/tournaments/create"
+                    onClick={() => setShowMenu(false)}
+                    className="text-sm font-bold uppercase tracking-widest text-black bg-[#ffaa00] rounded px-4 py-2 text-center"
                   >
-                    {ta('logout')}
-                  </button>
-                </>
-              ) : (
-                <div className="flex flex-col gap-6">
-                  <Link href="/auth/login" onClick={() => setShowMenu(false)} className="text-2xl font-black uppercase italic tracking-tighter">{ta('login')}</Link>
-                  <Link href="/auth/register" onClick={() => setShowMenu(false)} className="text-[#ffaa00] text-2xl font-black uppercase italic tracking-tighter">{ta('register')}</Link>
-                </div>
-              )}
-            </div>
-            
-            <div className="mt-auto">
-               <LocaleSwitcher />
+                    {tc('create')}
+                  </Link>
+                )}
+                <button
+                  onClick={() => { handleLogout(); setShowMenu(false); }}
+                  className="text-sm font-black uppercase italic tracking-tighter text-red-400 text-left"
+                >
+                  {ta('logout')}
+                </button>
+              </>
+            ) : (
+              <div className="flex gap-4">
+                <Link
+                  href="/auth/login"
+                  onClick={() => setShowMenu(false)}
+                  className="flex-1 text-center py-2 border border-white/20 rounded text-sm font-bold uppercase tracking-widest hover:border-[#ffaa00] hover:text-[#ffaa00] transition-colors"
+                >
+                  {ta('login')}
+                </Link>
+                <Link
+                  href="/auth/register"
+                  onClick={() => setShowMenu(false)}
+                  className="flex-1 text-center py-2 bg-[#ffaa00] rounded text-sm font-bold uppercase tracking-widest text-black hover:brightness-110 transition-all"
+                >
+                  {ta('register')}
+                </Link>
+              </div>
+            )}
+            <div className="mt-2">
+              <LocaleSwitcher />
             </div>
           </div>
-        )}
-      </nav>
+        </div>
+      )}
     </MobileMenuContext.Provider>
   );
 }

@@ -75,6 +75,7 @@ export default function HomePage() {
                     src="/logo.png" 
                     alt="Logo Watermark" 
                     fill 
+                    sizes="1000px"
                     className="object-contain"
                  />
               </div>
@@ -123,9 +124,9 @@ export default function HomePage() {
             transition={{ delay: 0.6 }}
             className="flex flex-wrap justify-center gap-6 pt-12"
           >
-            <Link href="/tournaments/create">
+            <Link href="/tournaments">
               <Button size="lg" className="h-20 px-16 rounded-full text-2xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#ffaa00] text-black hover:bg-[#ffaa00]/90 shadow-[0_0_60px_rgba(255,170,0,0.2)]">
-                {tc("create")}
+                {tc("tournament")}
               </Button>
             </Link>
           </motion.div>

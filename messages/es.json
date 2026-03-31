@@ -10,7 +10,8 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "winners": "Ganadores",
-    "home": "Inicio"
+    "home": "Inicio",
+    "tournament": "Torneo"
   },
   "Tournament": {
     "create_title": "Crear Nuevo Torneo",

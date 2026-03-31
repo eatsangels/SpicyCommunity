@@ -15,14 +15,14 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Enable a redirect to a matching locale at the root
-    '/',
-
-    // Set a cookie to remember the previous locale for
-    // all requests that have a locale prefix
-    '/(en|es|fr)/:path*',
-
-    // Enable redirects for internal routes
-    '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next (internal Next.js paths)
+     * - _static (static files)
+     * - _vercel (Vercel analytics, etc.)
+     * - Any path with a dot (e.g. image.png, favicon.ico)
+     */
+    '/((?!api|_next|_static|_vercel|.*\\..*).*)',
   ],
 };
