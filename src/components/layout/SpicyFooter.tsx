@@ -59,15 +59,16 @@ function SpicyFooter() {
           {/* Brand */}
           <div className="flex flex-col space-y-4">
             <div className="flex items-center gap-3 group">
-              <div className="relative w-12 h-12 flex items-center justify-center">
-                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[#ffaa00]/10 bg-black/40 drop-shadow-[0_0_10px_rgba(255,170,0,0.3)]">
+              <div className="relative w-12 h-16 flex items-center justify-center transition-all duration-500 hover:-rotate-3">
+                <div className="relative w-full h-full rounded-lg overflow-hidden border-2 border-white/20 bg-black/40 shadow-[0_0_15px_rgba(255,170,0,0.3)]">
                   <Image 
-                    src="/logo.png" 
+                    src="/logo_new.png" 
                     alt="Spicy" 
                     fill 
                     sizes="48px" 
                     className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
                   />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
                 </div>
               </div>
               <span className="text-white text-xl font-black uppercase tracking-tight italic">

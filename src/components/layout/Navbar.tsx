@@ -129,25 +129,25 @@ export default function Navbar() {
             <div className="flex items-center relative w-full justify-between">
               {/* Logo Area */}
               <Link href="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
-                <div className="relative w-14 h-14 md:w-18 md:h-18 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,170,0,0.4)]">
-                  {/* Hexagon Clip Container */}
-                  <div className="relative w-full h-full overflow-hidden [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] bg-black/40 border border-[#ffaa00]/10">
+                <div className="relative w-8 h-12 md:w-10 md:h-14 flex items-center justify-center transition-all duration-500 hover:rotate-3">
+                  {/* Card Shape Container */}
+                  <div className="relative w-full h-full rounded-md overflow-hidden border-2 border-white/20 bg-black/40 shadow-[0_0_12px_rgba(255,170,0,0.2)] group-hover:shadow-[0_0_20px_rgba(255,170,0,0.35)] transition-all duration-300">
                     <Image 
-                      src="/logo.png" 
+                      src="/logo_new.png" 
                       alt="Spicy" 
                       fill 
-                      sizes="(max-width: 768px) 56px, 72px" 
+                      sizes="(max-width: 768px) 32px, 40px" 
                       className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
                     />
+                    {/* Glossy Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
                   </div>
-                  {/* Subtle Hexagon Border Glow */}
-                  <div className="absolute inset-0 [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] border border-[#ffaa00]/20 pointer-events-none" />
                 </div>
                 <div className="flex flex-col -ml-1">
-                  <span className="text-[16px] md:text-[20px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate leading-none">
+                  <span className="text-[12px] md:text-[16px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate leading-none">
                     SPICY
                   </span>
-                  <span className="text-[8px] md:text-[10px] font-black tracking-[0.2em] text-white/40 uppercase leading-none mt-1">
+                  <span className="text-[6px] md:text-[8px] font-black tracking-[0.2em] text-white/40 uppercase leading-none mt-0.5">
                     COMMUNITY
                   </span>
                 </div>
