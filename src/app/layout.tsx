@@ -6,7 +6,7 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/layout/Navbar";
-import SpicyFooter from "@/components/layout/SpicyFooter";
+import FooterWrapper from "@/components/layout/FooterWrapper";
 import { UnoAlertProvider } from "@/components/ui/UnoAlertSystem";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +48,7 @@ export default async function RootLayout({
             <main className="pt-32 min-h-screen relative z-0">
               {children}
             </main>
-            <SpicyFooter />
+            <FooterWrapper />
           </UnoAlertProvider>
         </NextIntlClientProvider>
       </body>
