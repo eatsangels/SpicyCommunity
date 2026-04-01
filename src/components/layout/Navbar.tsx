@@ -157,13 +157,27 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Mobile Menu Toggle */}
-              <div
-                onClick={() => setShowMenu(!showMenu)}
-                className="cursor-pointer flex items-center gap-2 lg:hidden font-black text-[10px] uppercase tracking-widest text-[#ffaa00] bg-black/40 px-3 py-1.5 rounded-full border border-[#ffaa00]/30 shadow-lg"
-              >
-                <Zap className="size-4 animate-pulse" />
-                {tc('menu')}
+              {/* Mobile Auth + Menu Toggle */}
+              <div className="flex items-center gap-2 lg:hidden relative z-50">
+                {!user && !loading && (
+                  <div className="flex items-center gap-1.5">
+                    <Link href="/auth/login" className="text-[9px] font-black uppercase tracking-tighter text-white/50 hover:text-[#ffaa00] px-2 py-1 transition-colors italic whitespace-nowrap">
+                      {ta('login')}
+                    </Link>
+                    <Link href="/auth/register">
+                      <div className="text-[9px] font-black uppercase tracking-tighter text-black bg-[#ffaa00] px-3 py-1.5 rounded-full shadow-[0_0_15px_rgba(255,170,0,0.3)] italic transition-transform active:scale-95 whitespace-nowrap">
+                        {ta('register')}
+                      </div>
+                    </Link>
+                  </div>
+                )}
+                <div
+                  onClick={() => setShowMenu(!showMenu)}
+                  className="cursor-pointer flex items-center gap-1.5 font-black text-[9px] uppercase tracking-tighter text-[#ffaa00] bg-black/60 px-3 py-1.5 rounded-full border border-[#ffaa00]/30 shadow-lg italic transition-all active:scale-95"
+                >
+                  <Zap className="size-3.5 animate-pulse" />
+                  {tc('menu')}
+                </div>
               </div>
             </div>
           </div>

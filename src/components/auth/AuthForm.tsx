@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from '@/i18n/routing';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const t = useTranslations('Auth');
@@ -21,6 +22,8 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isPasswordStrong = (pwd: string) => {
     return pwd.length >= 8 && /[A-Z]/.test(pwd) && /[0-9]/.test(pwd);
@@ -177,25 +180,39 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
               <div className="group relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   placeholder={t('password')}
-                  className="w-full h-14 bg-white/5 text-white placeholder-white/20 border border-white/10 rounded-2xl px-6 font-medium outline-none focus:border-[#ffaa00]/50 focus:bg-white/10 transition-all"
+                  className="w-full h-14 bg-white/5 text-white placeholder-white/20 border border-white/10 rounded-2xl px-6 pr-14 font-medium outline-none focus:border-[#ffaa00]/50 focus:bg-white/10 transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
 
               {isRegister && (
                 <div className="group relative">
                   <input
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     required
                     placeholder={t('confirm_password')}
-                    className="w-full h-14 bg-white/5 text-white placeholder-white/20 border border-white/10 rounded-2xl px-6 font-medium outline-none focus:border-[#ffaa00]/50 focus:bg-white/10 transition-all"
+                    className="w-full h-14 bg-white/5 text-white placeholder-white/20 border border-white/10 rounded-2xl px-6 pr-14 font-medium outline-none focus:border-[#ffaa00]/50 focus:bg-white/10 transition-all"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white/20 hover:text-white transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               )}
             </div>
