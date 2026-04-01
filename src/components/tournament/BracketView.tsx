@@ -33,7 +33,8 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
           matches (
             *,
             participant_a:participants!participant_a_id(*),
-            participant_b:participants!participant_b_id(*)
+            participant_b:participants!participant_b_id(*),
+            box_score
           )
         )
       `)
@@ -153,14 +154,14 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   if (activeRoundIdx === totalRounds - 1) activeStageName = t('final');
   else if (activeRoundIdx === totalRounds - 2) activeStageName = t('semifinal');
 
-  const handleUpdateScore = async (matchId: string, scoreA: number, scoreB: number) => {
+  const handleUpdateScore = async (matchId: string, scoreA: number, scoreB: number, boxScore?: any[]) => {
     // 1. Update local state immediately
     setData((prev: any) => {
       const newData = { ...prev };
       newData.rounds = newData.rounds.map((r: any) => ({
         ...r,
         matches: r.matches.map((m: any) => 
-          m.id === matchId ? { ...m, score_a: scoreA, score_b: scoreB } : m
+          m.id === matchId ? { ...m, score_a: scoreA, score_b: scoreB, box_score: boxScore } : m
         ),
       }));
       return newData;
@@ -179,7 +180,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         const resp = await fetch(`/api/matches/${matchId}/score`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ score_a: scoreA, score_b: scoreB })
+          body: JSON.stringify({ score_a: scoreA, score_b: scoreB, box_score: boxScore })
         });
         
         if (!resp.ok) throw new Error('Sync failed');
@@ -352,7 +353,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                   
                   <div className="flex flex-col relative shrink-0">
                     {finalMatches.map((match: any) => {
-                      const BASE_CELL_HEIGHT = 115; 
+                      const BASE_CELL_HEIGHT = 180; 
                       const roundMultiplier = Math.pow(2, rIdx);
                       const cellHeight = BASE_CELL_HEIGHT * roundMultiplier;
                       const verticalShift = cellHeight / 2;
@@ -478,6 +479,18 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                          )}
                        </div>
                     </div>
+
+                    {/* Compact Box Score for Ticker */}
+                    {match.box_score && (match.box_score as any[]).length > 0 && (
+                      <div className="flex gap-1.5 border-l border-white/10 pl-4 py-1">
+                        {(match.box_score as any[]).map((r, i) => (
+                          <div key={i} className="flex flex-col items-center justify-center min-w-[14px]">
+                            <span className={cn("text-[8px] font-bold tabular-nums", r.a > r.b ? "text-[#ff5555]" : "text-white/20")}>{r.a}</span>
+                            <span className={cn("text-[8px] font-bold tabular-nums", r.b > r.a ? "text-[#5555ff]" : "text-white/20")}>{r.b}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

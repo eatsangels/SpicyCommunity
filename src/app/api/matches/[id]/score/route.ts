@@ -8,7 +8,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const { score_a, score_b } = await request.json();
+    const { score_a, score_b, box_score } = await request.json();
     const supabase = await createClient();
 
     // 1. Authenticate user
@@ -34,6 +34,7 @@ export async function PATCH(
       .update({
         score_a: score_a !== undefined ? score_a : null,
         score_b: score_b !== undefined ? score_b : null,
+        box_score: box_score !== undefined ? box_score : [],
       })
       .eq('id', id);
 

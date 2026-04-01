@@ -27,6 +27,7 @@ export type Database = {
           status: Database["public"]["Enums"]["match_status"]
           tournament_id: string
           winner_id: string | null
+          box_score: Json | null
         }
         Insert: {
           created_at?: string
@@ -40,6 +41,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["match_status"]
           tournament_id: string
           winner_id?: string | null
+          box_score?: Json | null
         }
         Update: {
           created_at?: string
@@ -53,6 +55,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["match_status"]
           tournament_id?: string
           winner_id?: string | null
+          box_score?: Json | null
         }
         Relationships: [
           {
