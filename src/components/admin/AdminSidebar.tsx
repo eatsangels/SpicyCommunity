@@ -9,7 +9,8 @@ import {
   Settings, 
   ChevronRight,
   LogOut,
-  Shield
+  Shield,
+  Calendar
 } from 'lucide-react';
 
 import Image from 'next/image';
@@ -21,6 +22,7 @@ export default function AdminSidebar() {
   const menuItems = [
     { id: 'dashboard', icon: LayoutDashboard, href: '/admin', label: t('dashboard') },
     { id: 'tournaments', icon: Trophy, href: '/admin/tournaments', label: t('tournaments') },
+    { id: 'calendar', icon: Calendar, href: '/admin/calendar', label: t('calendar') },
     { id: 'teams', icon: Shield, href: '/admin/teams', label: t('teams') },
     { id: 'users', icon: Users, href: '/admin/users', label: t('users') },
     { id: 'settings', icon: Settings, href: '/admin/settings', label: t('settings') },
@@ -29,17 +31,14 @@ export default function AdminSidebar() {
   return (
     <div className="w-64 h-full bg-zinc-950 border-r border-white/5 flex flex-col">
       <div className="p-8">
-        <div className="text-xl font-black italic flex items-center gap-4">
-            <div className="relative w-8 h-8 overflow-hidden rounded-lg bg-white/5 border border-white/10">
-                <Image 
-                  src="/logo.png" 
-                  alt="Admin Logo" 
-                  fill 
-                  sizes="32px"
-                  className="object-contain p-1"
-                />
-            </div>
-            <span className="text-[#ffaa00]">ADMIN</span>
+        <div className="flex flex-col">
+          <span className="text-3xl font-black italic tracking-tighter text-[#ffaa00] uppercase leading-none">
+            SPICY
+          </span>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] font-black tracking-widest text-[#ffaa00]/40 uppercase">ADMIN</span>
+            <div className="h-px bg-[#ffaa00]/10 flex-1" />
+          </div>
         </div>
       </div>
 

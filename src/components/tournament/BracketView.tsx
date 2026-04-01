@@ -242,6 +242,12 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const winner = (finalMatch?.winner_id && finalMatch?.status === 'completed') ? 
     (data.participants || []).find((p: any) => p.id === finalMatch.winner_id) : null;
 
+  // Derive completed matches for "Recent Results" section
+  const completedMatches = sortedRounds
+    .flatMap((r: any) => r.matches || [])
+    .filter((m: any) => m.status === 'completed')
+    .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
+
   return (
     <div translate="no" className="fixed inset-0 bg-zinc-950 text-white selection:bg-[#ffaa00] flex flex-col pt-[88px] md:pt-[96px] p-2 md:p-4 overflow-hidden">
       {/* BACKGROUND DECOR */}
@@ -405,6 +411,83 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
             )}
           </div>
         </div>
+
+        {/* RECENT MATCH TICKER (BOTTOM) */}
+        {completedMatches.length > 0 && (
+          <div className="shrink-0 border-t border-white/5 bg-black/40 backdrop-blur-md relative overflow-hidden py-4">
+            {/* Label */}
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center gap-2 px-3 py-1 bg-black/60 border border-[#ffaa00]/20 rounded-md">
+              <div className="w-1.5 h-1.5 bg-[#ffaa00] rounded-full animate-pulse" />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ffaa00] italic">{tc('recent_results')}</span>
+            </div>
+
+            <motion.div 
+              className="flex gap-8 items-center"
+              animate={{ x: ["-50%", "0%"] }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+            >
+              {[...completedMatches, ...completedMatches, ...completedMatches].map((match: any, idx) => (
+                <div
+                  key={`${match.id}-${idx}`}
+                  className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
+                >
+                  <div className="flex items-center gap-4">
+                    {/* Part A */}
+                    <div className="flex items-center gap-2">
+                       <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+                         {match.participant_a?.logo_url ? (
+                           <img src={match.participant_a.logo_url} className="w-full h-full object-contain" alt="" />
+                         ) : (
+                           <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_a?.name?.[0]}</span>
+                         )}
+                       </div>
+                       <span className={cn(
+                         "text-[10px] font-black uppercase tracking-widest whitespace-nowrap",
+                         match.winner_id === match.participant_a_id ? 'text-white' : 'text-white/20'
+                       )}>
+                         {match.participant_a?.name}
+                       </span>
+                    </div>
+
+                    {/* Scores */}
+                    <div className="flex items-center gap-1.5 bg-black/60 px-3 py-1 rounded border border-white/5 shadow-inner">
+                      <span className={cn(
+                        "text-sm font-black tabular-nums",
+                        match.score_a > match.score_b ? 'text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.4)]' : 'text-white/20'
+                      )}>{match.score_a}</span>
+                      <span className="text-white/5 text-[10px]">-</span>
+                      <span className={cn(
+                        "text-sm font-black tabular-nums",
+                        match.score_b > match.score_a ? 'text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.4)]' : 'text-white/20'
+                      )}>{match.score_b}</span>
+                    </div>
+
+                    {/* Part B */}
+                    <div className="flex items-center gap-2">
+                       <span className={cn(
+                         "text-[10px] font-black uppercase tracking-widest whitespace-nowrap text-right",
+                         match.winner_id === match.participant_b_id ? 'text-white' : 'text-white/20'
+                       )}>
+                         {match.participant_b?.name}
+                       </span>
+                       <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+                         {match.participant_b?.logo_url ? (
+                           <img src={match.participant_b.logo_url} className="w-full h-full object-contain" alt="" />
+                         ) : (
+                           <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_b?.name?.[0]}</span>
+                         )}
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+            
+            {/* Overlays to hide start/end for the label */}
+            <div className="absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 hidden lg:block" />
+            <div className="absolute right-0 top-0 bottom-0 w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-10" />
+          </div>
+        )}
       </div>
 
       <style jsx global>{`
@@ -421,6 +504,13 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         }
         .glass-pill {
           box-shadow: 0 4px 16px -1px rgba(0, 0, 0, 0.2);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </div>

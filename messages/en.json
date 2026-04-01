@@ -8,7 +8,10 @@
     "hero_subtitle": "The ultimate tournament engine for UNO masters. Create brackets, track scores, and shout UNO! in real-time.",
     "scroll_explore": "Scroll to explore",
     "live_arena": "Live Arena",
+    "upcoming_events": "Upcoming Tournaments",
+    "recent_results": "Recent Results",
     "joined_table": "Recently joined the table",
+    "no_upcoming": "No tournaments scheduled yet",
     "waiting_challengers": "Waiting for challengers...",
     "hero": {
       "trending": "Trending Now",
@@ -47,7 +50,9 @@
     "admin_panel": "Admin Panel",
     "live": "Live",
     "updated_at": "Updated {time}",
-    "view_results": "View Results"
+    "view_results": "View Results",
+    "final": "Final",
+    "recent_results": "Recent Results"
   },
   "Footer": {
     "platform": "Platform",
@@ -81,15 +86,18 @@
     "status": {
       "completed": "Completed",
       "active": "Active",
-      "draft": "Draft"
+      "draft": "Draft",
+      "scheduled": "Scheduled"
     },
+    "schedule_label": "Schedule for later",
     "alerts": {
       "same_score": "Both teams have the same score or are at zero. You must set a higher score for the winner to advance.",
       "missing_participants": "Missing teams in this match to be able to close it.",
       "error_advancing": "Something went wrong while trying to advance the round."
     },
     "delete_confirm_msg": "Are you sure you want to delete this tournament? This action cannot be undone.",
-    "confirm_delete_tournament": "Are you sure you want to delete this tournament?"
+    "confirm_delete_tournament": "Are you sure you want to delete this tournament?",
+    "delete_success": "Arena deleted successfully"
   },
   "Auth": {
     "login": "Login",
@@ -125,7 +133,9 @@
     "tournaments": "Tournaments",
     "teams": "Teams",
     "users": "Users",
+    "calendar": "Calendar",
     "settings": "Settings",
+    "schedule_date": "Schedule Date",
     "total_tournaments": "Total Tournaments",
     "active_users": "Active Users",
     "games_today": "Matches Today",

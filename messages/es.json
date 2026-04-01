@@ -1,7 +1,11 @@
 {
   "Index": {
     "title": "Bienvenido a Spicy Community",
-    "description": "El mejor sistema de gestión de torneos."
+    "description": "El mejor sistema de gestión de torneos.",
+    "upcoming_events": "Próximos Torneos",
+    "recent_results": "Últimos Resultados",
+    "no_upcoming": "Aún no hay torneos programados",
+    "joined_table": "Recién llegados a la mesa"
   },
   "Common": {
     "create": "Crear",
@@ -17,7 +21,9 @@
     "view_bracket": "Ver Bracket",
     "real_time_update": "Actualización en tiempo real",
     "players": "{count} jugadores",
-    "in_progress": "En Progreso"
+    "in_progress": "En Progreso",
+    "final": "Final",
+    "recent_results": "Últimos Resultados"
   },
   "Tournament": {
     "create_title": "Crear Nuevo Torneo",
@@ -35,15 +41,18 @@
     "advances": "¡Avanza!",
     "status": {
       "completed": "Finalizado",
-      "active": "En Vivo"
+      "active": "En Vivo",
+      "scheduled": "Programado"
     },
+    "schedule_label": "Programar para después",
     "alerts": {
       "same_score": "Ambos jugadores tienen los mismos puntos o están en cero. Debes poner una puntuación mayor en el ganador para avanzar.",
       "missing_participants": "Faltan jugadores en esta partida para poder cerrarla.",
       "error_advancing": "Algo falló al intentar avanzar la ronda."
     },
     "delete_confirm_msg": "¿Estás seguro de que quieres eliminar este torneo? Esta acción no se puede deshacer.",
-    "confirm_delete_tournament": "¿Estás seguro de que quieres eliminar este torneo?"
+    "confirm_delete_tournament": "¿Estás seguro de que quieres eliminar este torneo?",
+    "delete_success": "Arena eliminada con éxito"
   },
   "Auth": {
     "login": "Iniciar Sesión",
@@ -79,7 +88,9 @@
     "tournaments": "Torneos",
     "teams": "Equipos",
     "users": "Usuarios",
+    "calendar": "Calendario",
     "settings": "Ajustes",
+    "schedule_date": "Fecha programada",
     "total_tournaments": "Total Torneos",
     "active_users": "Usuarios Activos",
     "games_today": "Partidas Hoy",

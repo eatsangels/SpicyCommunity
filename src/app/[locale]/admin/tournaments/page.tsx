@@ -129,6 +129,7 @@ export default function AdminTournaments() {
                    <span className={`text-[9px] uppercase font-black px-3 py-1 rounded-full ${
                       tourney.status === 'in_progress' ? 'bg-green-500/20 text-green-400' :
                       tourney.status === 'draft' ? 'bg-yellow-500/20 text-[#ffaa00]' :
+                      tourney.status === 'scheduled' ? 'bg-indigo-500/20 text-indigo-400' :
                       'bg-blue-500/20 text-blue-400'
                    }`}>
                       {tourney.status}

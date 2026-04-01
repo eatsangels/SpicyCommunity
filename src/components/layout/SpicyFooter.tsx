@@ -58,21 +58,12 @@ function SpicyFooter() {
 
           {/* Brand */}
           <div className="flex flex-col space-y-4">
-            <div className="flex items-center gap-3 group">
-              <div className="relative w-12 h-16 flex items-center justify-center transition-all duration-500 hover:-rotate-3">
-                <div className="relative w-full h-full rounded-lg overflow-hidden border-2 border-white/20 bg-black/40 shadow-[0_0_15px_rgba(255,170,0,0.3)]">
-                  <Image 
-                    src="/logo_new.png" 
-                    alt="Spicy" 
-                    fill 
-                    sizes="48px" 
-                    className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none" />
-                </div>
-              </div>
-              <span className="text-white text-xl font-black uppercase tracking-tight italic">
-                Spicy <span className="text-[#ffaa00]">Community</span>
+            <div className="flex flex-col group py-2">
+              <span className="text-3xl font-black italic tracking-tighter text-[#ffaa00] uppercase leading-[0.75] transition-all duration-300 group-hover:drop-shadow-[0_0_15px_rgba(255,170,0,0.4)]">
+                SPICY
+              </span>
+              <span className="text-[10px] font-black tracking-[0.4em] text-white/40 uppercase leading-none mt-2 ml-1">
+                COMMUNITY
               </span>
             </div>
             <p className="text-sm leading-relaxed text-white/40">
@@ -158,11 +149,6 @@ function SpicyFooter() {
             })}
           </p>
         </div>
-      </div>
-
-      {/* Big hover text */}
-      <div className="lg:flex hidden h-[28rem] -mt-48 -mb-32 pointer-events-none select-none">
-        <TextHoverEffect text="SPICY" className="z-50 pointer-events-auto" />
       </div>
 
       <FooterBackgroundGradient />

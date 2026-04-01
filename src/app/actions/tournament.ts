@@ -9,6 +9,7 @@ export async function createTournamentAction(formData: {
   description: string;
   type: 'single_elimination' | 'double_elimination';
   participants: string; // JSON string from client
+  scheduledAt?: string | null;
 }) {
   try {
     const supabase = await createClient();
@@ -39,6 +40,8 @@ export async function createTournamentAction(formData: {
         name: formData.name,
         description: formData.description,
         type: formData.type,
+        scheduled_at: formData.scheduledAt ?? null,
+        status: formData.scheduledAt ? 'scheduled' : 'draft',
       },
       participantsData.map(p => ({ name: p.name, logo_url: p.logo_url ?? null }))
     );

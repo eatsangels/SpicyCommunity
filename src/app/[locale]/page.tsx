@@ -7,6 +7,8 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import Image from "next/image";
 import { Zap, Trophy, Radio, ChevronRight, Swords, Users } from "lucide-react";
 import { Lightning } from "@/components/ui/hero-odyssey";
+import UpcomingCalendar from "@/components/home/UpcomingCalendar";
+import { useLocale } from "next-intl";
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
@@ -25,6 +27,8 @@ export default function HomePage() {
   const [loadingTeams, setLoadingTeams] = useState(true);
   const [liveTournament, setLiveTournament] = useState<any>(null);
   const [liveMatch, setLiveMatch] = useState<any>(null);
+  const [scheduledTournaments, setScheduledTournaments] = useState<any[]>([]);
+  const locale = useLocale();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
@@ -99,8 +103,19 @@ export default function HomePage() {
       }
     };
 
+    const fetchScheduledTournaments = async () => {
+      const { data } = await supabase
+        .from('tournaments')
+        .select('*, participants(id, name)')
+        .eq('status', 'scheduled')
+        .gte('scheduled_at', new Date().toISOString())
+        .order('scheduled_at', { ascending: true });
+      setScheduledTournaments(data || []);
+    };
+
     fetchTeams();
     fetchLiveTournament();
+    fetchScheduledTournaments();
 
     // Real-time subscription for matches
     const channel = supabase
@@ -322,18 +337,18 @@ export default function HomePage() {
         <div className="flex overflow-hidden gap-5 px-8 md:px-16 group">
           <motion.div className="flex gap-5 shrink-0" animate={{ x: [0, -1000] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }}>
             {[...recentTeams, ...recentTeams].map((team, i) => (
-              <div key={`${team.id}-${i}`} className="w-52 h-64 bg-zinc-900 border border-white/5 rounded-3xl p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105">
-                <div className="w-20 h-20 rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2.5">
+              <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0">
+                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
                   {team.logo_url
                     ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
-                    : <div className="text-3xl font-black text-[#ffaa00]/20">{team.name[0]}</div>
+                    : <span className="text-xl sm:text-3xl font-black text-[#ffaa00]">{team.name[0]}</span>
                   }
                 </div>
                 <div className="text-center space-y-1">
-                  <h4 className="text-base font-black uppercase tracking-tight truncate w-full">{team.name}</h4>
-                  <p className="text-[8px] uppercase font-bold tracking-widest text-[#ffaa00]">{team.tournaments?.name || 'Local Duel'}</p>
+                  <h3 className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest truncate w-28 sm:w-40">{team.name}</h3>
+                  <p className="text-[6px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate max-w-[100px] sm:max-w-none">{team.tournaments?.name || 'Local Duel'}</p>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-white/5 text-[7px] font-black uppercase tracking-widest text-white/30">
+                <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30">
                   {tc('joined_at', { time: new Date(team.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })}
                 </div>
               </div>
@@ -345,20 +360,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Feature Grid */}
-      <section className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-8 px-8 md:px-16 py-32 bg-black">
-        {[
-          { title: t("features.sync_title"), desc: t("features.sync_desc") },
-          { title: t("features.teams_title"), desc: t("features.teams_desc") },
-          { title: t("features.stats_title"), desc: t("features.stats_desc") }
-        ].map((feat, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="p-10 glass rounded-3xl space-y-4 hover:border-primary/50 transition-colors">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-black">0{i + 1}</div>
-            <h3 className="text-2xl font-black uppercase tracking-tighter">{feat.title}</h3>
-            <p className="text-white/40 leading-relaxed font-medium">{feat.desc}</p>
-          </motion.div>
-        ))}
-      </section>
+      {/* Upcoming Tournaments Calendar */}
+      <UpcomingCalendar tournaments={scheduledTournaments} locale={locale} />
 
       <footer className="relative z-10 border-t border-white/5 py-16 text-center text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">
         Spicy Community <span className="text-primary">•</span> {t("footer_built")}

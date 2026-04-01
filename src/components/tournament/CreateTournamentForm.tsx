@@ -49,6 +49,8 @@ export default function CreateTournamentForm() {
     name: '',
     description: '',
     type: 'single_elimination' as 'single_elimination' | 'double_elimination',
+    scheduledAt: '',
+    isScheduled: false,
   });
 
   const [allTeams, setAllTeams] = useState<Team[]>([]);
@@ -170,8 +172,18 @@ export default function CreateTournamentForm() {
         }
         participantsPayload.push({ name: slot.name, logo_url: logoUrl, team_id: teamId });
       }
-      const result = await createTournamentAction({ ...formData, participants: JSON.stringify(participantsPayload) });
-      if (result.success) router.push(`/tournaments/${result.tournamentId}`);
+      const result = await createTournamentAction({ 
+        ...formData, 
+        participants: JSON.stringify(participantsPayload),
+        scheduledAt: formData.isScheduled ? formData.scheduledAt : null
+      });
+      if (result.success) {
+        if (formData.isScheduled) {
+          router.push('/admin/calendar');
+        } else {
+          router.push(`/tournaments/${result.tournamentId}`);
+        }
+      }
       else throw new Error(result.error);
     } catch (err: any) {
       toast(err.message, 'error');
@@ -271,6 +283,45 @@ export default function CreateTournamentForm() {
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="bg-zinc-900/50 p-8 rounded-[2.5rem] border border-white/5 backdrop-blur-xl space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h3 className="text-lg font-black uppercase italic tracking-tight">{t('schedule_label')}</h3>
+                <p className="text-[10px] uppercase font-black text-white/30 tracking-widest">Appear in the homepage calendar</p>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setFormData({ ...formData, isScheduled: !formData.isScheduled })}
+                className={cn(
+                  "w-14 h-8 rounded-full border-2 transition-all relative",
+                  formData.isScheduled ? "bg-[#ffaa00] border-[#ffaa00]" : "bg-black/40 border-white/10"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-1 w-5 h-5 rounded-full transition-all",
+                  formData.isScheduled ? "right-1 bg-black" : "left-1 bg-white/20"
+                )} />
+              </button>
+            </div>
+
+            {formData.isScheduled && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-2 overflow-hidden"
+              >
+                <label className="text-[10px] font-black uppercase tracking-widest text-[#ffaa00] px-4">Arena Date & Time</label>
+                <input 
+                  type="datetime-local" 
+                  required={formData.isScheduled}
+                  className="w-full h-16 bg-black/40 border-2 border-white/5 rounded-2xl px-6 text-xl font-bold uppercase outline-none focus:border-[#ffaa00]/40 transition-all text-[#ffaa00]"
+                  value={formData.scheduledAt}
+                  onChange={e => setFormData({ ...formData, scheduledAt: e.target.value })}
+                />
+              </motion.div>
+            )}
           </div>
 
           <div className="pt-4">

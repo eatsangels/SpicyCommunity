@@ -128,26 +128,12 @@ export default function Navbar() {
 
             <div className="flex items-center relative w-full justify-between">
               {/* Logo Area */}
-              <Link href="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
-                <div className="relative w-8 h-12 md:w-10 md:h-14 flex items-center justify-center transition-all duration-500 hover:rotate-3 -translate-y-2 md:-translate-y-3">
-                  {/* Card Shape Container */}
-                  <div className="relative w-full h-full rounded-md overflow-hidden border-2 border-white/20 bg-black/40 shadow-[0_0_12px_rgba(255,170,0,0.2)] group-hover:shadow-[0_0_20px_rgba(255,170,0,0.35)] transition-all duration-300">
-                    <Image 
-                      src="/logo_new.png" 
-                      alt="Spicy" 
-                      fill 
-                      sizes="(max-width: 768px) 32px, 40px" 
-                      className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
-                    />
-                    {/* Glossy Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
-                  </div>
-                </div>
-                <div className="flex flex-col -ml-1">
-                  <span className="text-[12px] md:text-[16px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate leading-none">
+              <Link href="/" className="flex items-center gap-1 cursor-pointer group shrink-0 relative py-2 z-10 -translate-y-1">
+                <div className="flex flex-col">
+                  <span className="text-3xl md:text-5xl font-black italic tracking-tighter text-[#ffaa00] uppercase leading-[0.75] transition-all duration-300 group-hover:scale-105 group-hover:drop-shadow-[0_0_15px_rgba(255,170,0,0.4)]">
                     SPICY
                   </span>
-                  <span className="text-[6px] md:text-[8px] font-black tracking-[0.2em] text-white/40 uppercase leading-none mt-0.5">
+                  <span className="text-[10px] md:text-[13px] font-black tracking-[0.6em] text-white/40 uppercase leading-none mt-2 ml-1">
                     COMMUNITY
                   </span>
                 </div>

@@ -261,29 +261,35 @@ export type Database = {
       }
       tournaments: {
         Row: {
+          banner_url: string | null
           created_at: string
           description: string | null
           id: string
           name: string
           owner_id: string | null
+          scheduled_at: string | null
           status: Database["public"]["Enums"]["tournament_status"]
           type: Database["public"]["Enums"]["tournament_type"]
         }
         Insert: {
+          banner_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
           name: string
           owner_id?: string | null
+          scheduled_at?: string | null
           status?: Database["public"]["Enums"]["tournament_status"]
           type?: Database["public"]["Enums"]["tournament_type"]
         }
         Update: {
+          banner_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
           name?: string
           owner_id?: string | null
+          scheduled_at?: string | null
           status?: Database["public"]["Enums"]["tournament_status"]
           type?: Database["public"]["Enums"]["tournament_type"]
         }
@@ -308,7 +314,7 @@ export type Database = {
     }
     Enums: {
       match_status: "pending" | "ongoing" | "completed"
-      tournament_status: "draft" | "in_progress" | "completed"
+      tournament_status: "draft" | "scheduled" | "in_progress" | "completed"
       tournament_type: "single_elimination" | "double_elimination"
     }
     CompositeTypes: {
@@ -438,7 +444,7 @@ export const Constants = {
   public: {
     Enums: {
       match_status: ["pending", "ongoing", "completed"],
-      tournament_status: ["draft", "in_progress", "completed"],
+      tournament_status: ["draft", "scheduled", "in_progress", "completed"],
       tournament_type: ["single_elimination", "double_elimination"],
     },
   },
