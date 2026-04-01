@@ -18,6 +18,8 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const [isFinishing, setIsFinishing] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const supabase = createClient();
+  const syncTimers = useRef<Record<string, any>>({});
+  const isEditing = useRef<Set<string>>(new Set());
 
   // ─── Supabase Realtime: auto-refresh bracket for all viewers ───
   const refreshTournament = useCallback(async () => {
@@ -39,7 +41,27 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
       .single();
 
     if (fresh) {
-      setData(fresh);
+      setData((prev: any) => {
+        if (!prev) return fresh;
+        // Merge fresh data but keep local versions of matches currently being edited
+        const merged = { ...fresh };
+        if (merged.rounds) {
+          merged.rounds = merged.rounds.map((fr: any) => {
+            const prevRound = prev.rounds?.find((pr: any) => pr.id === fr.id);
+            return {
+              ...fr,
+              matches: fr.matches?.map((fm: any) => {
+                if (isEditing.current.has(fm.id)) {
+                  const localMatch = prevRound?.matches?.find((pm: any) => pm.id === fm.id);
+                  return localMatch || fm;
+                }
+                return fm;
+              })
+            };
+          });
+        }
+        return merged;
+      });
       setLastUpdate(new Date());
     }
   }, [tournament.id, supabase]);
@@ -132,6 +154,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   else if (activeRoundIdx === totalRounds - 2) activeStageName = t('semifinal');
 
   const handleUpdateScore = async (matchId: string, scoreA: number, scoreB: number) => {
+    // 1. Update local state immediately
     setData((prev: any) => {
       const newData = { ...prev };
       newData.rounds = newData.rounds.map((r: any) => ({
@@ -142,6 +165,37 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
       }));
       return newData;
     });
+
+    // 2. Mark as being edited to prevent refresh-overwrite
+    isEditing.current.add(matchId);
+
+    // 3. Debounce the server update
+    if (syncTimers.current[matchId]) {
+      clearTimeout(syncTimers.current[matchId]);
+    }
+
+    syncTimers.current[matchId] = setTimeout(async () => {
+      try {
+        const resp = await fetch(`/api/matches/${matchId}/score`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score_a: scoreA, score_b: scoreB })
+        });
+        
+        if (!resp.ok) throw new Error('Sync failed');
+        
+        // Success: allow local state to be updated by remote next time
+        // We wait a bit (2s) to ensure the server update has propagated to the poller's next cycle
+        setTimeout(() => {
+          isEditing.current.delete(matchId);
+        }, 2000);
+      } catch (error) {
+        console.error('Score sync error:', error);
+        toast('Error syncing score', 'error');
+        // On error, let the next refresh restore the server value
+        isEditing.current.delete(matchId);
+      }
+    }, 1000);
   };
 
   const handleSetWinner = async (matchId: string, winnerId: string) => {

@@ -59,7 +59,7 @@
     "live_chat": "Live Chat",
     "engine_desc": "The ultimate UNO tournament engine. Create brackets, track scores, and crown champions in real-time.",
     "all_rights_reserved": "All rights reserved.",
-    "built_for": "Built with {icon} for UNO masters"
+    "built_for": "Built with <icon></icon> for UNO masters"
   },
   "Tournament": {
     "round": "Round {number}",

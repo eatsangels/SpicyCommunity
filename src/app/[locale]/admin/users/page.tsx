@@ -26,7 +26,7 @@ const roleBadge: Record<string, { label: string; style: string; icon: React.Reac
     icon: <Crown size={10} />,
   },
   user: {
-    label: 'Player',
+    label: 'User',
     style: 'bg-white/5 text-white/40 border-white/10',
     icon: <UserIcon size={10} />,
   },
@@ -56,7 +56,7 @@ export default function AdminUsersPage() {
   // ── Change role ────────────────────────────────────────────────────────────
   const toggleRole = async (user: Profile) => {
     const newRole = user.role === 'admin' ? 'user' : 'admin';
-    const label = newRole === 'admin' ? 'Admin' : 'Player';
+    const label = newRole === 'admin' ? 'Admin' : 'User';
     const ok = await confirm(
       `¿Cambiar el rol de "${user.username || 'este usuario'}" a ${label}?`
     );
