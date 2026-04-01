@@ -120,7 +120,7 @@ export default function HomePage() {
     fetchLiveTournament();
     fetchScheduledTournaments();
 
-    // Real-time subscription for matches
+    // Real Time subscription for matches
     const channel = supabase
       .channel('live-matches')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
@@ -161,7 +161,7 @@ export default function HomePage() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ffaa00]" />
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00]">{tc('live_now')}</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-white/50 max-w-[140px] sm:max-w-xs break-words">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-white/50 max-w-[140px] sm:max-w-xs break-words">
                   {liveTournament.name}
                 </span>
                 {liveMatch?.participant_a && liveMatch?.participant_b && (
@@ -312,9 +312,9 @@ export default function HomePage() {
                       </div>
                     </div>
                   ) : (
-                     <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-xl px-6 py-4 text-white/20 text-xs font-bold uppercase tracking-widest">
-                       <Trophy size={14} /> {tc('view_bracket')}
-                     </div>
+                    <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-xl px-6 py-4 text-white/20 text-xs font-bold uppercase tracking-widest">
+                      <Trophy size={14} /> {tc('view_bracket')}
+                    </div>
                   )}
 
                   {/* Right: CTA */}
@@ -339,9 +339,9 @@ export default function HomePage() {
         </div>
         <div className="relative overflow-hidden group">
           {/* Performance optimized ticker */}
-          <motion.div 
-            className="flex gap-5 shrink-0 w-max" 
-            animate={{ x: ["0%", "-50%"] }} 
+          <motion.div
+            className="flex gap-5 shrink-0 w-max"
+            animate={{ x: ["0%", "-50%"] }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
             style={{ willChange: "transform" }}
           >

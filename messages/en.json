@@ -5,7 +5,7 @@
     "hero_badge": "Master the Deck",
     "hero_title_1": "Wild",
     "hero_title_2": "Glory",
-    "hero_subtitle": "The ultimate tournament engine for UNO masters. Create brackets, track scores, and shout UNO! in real-time.",
+    "hero_subtitle": "The ultimate tournament engine for UNO masters. Create brackets, track scores, and shout UNO! in Real Time.",
     "scroll_explore": "Scroll to explore",
     "live_arena": "Live Arena",
     "upcoming_events": "Upcoming Tournaments",
@@ -19,7 +19,7 @@
       "no_live": "No Live Tournaments Currently"
     },
     "features": {
-      "sync_title": "Real-time Sync",
+      "sync_title": "Real Time Sync",
       "sync_desc": "Instant updates across all spectators and teams.",
       "teams_title": "Unlimited Teams",
       "teams_desc": "Scale from 4 to 4,000 without missing a beat.",
@@ -41,7 +41,7 @@
     "live_now": "Live",
     "live_tournament": "Live Tournament",
     "view_bracket": "View Bracket",
-    "real_time_update": "Real-time updates",
+    "real_time_update": "Real Time updates",
     "players": "{count} teams",
     "in_progress": "In Progress",
     "joined_at": "Joined {time}",
@@ -62,7 +62,7 @@
     "hall_of_fame": "Hall of Fame",
     "home": "Home",
     "live_chat": "Live Chat",
-    "engine_desc": "The ultimate UNO tournament engine. Create brackets, track scores, and crown champions in real-time.",
+    "engine_desc": "The ultimate UNO tournament engine. Create brackets, track scores, and crown champions in Real Time.",
     "all_rights_reserved": "All rights reserved.",
     "built_for": "Built with <icon></icon> for UNO masters"
   },

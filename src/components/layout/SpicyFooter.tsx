@@ -138,10 +138,21 @@ function SpicyFooter() {
         <hr className="border-t border-white/5 my-6" />
 
         {/* Bottom bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/20 gap-4">
-          <p>
-            &copy; {new Date().getFullYear()} Spicy Community. {tf("all_rights_reserved")}
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/20 gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4 whitespace-nowrap">
+            <p>&copy; {new Date().getFullYear()} Spicy Community. {tf("all_rights_reserved")}</p>
+            <div className="hidden md:block w-1 h-1 rounded-full bg-white/5" />
+            <a 
+              href="https://etrinidad.netlify.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-[#ffaa00] transition-colors flex items-center gap-1.5 group"
+            >
+              <span className="opacity-50">Developed by</span>
+              <span className="text-white/40 group-hover:text-white transition-colors font-black uppercase tracking-tighter">Edward Trinidad</span>
+            </a>
+          </div>
+          
           <p className="uppercase font-black tracking-widest text-[8px]">
             {tf.rich("built_for", {
               icon: () => <span className="inline-block align-middle pb-0.5">⚡</span>
