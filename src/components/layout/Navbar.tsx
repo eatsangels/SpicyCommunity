@@ -129,7 +129,7 @@ export default function Navbar() {
             <div className="flex items-center relative w-full justify-between">
               {/* Logo Area */}
               <Link href="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
-                <div className="relative w-8 h-12 md:w-10 md:h-14 flex items-center justify-center transition-all duration-500 hover:rotate-3">
+                <div className="relative w-8 h-12 md:w-10 md:h-14 flex items-center justify-center transition-all duration-500 hover:rotate-3 -translate-y-2 md:-translate-y-3">
                   {/* Card Shape Container */}
                   <div className="relative w-full h-full rounded-md overflow-hidden border-2 border-white/20 bg-black/40 shadow-[0_0_12px_rgba(255,170,0,0.2)] group-hover:shadow-[0_0_20px_rgba(255,170,0,0.35)] transition-all duration-300">
                     <Image 

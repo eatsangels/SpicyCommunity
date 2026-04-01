@@ -51,6 +51,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
             email, 
             password,
             options: {
+              emailRedirectTo: `${window.location.origin}/api/auth/callback`,
               data: {
                 username,
                 team_name: teamName
