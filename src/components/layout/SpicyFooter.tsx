@@ -16,7 +16,7 @@ import Image from "next/image";
 
 function SpicyFooter() {
   const tf = useTranslations("Footer");
-  
+
   const footerLinks: { title: string, links: { label: string, href: string, pulse?: boolean }[] }[] = [
     {
       title: tf("platform"),
@@ -128,7 +128,7 @@ function SpicyFooter() {
               <li className="flex items-center gap-3">
                 <Trophy size={16} className="text-[#ffaa00]" />
                 <span className="text-white/40 text-xs uppercase font-black tracking-widest">
-                  UNO Tournament Engine
+                  Tournament Engine
                 </span>
               </li>
             </ul>
@@ -142,9 +142,9 @@ function SpicyFooter() {
           <div className="flex flex-col md:flex-row items-center gap-4 whitespace-nowrap">
             <p>&copy; {new Date().getFullYear()} Spicy Community. {tf("all_rights_reserved")}</p>
             <div className="hidden md:block w-1 h-1 rounded-full bg-white/5" />
-            <a 
-              href="https://etrinidad.netlify.app/" 
-              target="_blank" 
+            <a
+              href="https://etrinidad.netlify.app/"
+              target="_blank"
               rel="noopener noreferrer"
               className="hover:text-[#ffaa00] transition-colors flex items-center gap-1.5 group"
             >
@@ -152,7 +152,7 @@ function SpicyFooter() {
               <span className="text-white/40 group-hover:text-white transition-colors font-black uppercase tracking-tighter">Edward Trinidad</span>
             </a>
           </div>
-          
+
           <p className="uppercase font-black tracking-widest text-[8px]">
             {tf.rich("built_for", {
               icon: () => <span className="inline-block align-middle pb-0.5">⚡</span>

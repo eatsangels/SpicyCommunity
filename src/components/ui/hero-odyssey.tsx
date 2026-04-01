@@ -151,16 +151,15 @@ interface StatItemProps {
 }
 
 const StatItem: React.FC<StatItemProps> = ({ label, value, position }) => (
-  <div className={`absolute ${position} z-10 group transition-all duration-300 hover:scale-110`}>
-    <div className="flex items-center gap-2">
+  <div className={`absolute ${position} z-10 group transition-all duration-300 hover:scale-110 hidden lg:block`}>
+    <div className="flex items-center gap-3">
       <div className="relative">
-        <div className="w-2 h-2 bg-[#ffaa00] rounded-full group-hover:animate-pulse" />
-        <div className="absolute -inset-1 bg-[#ffaa00]/30 rounded-full blur-sm opacity-70 group-hover:opacity-100 transition-opacity" />
+        <div className="w-2.5 h-2.5 bg-[#ffaa00] rounded-full group-hover:shadow-[0_0_15px_#ffaa00]" />
+        <div className="absolute -inset-1.5 bg-[#ffaa00]/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
-      <div className="text-white">
-        <div className="font-black uppercase tracking-wider text-sm text-[#ffaa00]">{value}</div>
-        <div className="text-white/50 text-xs">{label}</div>
-        <div className="absolute -inset-2 bg-[#ffaa00]/5 rounded-lg blur-md opacity-70 group-hover:opacity-100 transition-opacity -z-10" />
+      <div className="text-white flex flex-col text-left">
+        <span className="font-black uppercase tracking-tighter text-2xl text-[#ffaa00] leading-none">{value}</span>
+        <span className="text-white/40 text-[9px] font-black uppercase tracking-[0.2em] mt-0.5">{label}</span>
       </div>
     </div>
   </div>
@@ -220,25 +219,17 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
       </motion.div>
 
-      {/* Floating stats */}
+      {/* Floating stats (Desktop Only) */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
         className="absolute inset-0 z-20 pointer-events-none"
       >
-        <motion.div variants={itemVariants}>
-          <StatItem label={translations.allTimeChampions} value={`${totalChampions}`} position="left-8 md:left-20 top-1/3" />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <StatItem label={translations.tournamentsPlayed} value={`${totalTournaments}`} position="left-1/4 top-1/4" />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <StatItem label={translations.realTimeBrackets} value="LIVE" position="right-1/4 top-1/4" />
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <StatItem label={translations.engine} value="UNO" position="right-8 md:right-20 top-1/3" />
-        </motion.div>
+        <StatItem label={translations.allTimeChampions} value={`${totalChampions}`} position="left-[10%] top-[35%]" />
+        <StatItem label={translations.tournamentsPlayed} value={`${totalTournaments}`} position="left-[22%] top-[18%]" />
+        <StatItem label={translations.realTimeBrackets} value="LIVE" position="right-[22%] top-[18%]" />
+        <StatItem label={translations.engine} value="MESSIAS" position="right-[10%] top-[35%]" />
       </motion.div>
 
       {/* Center text */}
@@ -246,11 +237,11 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-30 flex flex-col items-center justify-center text-center h-full px-4"
+        className="relative z-30 flex flex-col items-center justify-center text-center h-full px-6"
       >
         <motion.div
           variants={itemVariants}
-          className="flex items-center gap-2 px-4 py-1.5 bg-[#ffaa00]/10 border border-[#ffaa00]/20 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00] mb-5"
+          className="flex items-center gap-2 px-4 py-1.5 bg-[#ffaa00]/10 border border-[#ffaa00]/20 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00] mb-6 shadow-[0_0_20px_rgba(255,170,0,0.1)]"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#ffaa00] animate-pulse" />
           Spicy Community
@@ -258,7 +249,7 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
 
         <motion.h1
           variants={itemVariants}
-          className="text-5xl md:text-7xl lg:text-8xl font-black italic uppercase tracking-tighter leading-none mb-3"
+          className="text-6xl md:text-8xl lg:text-9xl font-black italic uppercase tracking-tighter leading-[0.8] mb-6"
           style={{ textShadow: "0 0 80px rgba(255,170,0,0.3)" }}
         >
           {translations.title}
@@ -266,10 +257,28 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
 
         <motion.p
           variants={itemVariants}
-          className="text-white/40 text-sm md:text-base font-medium max-w-md"
+          className="text-white/40 text-sm md:text-base font-medium max-w-sm mb-10"
         >
           {translations.subtitle}
         </motion.p>
+
+        {/* Mobile Stats Grid */}
+        <motion.div 
+          variants={itemVariants}
+          className="grid grid-cols-2 gap-3 w-full max-w-xs lg:hidden mt-4"
+        >
+          {[
+            { label: translations.allTimeChampions, value: totalChampions },
+            { label: translations.tournamentsPlayed, value: totalTournaments },
+            { label: translations.realTimeBrackets, value: "LIVE" },
+            { label: translations.engine, value: "UNO" }
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center p-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
+              <span className="text-2xl font-black text-[#ffaa00] leading-none mb-1">{stat.value}</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-white/30 text-center leading-tight">{stat.label}</span>
+            </div>
+          ))}
+        </motion.div>
       </motion.div>
     </div>
   );
