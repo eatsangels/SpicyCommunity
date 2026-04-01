@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/routing';
 import { createTournamentAction, updateTournamentAction } from '@/app/actions/tournament';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Upload, Trophy, Trash2, Check, Search, X } from 'lucide-react';
+import { Plus, Upload, Trophy, Trash2, Check, Search, X, Shuffle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { Tables } from '@/types/database.types';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ export interface CreateTournamentFormProps {
 
 export default function CreateTournamentForm({ initialData }: CreateTournamentFormProps) {
   const t = useTranslations('Tournament');
-  const { toast } = useAlert();
+  const { toast, confirm } = useAlert();
   const router = useRouter();
   const supabase = createClient();
 
@@ -164,6 +164,22 @@ export default function CreateTournamentForm({ initialData }: CreateTournamentFo
   const removeSlot = (slotId: string) => {
     if (slots.length <= 2) return;
     setSlots(prev => prev.filter(s => s.slotId !== slotId));
+  };
+
+  const shuffleSlots = async () => {
+    if (slots.length < 2) return;
+    const confirmed = await confirm(t('confirm_shuffle'));
+    if (!confirmed) return;
+
+    setSlots(prev => {
+      const shuffled = [...prev];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    });
+    toast(t('alerts.shuffled'), 'success');
   };
 
   const handleSlotLogoChange = (slotId: string, file: File | null) => {
@@ -299,9 +315,21 @@ export default function CreateTournamentForm({ initialData }: CreateTournamentFo
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-xl font-black uppercase italic tracking-tight">In Bracket</h2>
-                <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full", slots.length < 2 ? "bg-red-500/20 text-red-400" : "bg-[#ffaa00]/10 text-[#ffaa00]")}>{slots.length} teams</span>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <h2 className="text-xl font-black uppercase italic tracking-tight">In Bracket</h2>
+                  <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded-full", slots.length < 2 ? "bg-red-500/20 text-red-400" : "bg-[#ffaa00]/10 text-[#ffaa00]")}>{slots.length} teams</span>
+                </div>
+                {slots.length >= 2 && (
+                  <button
+                    type="button"
+                    onClick={shuffleSlots}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/40 hover:text-[#ffaa00] hover:border-[#ffaa00]/40 transition-all text-[9px] font-black uppercase tracking-widest group/shuffle"
+                  >
+                    <Shuffle size={12} className="group-hover/shuffle:rotate-180 transition-transform duration-500" />
+                    Shuffle Seeds
+                  </button>
+                )}
               </div>
               {slots.length === 0 ? <div className="bg-zinc-900 border border-white/5 rounded-3xl p-12 text-center text-[10px] uppercase tracking-widest text-white/20">Select teams from the left →</div> : (
                 <div className="space-y-2 max-h-[460px] overflow-y-auto pr-1">

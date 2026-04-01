@@ -48,11 +48,11 @@ export default function HomePage() {
     };
 
     const fetchLiveTournament = async () => {
-      // Try in_progress first, fallback to draft (active tournaments not yet started)
+      // Try in_progress first
       let { data: tournament } = await supabase
         .from('tournaments')
         .select(`
-          id, name, status,
+          id, name, status, scheduled_at,
           participants (id, name, logo_url),
           rounds (
             id, round_number,
@@ -69,12 +69,12 @@ export default function HomePage() {
         .limit(1)
         .maybeSingle();
 
-      // Fallback: show any non-completed tournament
+      // Fallback: show any non-completed tournament that IS ALREADY SCHEDULED / STARTED
       if (!tournament) {
         const { data: fallback } = await supabase
           .from('tournaments')
           .select(`
-            id, name, status,
+            id, name, status, scheduled_at,
             participants (id, name, logo_url),
             rounds (
               id, round_number,
@@ -87,7 +87,8 @@ export default function HomePage() {
             )
           `)
           .neq('status', 'completed')
-          .order('created_at', { ascending: false })
+          .lte('scheduled_at', new Date().toISOString()) // ONLY show if time has reached or passed
+          .order('scheduled_at', { ascending: false })
           .limit(1)
           .maybeSingle();
         tournament = fallback;
