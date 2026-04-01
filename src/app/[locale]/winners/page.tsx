@@ -68,7 +68,7 @@ export default async function WinnersPage({ params }: { params: Promise<{ locale
     allTimeChampions: t('total_champions'),
     tournamentsPlayed: "Tournaments Played", // Fallback if not in JSON
     realTimeBrackets: "Brackets",
-    engine: "Engine"
+    engine: "OWNER"
   };
 
   return (
