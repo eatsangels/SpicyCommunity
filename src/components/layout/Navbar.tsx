@@ -128,13 +128,29 @@ export default function Navbar() {
 
             <div className="flex items-center relative w-full justify-between">
               {/* Logo Area */}
-              <Link href="/" className="flex items-center gap-2 cursor-pointer group shrink-0">
-                <div className="relative w-8 h-8 md:w-10 md:h-10">
-                  <Image src="/logo.png" alt="Spicy" fill sizes="40px" className="object-contain group-hover:scale-110 transition-transform" />
+              <Link href="/" className="flex items-center gap-3 cursor-pointer group shrink-0">
+                <div className="relative w-14 h-14 md:w-18 md:h-18 flex items-center justify-center drop-shadow-[0_0_15px_rgba(255,170,0,0.4)]">
+                  {/* Hexagon Clip Container */}
+                  <div className="relative w-full h-full overflow-hidden [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] bg-black/40 border border-[#ffaa00]/10">
+                    <Image 
+                      src="/logo.png" 
+                      alt="Spicy" 
+                      fill 
+                      sizes="(max-width: 768px) 56px, 72px" 
+                      className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
+                    />
+                  </div>
+                  {/* Subtle Hexagon Border Glow */}
+                  <div className="absolute inset-0 [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] border border-[#ffaa00]/20 pointer-events-none" />
                 </div>
-                <span className="text-[12px] md:text-[14px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate max-w-[120px] sm:max-w-none">
-                  SPICY COMMUNITY
-                </span>
+                <div className="flex flex-col -ml-1">
+                  <span className="text-[16px] md:text-[20px] font-black italic tracking-tighter text-[#ffaa00] uppercase truncate leading-none">
+                    SPICY
+                  </span>
+                  <span className="text-[8px] md:text-[10px] font-black tracking-[0.2em] text-white/40 uppercase leading-none mt-1">
+                    COMMUNITY
+                  </span>
+                </div>
               </Link>
 
               {/* Desktop Nav Links */}

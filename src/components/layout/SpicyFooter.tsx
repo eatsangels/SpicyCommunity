@@ -12,6 +12,7 @@ import {
 import { FooterBackgroundGradient, TextHoverEffect } from "@/components/ui/hover-footer";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 function SpicyFooter() {
   const tf = useTranslations("Footer");
@@ -57,9 +58,19 @@ function SpicyFooter() {
 
           {/* Brand */}
           <div className="flex flex-col space-y-4">
-            <div className="flex items-center gap-2">
-              <Zap size={22} className="text-[#ffaa00]" fill="#ffaa00" />
-              <span className="text-white text-xl font-black uppercase tracking-tight">
+            <div className="flex items-center gap-3 group">
+              <div className="relative w-12 h-12 flex items-center justify-center">
+                <div className="relative w-full h-full rounded-2xl overflow-hidden border border-[#ffaa00]/10 bg-black/40 drop-shadow-[0_0_10px_rgba(255,170,0,0.3)]">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Spicy" 
+                    fill 
+                    sizes="48px" 
+                    className="object-cover group-hover:scale-110 transition-transform duration-500 pointer-events-none" 
+                  />
+                </div>
+              </div>
+              <span className="text-white text-xl font-black uppercase tracking-tight italic">
                 Spicy <span className="text-[#ffaa00]">Community</span>
               </span>
             </div>

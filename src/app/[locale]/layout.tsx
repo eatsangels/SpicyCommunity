@@ -21,13 +21,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Spicy Community - Tournament Management",
   description: "Advanced tournament management system for the Spicy Community.",
-  icons: {
-    icon: [
-      { url: "/logo_new.png", type: "image/png" },
-    ],
-    apple: "/logo_new.png",
-    shortcut: "/logo_new.png",
-  },
   other: {
     google: "notranslate",
   },
