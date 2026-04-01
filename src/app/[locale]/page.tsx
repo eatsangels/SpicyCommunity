@@ -314,32 +314,32 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Live Community Feed */}
-      <section className="relative z-10 py-32 space-y-16">
-        <div className="px-8 md:px-16 space-y-4">
-          <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter gradient-text">{t("live_arena")}</h2>
-          <p className="text-[10px] uppercase font-black tracking-[0.5em] text-white/20">{t("joined_table")}</p>
+      <section className="relative z-10 py-20 space-y-12">
+        <div className="px-8 md:px-16 space-y-3">
+          <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter gradient-text">{t("live_arena")}</h2>
+          <p className="text-[9px] uppercase font-black tracking-[0.4em] text-white/20">{t("joined_table")}</p>
         </div>
-        <div className="flex overflow-hidden gap-6 px-8 md:px-16 group">
-          <motion.div className="flex gap-6 shrink-0" animate={{ x: [0, -1000] }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }}>
+        <div className="flex overflow-hidden gap-5 px-8 md:px-16 group">
+          <motion.div className="flex gap-5 shrink-0" animate={{ x: [0, -1000] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }}>
             {[...recentTeams, ...recentTeams].map((team, i) => (
-              <div key={`${team.id}-${i}`} className="w-64 h-80 bg-zinc-900 border border-white/5 rounded-[2.5rem] p-8 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105">
-                <div className="w-24 h-24 rounded-3xl bg-black border border-white/5 shadow-2xl overflow-hidden flex items-center justify-center p-2">
+              <div key={`${team.id}-${i}`} className="w-52 h-64 bg-zinc-900 border border-white/5 rounded-3xl p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105">
+                <div className="w-20 h-20 rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2.5">
                   {team.logo_url
                     ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
-                    : <div className="text-4xl font-black text-[#ffaa00]/20">{team.name[0]}</div>
+                    : <div className="text-3xl font-black text-[#ffaa00]/20">{team.name[0]}</div>
                   }
                 </div>
-                <div className="text-center space-y-2">
-                  <h4 className="text-lg font-black uppercase tracking-tight truncate w-full">{team.name}</h4>
-                  <p className="text-[9px] uppercase font-bold tracking-widest text-[#ffaa00]">{team.tournaments?.name || 'Local Duel'}</p>
+                <div className="text-center space-y-1">
+                  <h4 className="text-base font-black uppercase tracking-tight truncate w-full">{team.name}</h4>
+                  <p className="text-[8px] uppercase font-bold tracking-widest text-[#ffaa00]">{team.tournaments?.name || 'Local Duel'}</p>
                 </div>
-                <div className="px-4 py-1.5 rounded-full bg-white/5 text-[8px] font-black uppercase tracking-widest text-white/30">
+                <div className="px-3 py-1 rounded-full bg-white/5 text-[7px] font-black uppercase tracking-widest text-white/30">
                   {tc('joined_at', { time: new Date(team.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })}
                 </div>
               </div>
             ))}
             {recentTeams.length === 0 && !loadingTeams && (
-              <div className="text-white/10 font-black uppercase text-xl italic tracking-tighter">{t("waiting_challengers")}</div>
+              <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter">{t("waiting_challengers")}</div>
             )}
           </motion.div>
         </div>
