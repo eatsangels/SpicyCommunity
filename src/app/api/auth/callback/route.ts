@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   if (error) {
     console.error('Auth error from Supabase:', error, error_description);
-    return NextResponse.redirect(`${origin}/es/auth/login?error=${encodeURIComponent(error_description || error)}`);
+    return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(error_description || error)}`);
   }
 
   if (code) {
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
       return response;
     } else {
       console.error('Swap code error:', exchangeError);
-       return NextResponse.redirect(`${origin}/es/auth/login?error=${encodeURIComponent(exchangeError.message)}`);
+       return NextResponse.redirect(`${origin}/auth/login?error=${encodeURIComponent(exchangeError.message)}`);
     }
   }
 

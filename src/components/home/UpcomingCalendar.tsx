@@ -133,9 +133,9 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
       transition={{ delay: index * 0.1 }}
       className="flex-shrink-0 w-full sm:w-[320px] md:w-[420px] group relative snap-center"
     >
-      <div className="flex bg-zinc-900/40 border border-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden backdrop-blur-xl h-[200px] sm:h-[280px] hover:border-[#ffaa00]/40 transition-all duration-500 group-hover:shadow-[0_40px_100px_rgba(255,170,0,0.1)]">
+      <div className="flex bg-zinc-900/40 border border-white/10 rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden backdrop-blur-xl min-h-[220px] h-auto sm:h-[280px] hover:border-[#ffaa00]/40 transition-all duration-500 group-hover:shadow-[0_40px_100px_rgba(255,170,0,0.1)]">
         {/* Date Section (UNO Card Style) */}
-        <div className="w-1/3 min-w-[90px] sm:min-w-[110px] bg-[#ffaa00] flex flex-col items-center justify-center relative overflow-hidden p-3 sm:p-4">
+        <div className="w-1/3 min-w-[90px] sm:min-w-[110px] bg-[#ffaa00] flex flex-col items-center justify-center relative overflow-hidden p-3 sm:p-4 shrink-0">
           {/* Subtle UNO pattern overlap */}
           <div className="absolute inset-0 opacity-10 pointer-events-none">
              <div className="absolute top-4 left-4 text-xl font-black text-black leading-none">
@@ -158,7 +158,7 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
         </div>
 
         {/* Info Section */}
-        <div className="flex-1 p-8 flex flex-col justify-between relative">
+        <div className="flex-1 p-5 sm:p-8 flex flex-col justify-between relative">
           {/* Glass Overlay Effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50 pointer-events-none" />
           

@@ -126,7 +126,8 @@
     "uno_action_register": "DRAW CARD",
     "uno_letter_login": "E",
     "uno_letter_register": "J",
-    "uno_success_title": "SUCCESS!"
+    "uno_success_title": "SUCCESS!",
+    "cancel": "Cancel"
   },
   "Admin": {
     "dashboard": "Dashboard",
