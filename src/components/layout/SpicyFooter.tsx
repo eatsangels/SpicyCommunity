@@ -29,9 +29,7 @@ function SpicyFooter() {
     {
       title: tf("community"),
       links: [
-        { label: "Discord", href: "#" },
-        { label: "Reddit", href: "#" },
-        { label: tf("live_chat"), href: "#", pulse: true },
+        { label: "Discord", href: "https://discord.gg/nEvwBUtqAV" },
       ],
     },
   ];
@@ -39,14 +37,14 @@ function SpicyFooter() {
   const contactInfo = [
     {
       icon: <Mail size={16} className="text-[#ffaa00]" />,
-      text: "contact@spicycommunity.gg",
-      href: "mailto:contact@spicycommunity.gg",
+      text: "spicycommunityuno@gmail.com",
+      href: "mailto:spicycommunityuno@gmail.com",
     },
   ];
 
   const socialLinks = [
     { icon: <Share2 size={18} />, label: "Twitter / X", href: "#" },
-    { icon: <Radio size={18} />, label: "Discord", href: "#" },
+    { icon: <Radio size={18} />, label: "Discord", href: "https://discord.gg/nEvwBUtqAV" },
     { icon: <Video size={18} />, label: "YouTube", href: "#" },
     { icon: <Play size={18} />, label: "Twitch", href: "#" },
   ];
@@ -105,6 +103,38 @@ function SpicyFooter() {
                   </li>
                 ))}
               </ul>
+
+              {/* QR Code if it's the Community section */}
+              {section.title === tf("community") && (
+                <div className="mt-8 relative group/qr cursor-pointer w-fit">
+                  {/* Glowing background behind image */}
+                  <div className="absolute -inset-1 bg-[#ffaa00]/20 rounded-2xl blur-md group-hover/qr:bg-[#ffaa00]/40 transition-all duration-500 opacity-0 group-hover/qr:opacity-100" />
+                  
+                  <div className="relative p-1 bg-black/40 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm group-hover/qr:border-[#ffaa00]/30 transition-all duration-500">
+                    {/* Artistic scan brackets */}
+                    <div className="absolute top-2 left-2 size-2 border-t-2 border-l-2 border-[#ffaa00] rounded-tl-sm opacity-50" />
+                    <div className="absolute top-2 right-2 size-2 border-t-2 border-r-2 border-[#ffaa00] rounded-tr-sm opacity-50" />
+                    <div className="absolute bottom-2 left-2 size-2 border-b-2 border-l-2 border-[#ffaa00] rounded-bl-sm opacity-50" />
+                    <div className="absolute bottom-2 right-2 size-2 border-b-2 border-r-2 border-[#ffaa00] rounded-br-sm opacity-50" />
+                    
+                    <Image
+                      src="/QRDdiscord.png"
+                      alt="Discord QR Code"
+                      width={88}
+                      height={88}
+                      className="rounded-xl grayscale group-hover/qr:grayscale-0 transition-all duration-500"
+                    />
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-center gap-2 group-hover/qr:translate-y-0.5 transition-transform duration-300">
+                    <div className="h-[1px] w-4 bg-white/10 group-hover/qr:bg-[#ffaa00]/30" />
+                    <p className="text-[7px] font-black uppercase tracking-[0.3em] text-white/30 group-hover/qr:text-[#ffaa00] transition-colors">
+                      CONNECT
+                    </p>
+                    <div className="h-[1px] w-4 bg-white/10 group-hover/qr:bg-[#ffaa00]/30" />
+                  </div>
+                </div>
+              )}
             </div>
           ))}
 

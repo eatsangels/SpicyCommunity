@@ -11,6 +11,7 @@ import UpcomingCalendar from "@/components/home/UpcomingCalendar";
 import { useLocale } from "next-intl";
 
 import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
 
 export default function HomePage() {
@@ -28,9 +29,11 @@ export default function HomePage() {
   const [liveTournament, setLiveTournament] = useState<any>(null);
   const [liveMatch, setLiveMatch] = useState<any>(null);
   const [scheduledTournaments, setScheduledTournaments] = useState<any[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   const locale = useLocale();
 
   useEffect(() => {
+    setIsMounted(true);
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
 
     const fetchTeams = async () => {
@@ -334,10 +337,16 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter gradient-text">{t("live_arena")}</h2>
           <p className="text-[9px] uppercase font-black tracking-[0.4em] text-white/20">{t("joined_table")}</p>
         </div>
-        <div className="flex overflow-hidden gap-5 px-8 md:px-16 group">
-          <motion.div className="flex gap-5 shrink-0" animate={{ x: [0, -1000] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }}>
-            {[...recentTeams, ...recentTeams].map((team, i) => (
-              <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0">
+        <div className="relative overflow-hidden group">
+          {/* Performance optimized ticker */}
+          <motion.div 
+            className="flex gap-5 shrink-0 w-max" 
+            animate={{ x: ["0%", "-50%"] }} 
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            style={{ willChange: "transform" }}
+          >
+            {[...recentTeams, ...recentTeams, ...recentTeams, ...recentTeams].map((team, i) => (
+              <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0 transform-gpu">
                 <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
                   {team.logo_url
                     ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
@@ -348,15 +357,19 @@ export default function HomePage() {
                   <h3 className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest truncate w-28 sm:w-40">{team.name}</h3>
                   <p className="text-[6px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate max-w-[100px] sm:max-w-none">{team.tournaments?.name || 'Local Duel'}</p>
                 </div>
-                <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30">
-                  {tc('joined_at', { time: new Date(team.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) })}
+                <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30" suppressHydrationWarning>
+                  {isMounted ? tc('joined_at', { time: format(new Date(team.created_at), 'HH:mm') }) : '--:--'}
                 </div>
               </div>
             ))}
             {recentTeams.length === 0 && !loadingTeams && (
-              <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter">{t("waiting_challengers")}</div>
+              <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
             )}
           </motion.div>
+
+          {/* Side Fades for Depth */}
+          <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
+          <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
         </div>
       </section>
 
