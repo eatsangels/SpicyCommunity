@@ -102,6 +102,110 @@ export const TournamentService = {
     return tournament;
   },
 
+  /**
+   * Updates a tournament and regenerates its full initial match structure.
+   */
+  async updateTournamentParticipants(
+    tournamentId: string,
+    data: Partial<TournamentInsert>,
+    participantsRaw: { name: string, logo_url: string | null }[]
+  ) {
+    const supabase = await createClient();
+
+    // 2. Update Tournament details
+    const { data: tournament, error: tUpdateErr } = await supabase
+      .from('tournaments')
+      .update({ ...data, status: data.scheduled_at ? 'scheduled' : 'draft' })
+      .eq('id', tournamentId)
+      .select()
+      .single();
+
+    if (tUpdateErr) throw tUpdateErr;
+
+    // 3. Clear existing bracket structure sequentially to avoid FK constraint errors
+    await supabase.from('matches').delete().eq('tournament_id', tournamentId);
+    await supabase.from('rounds').delete().eq('tournament_id', tournamentId);
+    await supabase.from('participants').delete().eq('tournament_id', tournamentId);
+
+    // 4. Insert new Participants
+    const participantsData = participantsRaw.map((p, index) => ({
+      tournament_id: tournamentId,
+      name: p.name,
+      logo_url: p.logo_url,
+      seed: index + 1,
+    }));
+
+    const { data: participants, error: pError } = await supabase
+      .from('participants')
+      .insert(participantsData)
+      .select();
+
+    if (pError) throw pError;
+    if (!participants || participants.length === 0) {
+      throw new Error('No participants were created.');
+    }
+
+    // 5. Generate rounds and matches
+    const matchesByRound = generateInitialMatches(participants as Participant[]);
+
+    // 6. Create Rounds in DB
+    const roundIds: string[] = [];
+    for (let i = 0; i < matchesByRound.length; i++) {
+      const { data: round, error: rError } = await supabase
+        .from('rounds')
+        .insert({
+          tournament_id: tournamentId,
+          round_number: i + 1,
+        })
+        .select()
+        .single();
+
+      if (rError) throw rError;
+      roundIds.push(round.id);
+    }
+
+    // 7. Create Matches sequentially to guarantee stable created_at ordering
+    const createdMatchesByRound: any[][] = [];
+    for (let r = 0; r < matchesByRound.length; r++) {
+      const dbMatches: any[] = [];
+      for (const m of matchesByRound[r]) {
+        const { data: dbMatch, error: mError } = await supabase
+          .from('matches')
+          .insert({
+            tournament_id: tournamentId,
+            round_id: roundIds[r],
+            participant_a_id: m.participant_a_id,
+            participant_b_id: m.participant_b_id,
+            status: 'pending' as const,
+          })
+          .select()
+          .single();
+
+        if (mError) throw mError;
+        dbMatches.push(dbMatch);
+      }
+      createdMatchesByRound.push(dbMatches);
+    }
+
+    // 8. Link matches to their next match (next_match_id)
+    for (let r = 0; r < createdMatchesByRound.length - 1; r++) {
+      const currentRound = createdMatchesByRound[r];
+      const nextRound = createdMatchesByRound[r + 1];
+
+      for (let i = 0; i < currentRound.length; i++) {
+        const nextMatchIndex = Math.floor(i / 2);
+        if (nextRound[nextMatchIndex]) {
+          await supabase
+            .from('matches')
+            .update({ next_match_id: nextRound[nextMatchIndex].id })
+            .eq('id', currentRound[i].id);
+        }
+      }
+    }
+
+    return tournament;
+  },
+
   async getTournamentDetails(id: string) {
     const supabase = await createClient();
 

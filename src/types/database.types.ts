@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       matches: {
         Row: {
+          box_score: Json | null
           created_at: string
           id: string
           next_match_id: string | null
@@ -27,9 +28,9 @@ export type Database = {
           status: Database["public"]["Enums"]["match_status"]
           tournament_id: string
           winner_id: string | null
-          box_score: Json | null
         }
         Insert: {
+          box_score?: Json | null
           created_at?: string
           id?: string
           next_match_id?: string | null
@@ -41,9 +42,9 @@ export type Database = {
           status?: Database["public"]["Enums"]["match_status"]
           tournament_id: string
           winner_id?: string | null
-          box_score?: Json | null
         }
         Update: {
+          box_score?: Json | null
           created_at?: string
           id?: string
           next_match_id?: string | null
@@ -55,7 +56,6 @@ export type Database = {
           status?: Database["public"]["Enums"]["match_status"]
           tournament_id?: string
           winner_id?: string | null
-          box_score?: Json | null
         }
         Relationships: [
           {
@@ -261,6 +261,39 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      tournament_likes: {
+        Row: {
+          created_at: string
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_likes_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournament_champions"
+            referencedColumns: ["tournament_id"]
+          },
+          {
+            foreignKeyName: "tournament_likes_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tournaments: {
         Row: {

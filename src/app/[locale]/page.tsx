@@ -109,7 +109,7 @@ export default function HomePage() {
     const fetchScheduledTournaments = async () => {
       const { data } = await supabase
         .from('tournaments')
-        .select('*, participants(id, name)')
+        .select('*, participants(id, name), tournament_likes(user_id)')
         .eq('status', 'scheduled')
         .gte('scheduled_at', new Date().toISOString())
         .order('scheduled_at', { ascending: true });
@@ -338,13 +338,8 @@ export default function HomePage() {
           <p className="text-[9px] uppercase font-black tracking-[0.4em] text-white/20">{t("joined_table")}</p>
         </div>
         <div className="relative overflow-hidden group">
-          {/* Performance optimized ticker */}
-          <motion.div
-            className="flex gap-5 shrink-0 w-max"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            style={{ willChange: "transform" }}
-          >
+          {/* Performance optimized CSS ticker */}
+          <div className="flex gap-5 shrink-0 w-max animate-marquee">
             {[...recentTeams, ...recentTeams, ...recentTeams, ...recentTeams].map((team, i) => (
               <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0 transform-gpu">
                 <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
@@ -362,19 +357,19 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
-            {recentTeams.length === 0 && !loadingTeams && (
-              <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
-            )}
-          </motion.div>
+          {recentTeams.length === 0 && !loadingTeams && (
+            <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
+          )}
+        </div>
 
-          {/* Side Fades for Depth */}
+        {/* Side Fades for Depth */}
           <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
         </div>
       </section>
 
       {/* Upcoming Tournaments Calendar */}
-      <UpcomingCalendar tournaments={scheduledTournaments} locale={locale} />
+      <UpcomingCalendar tournaments={scheduledTournaments} locale={locale} user={user} />
 
       <footer className="relative z-10 border-t border-white/5 py-16 text-center text-white/20 text-[10px] font-black uppercase tracking-[0.5em]">
         Spicy Community <span className="text-primary">•</span> {t("footer_built")}

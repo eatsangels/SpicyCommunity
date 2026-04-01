@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useRouter } from '@/i18n/routing';
-import { createTournamentAction } from '@/app/actions/tournament';
+import { createTournamentAction, updateTournamentAction } from '@/app/actions/tournament';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Upload, Trophy, Trash2, Check, Search, X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -38,7 +38,11 @@ function newSlot(overrides?: Partial<ParticipantSlot>): ParticipantSlot {
   };
 }
 
-export default function CreateTournamentForm() {
+export interface CreateTournamentFormProps {
+  initialData?: any;
+}
+
+export default function CreateTournamentForm({ initialData }: CreateTournamentFormProps) {
   const t = useTranslations('Tournament');
   const { toast } = useAlert();
   const router = useRouter();
@@ -46,11 +50,11 @@ export default function CreateTournamentForm() {
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    type: 'single_elimination' as 'single_elimination' | 'double_elimination',
-    scheduledAt: '',
-    isScheduled: false,
+    name: initialData?.name || '',
+    description: initialData?.description || '',
+    type: (initialData?.type || 'single_elimination') as 'single_elimination' | 'double_elimination',
+    scheduledAt: initialData?.scheduled_at ? new Date(initialData.scheduled_at).toISOString().slice(0, 16) : '',
+    isScheduled: !!initialData?.scheduled_at,
   });
 
   const [allTeams, setAllTeams] = useState<Team[]>([]);
@@ -62,8 +66,29 @@ export default function CreateTournamentForm() {
     setTeamsLoading(true);
     const { data } = await supabase.from('teams').select('*').order('name');
     setAllTeams(data || []);
+    
+    setSlots(prev => {
+      if (initialData?.participants && prev.length === 0) {
+        // Sort participants by their original seed safely to retain order
+        const sorted = [...initialData.participants].sort((a,b) => a.seed - b.seed);
+        return sorted.map((p: any) => {
+          const matchingTeam = data?.find(t => t.name === p.name);
+          return {
+            slotId: Math.random().toString(36).slice(2),
+            teamId: matchingTeam?.id || null,
+            name: p.name,
+            logoUrl: p.logo_url,
+            logoFile: null,
+            previewUrl: null,
+            isNew: false
+          };
+        });
+      }
+      return prev;
+    });
+    
     setTeamsLoading(false);
-  }, [supabase]);
+  }, [supabase, initialData]);
 
   useEffect(() => { loadTeams(); }, [loadTeams]);
 
@@ -172,16 +197,26 @@ export default function CreateTournamentForm() {
         }
         participantsPayload.push({ name: slot.name, logo_url: logoUrl, team_id: teamId });
       }
-      const result = await createTournamentAction({ 
-        ...formData, 
-        participants: JSON.stringify(participantsPayload),
-        scheduledAt: formData.isScheduled ? formData.scheduledAt : null
-      });
+      let result;
+      if (initialData) {
+        result = await updateTournamentAction(initialData.id, { 
+          ...formData, 
+          participants: JSON.stringify(participantsPayload),
+          scheduledAt: formData.isScheduled ? formData.scheduledAt : null
+        });
+      } else {
+        result = await createTournamentAction({ 
+          ...formData, 
+          participants: JSON.stringify(participantsPayload),
+          scheduledAt: formData.isScheduled ? formData.scheduledAt : null
+        });
+      }
+
       if (result.success) {
-        if (formData.isScheduled) {
+        if (formData.isScheduled && !initialData) {
           router.push('/admin/calendar');
         } else {
-          router.push(`/tournaments/${result.tournamentId}`);
+          router.push(`/tournaments/${result.tournamentId || initialData.id}`);
         }
       }
       else throw new Error(result.error);
@@ -202,8 +237,12 @@ export default function CreateTournamentForm() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="w-16 h-16 bg-[#ffaa00]/20 rounded-3xl flex items-center justify-center text-[#ffaa00] mx-auto border border-[#ffaa00]/20">
             <Trophy size={32} />
           </motion.div>
-          <h1 className="text-6xl font-black uppercase italic tracking-tighter gradient-text">Create Arena</h1>
-          <p className="text-[10px] uppercase font-black tracking-[0.4em] text-white/30">Set the stage for Glory</p>
+          <h1 className="text-6xl font-black uppercase italic tracking-tighter gradient-text">
+            {initialData ? 'Edit Arena' : 'Create Arena'}
+          </h1>
+          <p className="text-[10px] uppercase font-black tracking-[0.4em] text-white/30">
+            {initialData ? 'Reshape the battlefield' : 'Set the stage for Glory'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-12">
@@ -325,7 +364,12 @@ export default function CreateTournamentForm() {
           </div>
 
           <div className="pt-4">
-            <Button type="submit" disabled={loading || slots.length < 2} className="w-full h-20 bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black text-2xl font-black uppercase italic tracking-tighter rounded-[3rem] shadow-[0_30px_60px_rgba(255,170,0,0.2)] transition-all active:scale-95 disabled:opacity-40">{loading ? 'Igniting...' : `Launch Tournament (${slots.length} teams)`}</Button>
+            <Button type="submit" disabled={loading || slots.length < 2} className="w-full h-20 bg-[#ffaa00] hover:bg-[#ffaa00]/90 text-black text-2xl font-black uppercase italic tracking-tighter rounded-[3rem] shadow-[0_30px_60px_rgba(255,170,0,0.2)] transition-all active:scale-95 disabled:opacity-40">
+              {loading 
+                ? (initialData ? 'Updating...' : 'Igniting...') 
+                : (initialData ? `Save Changes (${slots.length} teams)` : `Launch Tournament (${slots.length} teams)`)
+              }
+            </Button>
           </div>
         </form>
       </div>

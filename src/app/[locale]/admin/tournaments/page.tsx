@@ -9,7 +9,8 @@ import {
   Users,
   Search,
   Plus,
-  Trash
+  Trash,
+  Edit
 } from 'lucide-react';
 import { Link } from "@/i18n/routing";
 import { useAlert } from '@/components/ui/UnoAlertSystem';
@@ -98,7 +99,7 @@ export default function AdminTournaments() {
              </div>
         ) : (
           <>
-            <div className="grid grid-cols-4 p-6 border-b border-white/10 text-[9px] uppercase font-black tracking-[0.2em] text-white/20">
+            <div className="hidden md:grid grid-cols-4 p-6 border-b border-white/10 text-[9px] uppercase font-black tracking-[0.2em] text-white/20">
                <div>{tt('name_label')}</div>
                <div className="text-center">Participants</div>
                <div className="text-center">Created</div>
@@ -109,37 +110,72 @@ export default function AdminTournaments() {
               <div 
                 key={tourney.id} 
                 onClick={() => window.location.href = `/tournaments/${tourney.id}`}
-                className="grid grid-cols-4 p-6 border-b border-white/5 last:border-0 items-center hover:bg-white/2 transition-colors group cursor-pointer"
+                className="flex flex-col md:grid md:grid-cols-4 p-5 md:p-6 border-b border-white/5 last:border-0 md:items-center hover:bg-white/5 transition-colors group cursor-pointer gap-4 md:gap-0"
               >
-                <div className="flex items-center gap-4">
-                   <div className="p-2 bg-white/5 rounded-lg text-[#ffaa00]">
-                      <Trophy size={16} />
+                <div className="flex items-center justify-between gap-4">
+                   <div className="flex items-center gap-4">
+                     <div className="p-2 bg-white/5 rounded-lg text-[#ffaa00]">
+                        <Trophy size={16} />
+                     </div>
+                     <span className="font-bold text-sm truncate">{tourney.name}</span>
                    </div>
-                   <span className="font-bold text-sm truncate">{tourney.name}</span>
+                   {/* Mobile Action Buttons */}
+                   <div className="md:hidden flex items-center gap-1 shrink-0">
+                      <button 
+                         onClick={(e) => { e.stopPropagation(); window.location.href = `/admin/tournaments/${tourney.id}/edit`; }}
+                         className="text-white/20 hover:text-[#ffaa00] transition-colors p-2"
+                      >
+                         <Edit size={16} />
+                      </button>
+                      <button 
+                         onClick={(e) => handleDelete(e, tourney.id)}
+                         className="text-white/20 hover:text-red-500 transition-colors p-2"
+                      >
+                         <Trash size={18} />
+                      </button>
+                   </div>
                 </div>
-                <div className="text-center">
-                   <span className="text-[10px] font-bold text-white/40 bg-white/5 px-2 py-1 rounded-md flex items-center justify-center gap-2 w-fit mx-auto">
+
+                <div className="flex items-center gap-3 text-center md:items-center md:justify-center">
+                   <span className="text-[10px] font-bold text-white/40 bg-white/5 px-2 py-1 rounded-md flex items-center justify-center gap-2 w-fit">
                       <Users size={12} /> {tourney.participants?.[0]?.count || 0}
                    </span>
+                   {/* Mobile Date */}
+                   <div className="md:hidden text-[10px] font-medium text-white/30 flex items-center justify-center gap-1.5 bg-black/40 px-2 py-1 rounded-md">
+                       <Calendar size={12} /> {new Date(tourney.created_at).toLocaleDateString()}
+                   </div>
                 </div>
-                <div className="text-center text-[10px] font-medium text-white/30 flex items-center justify-center gap-2">
+
+                {/* Desktop Date */}
+                <div className="hidden md:flex text-center text-[10px] font-medium text-white/30 items-center justify-center gap-2">
                    <Calendar size={12} /> {new Date(tourney.created_at).toLocaleDateString()}
                 </div>
-                <div className="flex justify-end items-center gap-4">
-                   <span className={`text-[9px] uppercase font-black px-3 py-1 rounded-full ${
-                      tourney.status === 'in_progress' ? 'bg-green-500/20 text-green-400' :
-                      tourney.status === 'draft' ? 'bg-yellow-500/20 text-[#ffaa00]' :
-                      tourney.status === 'scheduled' ? 'bg-indigo-500/20 text-indigo-400' :
-                      'bg-blue-500/20 text-blue-400'
-                   }`}>
-                      {tourney.status}
-                   </span>
-                   <button 
-                      onClick={(e) => handleDelete(e, tourney.id)}
-                      className="text-white/20 hover:text-red-500 transition-colors"
-                   >
-                      <Trash size={16} />
-                   </button>
+
+                <div className="flex justify-between md:justify-end items-center gap-4 border-t border-white/5 md:border-t-0 pt-3 md:pt-0 mt-1 md:mt-0">
+                   <span className="md:hidden text-[9px] uppercase font-black text-white/20 tracking-[0.2em]">Status</span>
+                   <div className="flex items-center gap-3">
+                     <span className={`text-[9px] uppercase font-black px-3 py-1 rounded-full ${
+                        tourney.status === 'in_progress' ? 'bg-green-500/20 text-green-400' :
+                        tourney.status === 'draft' ? 'bg-yellow-500/20 text-[#ffaa00]' :
+                        tourney.status === 'scheduled' ? 'bg-indigo-500/20 text-indigo-400' :
+                        'bg-blue-500/20 text-blue-400'
+                     }`}>
+                        {tourney.status}
+                     </span>
+                     {/* Desktop Action Buttons */}
+                     <button 
+                        onClick={(e) => { e.stopPropagation(); window.location.href = `/admin/tournaments/${tourney.id}/edit`; }}
+                        className="hidden md:block text-white/20 hover:text-[#ffaa00] transition-colors ml-4"
+                     >
+                        <Edit size={16} />
+                     </button>
+                     <button 
+                        onClick={(e) => handleDelete(e, tourney.id)}
+                        className="hidden md:block text-white/20 hover:text-[#ff5555] transition-colors"
+                     >
+                        <Trash size={16} />
+                     </button>
+                   </div>
                 </div>
               </div>
             ))}
