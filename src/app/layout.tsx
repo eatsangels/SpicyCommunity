@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://spicycommunity.com"),
   title: {
     default: "Spicy Community - Elite Tournament Platform",
     template: "%s | Spicy Community"
@@ -43,15 +44,26 @@ export const metadata: Metadata = {
         url: "/logo_new.png",
         width: 1200,
         height: 630,
-        alt: "Spicy Community Logo",
+        alt: "Spicy Community Branding",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Spicy Community - Tournament Management",
-    description: "Advanced eSports tournament management system.",
+    title: "Spicy Community | eSports Arena",
+    description: "Professional tournament brackets and live updates for the competitive community.",
     images: ["/logo_new.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   other: {
     google: "notranslate",

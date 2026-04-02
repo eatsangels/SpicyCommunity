@@ -19,7 +19,14 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     openGraph: {
       title,
       description,
-      images: ["/logo_new.png"], // Support dynamic logo per tournament in future if needed
+      images: [
+        {
+          url: "/logo_new.png", // Use default branding for consistency
+          width: 1200,
+          height: 630,
+          alt: `${tournament.name} | Spicy Community`,
+        }
+      ],
     },
     twitter: {
       card: "summary_large_image",
