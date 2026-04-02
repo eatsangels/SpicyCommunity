@@ -150,7 +150,7 @@ export default function Navbar() {
                 <Link href="/" className="text-white/40 hover:text-white transition-colors flex items-center gap-2 uppercase">
                   {tc('home')}
                 </Link>
-                {user && role === 'admin' && (
+                {(user && (role === 'admin' || role === 'moderator')) && (
                   <Link href="/admin" className="text-[#ffaa00] hover:brightness-110 transition-all border-b border-[#ffaa00]/0 hover:border-[#ffaa00]/100">
                     ADMIN
                   </Link>
@@ -207,7 +207,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-4">
                   <span className="text-[9px] font-bold uppercase tracking-widest text-white/30 max-w-[120px] truncate">{user.email}</span>
 
-                  {role === 'admin' && (
+                  {(role === 'admin' || role === 'moderator') && (
                     <Link href="/tournaments/create">
                       <FutureButton shape="flat" className="py-[0.4rem] px-6 text-[9px] uppercase tracking-widest text-black">
                         {tc('create')}
@@ -297,7 +297,7 @@ export default function Navbar() {
             >
               {tc('winners')}
             </Link>
-            {user && role === 'admin' && (
+            {user && (role === 'admin' || role === 'moderator') && (
               <Link
                 href="/admin"
                 onClick={() => setShowMenu(false)}
@@ -313,7 +313,7 @@ export default function Navbar() {
             {user ? (
               <>
                 <span className="text-xs font-bold text-white/30 tracking-widest uppercase">{user.email}</span>
-                {role === 'admin' && (
+                {(role === 'admin' || role === 'moderator') && (
                   <Link
                     href="/tournaments/create"
                     onClick={() => setShowMenu(false)}
