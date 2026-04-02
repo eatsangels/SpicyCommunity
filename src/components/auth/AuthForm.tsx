@@ -81,23 +81,50 @@ export default function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
   const isRegister = mode === 'register';
 
-  // ─── Success Screen ───────────────────────────────────────────────────────
   if (success && isRegister) {
     return (
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-md mx-auto py-4 sm:py-8">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative w-full aspect-[2.5/3.5] bg-black/40 backdrop-blur-xl rounded-[2rem] shadow-2xl overflow-hidden p-8 flex flex-col items-center justify-center border border-white/10"
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative w-full rounded-[1.5rem] sm:rounded-[2rem] bg-black/60 backdrop-blur-xl border border-[#ffaa00]/20 shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden p-8 sm:p-12 flex flex-col items-center justify-center text-center"
         >
-          <div className="relative z-10 bg-white p-8 rounded-[50%] w-full aspect-square flex flex-col items-center justify-center border-4 border-black shadow-xl">
-            <h2 className="text-3xl font-black italic uppercase text-black text-center">
+          {/* Subtle Glow Background */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#ffaa00]/10 rounded-full blur-3xl pointer-events-none" />
+          
+          {/* Checkmark Icon */}
+          <div className="relative z-10 mb-8 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[#ffaa00] to-[#cc8800] rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(255,170,0,0.3)]">
+            <svg 
+              className="w-10 h-10 sm:w-12 sm:h-12 text-black drop-shadow-md" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor" 
+              strokeWidth={3}
+            >
+              <motion.path 
+                initial={{ pathLength: 0 }} 
+                animate={{ pathLength: 1 }} 
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                d="M5 13l4 4L19 7" 
+              />
+            </svg>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="relative z-10 space-y-3"
+          >
+            <h2 className="text-3xl sm:text-4xl font-black italic uppercase tracking-tighter text-white drop-shadow-lg">
               {t('uno_success_title')}
             </h2>
-            <p className="mt-4 text-center text-xs font-bold uppercase tracking-widest text-[#ffaa00]">
+            <p className="text-sm sm:text-base font-medium text-white/60 leading-relaxed px-2">
               {t('email_sent')}
             </p>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     );

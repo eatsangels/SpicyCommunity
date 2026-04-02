@@ -229,7 +229,7 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
         <StatItem label={translations.allTimeChampions} value={`${totalChampions}`} position="left-[10%] top-[35%]" />
         <StatItem label={translations.tournamentsPlayed} value={`${totalTournaments}`} position="left-[22%] top-[18%]" />
         <StatItem label={translations.realTimeBrackets} value="LIVE" position="right-[22%] top-[18%]" />
-        <StatItem label={translations.engine} value="MESSIAS" position="right-[10%] top-[35%]" />
+        <StatItem label={translations.engine} value="UNO" position="right-[10%] top-[35%]" />
       </motion.div>
 
       {/* Center text */}
@@ -271,7 +271,7 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
             { label: translations.allTimeChampions, value: totalChampions },
             { label: translations.tournamentsPlayed, value: totalTournaments },
             { label: translations.realTimeBrackets, value: "LIVE" },
-            { label: translations.engine, value: "MESSIAS" }
+            { label: translations.engine, value: "UNO" }
           ].map((stat, i) => (
             <div key={i} className="flex flex-col items-center p-4 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md">
               <span className="text-2xl font-black text-[#ffaa00] leading-none mb-1">{stat.value}</span>
