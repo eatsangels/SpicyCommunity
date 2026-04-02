@@ -349,9 +349,9 @@ export default function HomePage() {
                     : <span className="text-xl sm:text-3xl font-black text-[#ffaa00]">{team.name[0]}</span>
                   }
                 </div>
-                <div className="text-center space-y-1">
-                  <h3 className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest truncate w-28 sm:w-40">{team.name}</h3>
-                  <p className="text-[6px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate max-w-[100px] sm:max-w-none">{team.tournaments?.name || 'Local Duel'}</p>
+                <div className="text-center flex flex-col items-center w-full">
+                  <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-[90%]">{team.name}</h3>
+                  <p className="text-[7px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate w-[90%]">{team.tournaments?.name || 'Local Duel'}</p>
                 </div>
                 <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30" suppressHydrationWarning>
                   {isMounted ? tc('joined_at', { time: format(new Date(team.created_at), 'HH:mm') }) : '--:--'}

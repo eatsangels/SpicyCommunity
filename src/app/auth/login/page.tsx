@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-black">
+    <div className="flex-1 w-full relative flex items-start justify-center p-6 pt-10 sm:pt-20 min-h-[70vh]">
       {/* Background Winners Style */}
       <motion.div 
         initial={{ opacity: 0 }}

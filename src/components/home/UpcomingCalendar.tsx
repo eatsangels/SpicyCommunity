@@ -198,7 +198,7 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
             <div className="flex flex-wrap gap-3 pt-2">
               <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase">
                 <Users size={12} />
-                <span>{tournament.participants.length} Players</span>
+                <span>{tournament.participants.length} Teams</span>
               </div>
               <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase">
                 <MapPin size={12} />

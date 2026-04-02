@@ -6,8 +6,7 @@ import { motion } from 'framer-motion';
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-black">
-      {/* Background Winners Style */}
+    <div className="flex-1 w-full relative flex items-start justify-center p-6 pt-10 sm:pt-20 min-h-[70vh]">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

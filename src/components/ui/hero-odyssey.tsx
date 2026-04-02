@@ -194,7 +194,7 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
   };
 
   return (
-    <div className="relative w-full bg-black text-white overflow-hidden h-[55vh] min-h-[400px]">
+    <div className="relative w-full bg-black text-white overflow-hidden h-[65vh] min-h-[550px] lg:min-h-[600px]">
 
       {/* Background WebGL Lightning */}
       <motion.div
@@ -237,11 +237,11 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-30 flex flex-col items-center justify-center text-center h-full px-6"
+        className="relative z-30 flex flex-col items-center justify-center text-center h-full px-6 pt-24 md:pt-28"
       >
         <motion.div
           variants={itemVariants}
-          className="flex items-center gap-2 px-4 py-1.5 bg-[#ffaa00]/10 border border-[#ffaa00]/20 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00] mb-6 shadow-[0_0_20px_rgba(255,170,0,0.1)]"
+          className="flex items-center gap-2 px-4 py-1.5 bg-[#ffaa00]/10 border border-[#ffaa00]/20 rounded-full text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00] mb-10 shadow-[0_0_20px_rgba(255,170,0,0.1)]"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-[#ffaa00] animate-pulse" />
           Spicy Community
@@ -249,7 +249,7 @@ export const HallOfFameHero: React.FC<HallOfFameHeroProps> = ({
 
         <motion.h1
           variants={itemVariants}
-          className="text-6xl md:text-8xl lg:text-9xl font-black italic uppercase tracking-tighter leading-[0.8] mb-6"
+          className="text-6xl md:text-8xl lg:text-9xl font-black italic uppercase tracking-tighter leading-[0.8] mb-6 gradient-text-luxury"
           style={{ textShadow: "0 0 80px rgba(255,170,0,0.3)" }}
         >
           {translations.title}
