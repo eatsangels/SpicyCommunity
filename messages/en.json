@@ -102,8 +102,8 @@
     }
   },
   "Auth": {
-    "login": "Login",
-    "register": "Register",
+    "login": "Log In",
+    "register": "Sign Up",
     "logout": "Logout",
     "email": "Email",
     "username": "Username",
