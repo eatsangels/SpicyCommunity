@@ -74,6 +74,8 @@ function SpicyFooter() {
                   key={label}
                   href={href}
                   aria-label={label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-[#ffaa00] transition-colors"
                 >
                   {icon}
@@ -93,6 +95,8 @@ function SpicyFooter() {
                   <li key={link.label} className="relative w-fit">
                     <Link
                       href={link.href as any}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="hover:text-[#ffaa00] transition-colors"
                     >
                       {link.label}
@@ -117,7 +121,7 @@ function SpicyFooter() {
                 <li key={i} className="flex items-center gap-3">
                   {item.icon}
                   {item.href ? (
-                    <a href={item.href} className="hover:text-[#ffaa00] transition-colors">
+                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="hover:text-[#ffaa00] transition-colors">
                       {item.text}
                     </a>
                   ) : (
