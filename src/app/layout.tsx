@@ -41,10 +41,10 @@ export const metadata: Metadata = {
     description: "The ultimate engine for competitive gaming tournaments.",
     images: [
       {
-        url: "/logo_new.png",
+        url: "/og_banner.png", // New professional banner
         width: 1200,
         height: 630,
-        alt: "Spicy Community Branding",
+        alt: "Spicy Community Elite Platform",
       },
     ],
   },
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Spicy Community | eSports Arena",
     description: "Professional tournament brackets and live updates for the competitive community.",
-    images: ["/logo_new.png"],
+    images: ["/og_banner.png"],
   },
   robots: {
     index: true,

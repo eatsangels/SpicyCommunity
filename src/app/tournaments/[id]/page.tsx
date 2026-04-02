@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       description,
       images: [
         {
-          url: "/logo_new.png", // Use default branding for consistency
+          url: "/og_banner.png", // Use the master banner for elite look
           width: 1200,
           height: 630,
           alt: `${tournament.name} | Spicy Community`,
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
       card: "summary_large_image",
       title,
       description,
-      images: ["/logo_new.png"],
+      images: ["/og_banner.png"],
     },
   };
 }
