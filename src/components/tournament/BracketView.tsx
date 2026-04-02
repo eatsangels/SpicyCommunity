@@ -280,7 +280,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     </div>
                 </div>
 
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter uppercase italic leading-none gradient-text-luxury transition-all duration-500 flex items-center gap-3">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter uppercase italic leading-none gradient-text-luxury transition-all duration-500 flex items-center gap-3 pr-2 pb-1">
                     {data.name}
                     <div className="h-px w-12 md:w-24 bg-gradient-to-r from-white/20 to-transparent hidden md:block" />
                 </h1>
@@ -344,8 +344,8 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
               return (
                 <div key={round.id} className="flex flex-col gap-4 min-w-[210px] md:min-w-[240px]">
                   <div className="relative flex items-center justify-center -mb-3">
-                      <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/5" />
-                      <h2 className={cn("px-4 text-[9px] md:text-[10px] font-black tracking-[0.4em] uppercase italic transition-colors", round.id === activeRoundId ? "text-[#ffaa00]" : "text-white/20")}>
+                      <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
+                      <h2 className={cn("px-4 text-xs md:text-sm lg:text-base font-black tracking-[0.4em] uppercase italic transition-colors whitespace-nowrap", round.id === activeRoundId ? "text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" : "text-white/40")}>
                         {roundName}
                       </h2>
                       <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/5" />

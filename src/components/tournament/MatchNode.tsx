@@ -94,23 +94,23 @@ export default function MatchNode({
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="uno-card relative w-40 md:w-48 bg-white dark:bg-zinc-900 border-[3px] border-zinc-800 flex flex-col overflow-hidden rounded-xl shrink-0"
+      className="uno-card relative w-48 md:w-60 bg-white dark:bg-zinc-900 border-[3px] border-zinc-800 flex flex-col overflow-hidden rounded-[1rem] shrink-0"
     >
       {/* Participant A */}
-      <div className="flex-1 flex justify-between items-center px-1.5 md:px-2 py-0.5 md:py-1 gap-1 md:gap-1.5">
-        <div className="flex items-center gap-1 md:gap-1.5 min-w-0">
-          <div className="w-5 h-5 md:w-6 md:h-6 rounded-md bg-black/40 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
+      <div className="flex-1 flex justify-between items-center px-2 md:px-3 py-1.5 md:py-2 gap-2">
+        <div className="flex items-center gap-2 flex-1 min-w-0 pr-1">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-black/40 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
             {match.participant_a?.logo_url ? (
               <img src={match.participant_a.logo_url} alt={match.participant_a.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[5px] md:text-[6px] font-black text-white/20">{match.participant_a?.name?.slice(0,2).toUpperCase() ?? '?'}</span>
+              <span className="text-[7px] md:text-[9px] font-black text-white/20">{match.participant_a?.name?.slice(0,2).toUpperCase() ?? '?'}</span>
             )}
           </div>
-          <div className="flex flex-col min-w-0 leading-tight">
-            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">T1</span>
+          <div className="flex flex-col min-w-0 leading-tight flex-1">
+            <span className="text-[6px] md:text-[7px] font-black uppercase tracking-widest opacity-40">T1</span>
             <span className={cn(
-              "font-black text-[9px] md:text-[10px] uppercase truncate max-w-[50px] md:max-w-[70px]",
-              match.participant_a ? "text-white/80" : "text-white/20 italic"
+              "font-black text-[11px] md:text-xs uppercase truncate w-full",
+              match.participant_a ? "text-white/90" : "text-white/20 italic"
             )}>
               {match.participant_a?.name || t('waiting')}
             </span>
@@ -123,12 +123,12 @@ export default function MatchNode({
             inputMode="numeric"
             disabled={isCompleted}
             placeholder="0"
-            className="w-8 h-6 md:w-10 md:h-8 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#ff5555] transition-all text-white flex-shrink-0"
+            className="w-10 h-8 md:w-12 md:h-10 bg-black/40 rounded-lg text-center font-black text-sm md:text-base outline-none border border-white/5 focus:border-[#ff5555] transition-all text-white flex-shrink-0"
             value={match.score_a === 0 ? '' : (match.score_a ?? '')}
             onChange={(e) => onUpdateScore?.(match.id, e.target.value === '' ? 0 : parseInt(e.target.value), match.score_b || 0)}
           />
         ) : (
-          <div className="w-8 h-6 md:w-10 md:h-8 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
+          <div className="w-10 h-8 md:w-12 md:h-10 flex items-center justify-center bg-black/20 rounded-lg font-black text-sm md:text-base border border-transparent text-white flex-shrink-0">
             {match.score_a ?? 0}
           </div>
         )}
@@ -137,20 +137,20 @@ export default function MatchNode({
       <div className="h-[1px] bg-gradient-to-r from-[#ff5555] via-[#ffaa00] to-[#5555ff] opacity-20" />
 
       {/* Participant B */}
-      <div className="flex-1 flex justify-between items-center px-1.5 md:px-2 py-0.5 md:py-1 gap-1 md:gap-1.5">
-        <div className="flex items-center gap-1 md:gap-1.5 min-w-0">
-          <div className="w-5 h-5 md:w-6 md:h-6 rounded-md bg-black/40 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
+      <div className="flex-1 flex justify-between items-center px-2 md:px-3 py-1.5 md:py-2 gap-2">
+        <div className="flex items-center gap-2 flex-1 min-w-0 pr-1">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-black/40 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center">
             {match.participant_b?.logo_url ? (
               <img src={match.participant_b.logo_url} alt={match.participant_b.name} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[5px] md:text-[6px] font-black text-white/20">{match.participant_b?.name?.slice(0,2).toUpperCase() ?? '?'}</span>
+              <span className="text-[7px] md:text-[9px] font-black text-white/20">{match.participant_b?.name?.slice(0,2).toUpperCase() ?? '?'}</span>
             )}
           </div>
-          <div className="flex flex-col min-w-0 leading-tight">
-            <span className="text-[5px] md:text-[6px] font-black uppercase tracking-widest opacity-40">T2</span>
+          <div className="flex flex-col min-w-0 leading-tight flex-1">
+            <span className="text-[6px] md:text-[7px] font-black uppercase tracking-widest opacity-40">T2</span>
             <span className={cn(
-              "font-black text-[9px] md:text-[10px] uppercase truncate max-w-[50px] md:max-w-[70px]",
-              match.participant_b ? "text-white/80" : "text-white/20 italic"
+              "font-black text-[11px] md:text-xs uppercase truncate w-full",
+              match.participant_b ? "text-white/90" : "text-white/20 italic"
             )}>
               {match.participant_b?.name || t('waiting')}
             </span>
@@ -163,12 +163,12 @@ export default function MatchNode({
             inputMode="numeric"
             disabled={isCompleted}
             placeholder="0"
-            className="w-8 h-6 md:w-10 md:h-8 bg-black/40 rounded text-center font-black text-xs md:text-sm outline-none border border-white/5 focus:border-[#5555ff] transition-all text-white flex-shrink-0"
+            className="w-10 h-8 md:w-12 md:h-10 bg-black/40 rounded-lg text-center font-black text-sm md:text-base outline-none border border-white/5 focus:border-[#5555ff] transition-all text-white flex-shrink-0"
             value={match.score_b === 0 ? '' : (match.score_b ?? '')}
             onChange={(e) => onUpdateScore?.(match.id, match.score_a || 0, e.target.value === '' ? 0 : parseInt(e.target.value))}
           />
         ) : (
-          <div className="w-8 h-6 md:w-10 md:h-8 flex items-center justify-center bg-black/20 rounded font-black text-[10px] md:text-xs border border-transparent text-white flex-shrink-0">
+          <div className="w-10 h-8 md:w-12 md:h-10 flex items-center justify-center bg-black/20 rounded-lg font-black text-sm md:text-base border border-transparent text-white flex-shrink-0">
             {match.score_b ?? 0}
           </div>
         )}
