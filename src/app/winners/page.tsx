@@ -76,7 +76,7 @@ export default async function WinnersPage({ params }: { params: Promise<{ locale
     allTimeChampions: t('total_champions'),
     tournamentsPlayed: "Arena Played",
     realTimeBrackets: "LIVE",
-    engine: "UNO"
+    engine: "ENGINE"
   };
 
   return (
