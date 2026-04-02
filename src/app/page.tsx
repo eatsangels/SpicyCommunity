@@ -224,9 +224,9 @@ export default function HomePage() {
         </motion.div>
 
         {/* Scroll Indicator */}
-        <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-8 md:bottom-12 flex flex-col items-center gap-4 opacity-10">
-          <span className="text-[8px] uppercase font-black tracking-widest">{t("scroll_explore")}</span>
-          <div className="w-px h-12 bg-white" />
+        <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-8 md:bottom-12 flex flex-col items-center gap-4 opacity-70">
+          <span className="text-[9px] uppercase font-black tracking-[0.3em] text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]">{t("scroll_explore")}</span>
+          <div className="w-px h-12 bg-gradient-to-b from-[#ffaa00] to-transparent" />
         </motion.div>
       </section>
 
