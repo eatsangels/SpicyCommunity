@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tournaments = await TournamentService.getAllTournaments();
   const tournamentRoutes = (tournaments || []).map((t) => ({
     url: `${baseUrl}/tournaments/${t.id}`,
-    lastModified: new Date(t.updated_at || t.created_at || new Date()),
+    lastModified: new Date(t.created_at || new Date()),
     changeFrequency: 'hourly' as const,
     priority: 0.6,
   }));
