@@ -423,11 +423,11 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
             </div>
 
             <motion.div 
-              className="flex gap-8 items-center"
-              animate={{ x: ["-50%", "0%"] }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+              className="flex gap-8 items-center w-max"
+              animate={{ x: ["0%", "-50%"] }}
+              transition={{ duration: Math.max(15, tickerMatches.length * 4), repeat: Infinity, ease: "linear" }}
             >
-              {[...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
+              {[...tickerMatches, ...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
                 <div
                   key={`${match.id}-${idx}`}
                   className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
