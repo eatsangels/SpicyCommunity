@@ -75,7 +75,7 @@ export default async function AdminCalendarPage({ params: { locale } }: { params
                   <div className="flex items-center gap-3 bg-black/40 px-4 py-2 rounded-2xl border border-white/5">
                     <Clock size={16} className="text-[#ffaa00]" />
                     <span className="text-xs font-black uppercase text-white tracking-widest">
-                      {tourney.scheduled_at ? format(new Date(tourney.scheduled_at), 'HH:mm', { locale: dateLocale }) : '--:--'}
+                      {tourney.scheduled_at ? format(new Date(tourney.scheduled_at), 'HH:mm') : '--:--'}
                     </span>
                   </div>
                   <DeleteTournamentButton id={tourney.id} />
