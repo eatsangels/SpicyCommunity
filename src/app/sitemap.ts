@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { TournamentService } from '@/lib/services/tournament-service';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://spicycommunity.com'; // Adjust to your actual domain
+  const baseUrl = 'https://spicycommunity.online'; // Official domain
 
   // 1. Static Routes
   const staticRoutes = [

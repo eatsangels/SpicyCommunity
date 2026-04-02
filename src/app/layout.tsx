@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://spicycommunity.com"),
+  metadataBase: new URL("https://spicycommunity.online"),
   title: {
     default: "Spicy Community - Elite Tournament Platform",
     template: "%s | Spicy Community"
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://spicycommunity.com", // Adjust if domain is different
+    url: "https://spicycommunity.online",
     siteName: "Spicy Community",
     title: "Spicy Community - Tournament Management",
     description: "The ultimate engine for competitive gaming tournaments.",

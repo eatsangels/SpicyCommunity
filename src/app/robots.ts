@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin', '/api'], // Protect administrative zones from robots
     },
-    sitemap: 'https://spicycommunity.com/sitemap.xml',
+    sitemap: 'https://spicycommunity.online/sitemap.xml',
   };
 }
