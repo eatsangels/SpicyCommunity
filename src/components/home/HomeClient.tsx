@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@/i18n/routing";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Zap, Trophy, Radio, ChevronRight, Swords, Users, ChevronLeft } from "lucide-react";
+import { Zap, Trophy, Radio, ChevronRight, Swords, Users, ChevronLeft, MessageSquare } from "lucide-react";
 import { Lightning } from "@/components/ui/hero-odyssey";
 import UpcomingCalendar from "@/components/home/UpcomingCalendar";
 import { useLocale } from "next-intl";
@@ -214,12 +214,18 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="max-w-2xl text-xl md:text-2xl text-white/40 font-medium italic">
             {t("hero_subtitle")}
           </motion.p>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-6 pt-12">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-4 sm:gap-6 pt-12">
             <Link href="/tournaments">
               <Button size="lg" className="h-14 sm:h-16 px-10 sm:px-14 rounded-full text-lg sm:text-xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#ffaa00] text-black hover:bg-[#ffaa00]/90 shadow-[0_0_40px_rgba(255,170,0,0.15)]">
                 {tc("tournaments")}
               </Button>
             </Link>
+            <a href="https://discord.gg/spicy" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" className="h-14 sm:h-16 px-10 sm:px-14 rounded-full text-lg sm:text-xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#5865F2] text-white hover:bg-[#5865F2]/90 shadow-[0_0_40px_rgba(88,101,242,0.2)] flex items-center gap-3">
+                <MessageSquare size={24} className="fill-white" />
+                Discord
+              </Button>
+            </a>
           </motion.div>
         </motion.div>
 
