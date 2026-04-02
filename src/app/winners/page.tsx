@@ -20,6 +20,8 @@ interface GroupedChampion {
   wins: { tournament_id: string; tournament_name: string | null; tournament_date: string | null }[];
 }
 
+export const revalidate = 0;
+
 export default async function WinnersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations('Winners');
@@ -62,11 +64,11 @@ export default async function WinnersPage({ params }: { params: Promise<{ locale
     .select('*', { count: 'exact', head: true })
     .eq('status', 'completed');
 
-  // Count in_progress tournaments for live stat
+  // Count active tournaments for live stat
   const { count: liveCount } = await supabase
     .from('tournaments')
     .select('*', { count: 'exact', head: true })
-    .eq('status', 'in_progress');
+    .neq('status', 'completed');
 
   const heroTranslations = {
     title: t('title'),

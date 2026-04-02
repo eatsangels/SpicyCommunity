@@ -14,6 +14,8 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 
+export const revalidate = 0;
+
 export default function AdminDashboard() {
   const t = useTranslations('Admin');
   const supabase = createClient();
@@ -32,11 +34,11 @@ export default function AdminDashboard() {
         .from('tournaments')
         .select('*', { count: 'exact', head: true });
 
-      // 2. Active Tournaments (In Progress)
+      // 2. Active Tournaments
       const { count: activeCount } = await supabase
         .from('tournaments')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'in_progress');
+        .neq('status', 'completed');
 
       // 3. Match Count (Total matches played today)
       const today = new Date().toISOString().split('T')[0];

@@ -238,6 +238,7 @@ export const TournamentService = {
         id,
         name,
         status,
+        scheduled_at,
         created_at,
         participants (id)
       `)

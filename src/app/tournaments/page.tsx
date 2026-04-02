@@ -14,7 +14,11 @@ export default async function TournamentsPage() {
 
   // Fetch all tournaments for general stats
   const tournaments = await TournamentService.getAllTournaments();
-  const active = tournaments?.filter((t) => t.status === "in_progress") ?? [];
+  const now = new Date().toISOString();
+  const active = tournaments?.filter((t) => 
+    t.status === "in_progress" || 
+    (t.status !== "completed" && t.scheduled_at && t.scheduled_at <= now)
+  ) ?? [];
   const completedTournaments = tournaments?.filter((t) => t.status === "completed") ?? [];
 
   // Specifically fetch scheduled tournaments with full relational data needed for the Calendar widget
