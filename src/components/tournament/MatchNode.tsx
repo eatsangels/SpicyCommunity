@@ -94,7 +94,7 @@ export default function MatchNode({
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="uno-card relative w-48 md:w-60 bg-white dark:bg-zinc-900 border-[3px] border-zinc-800 flex flex-col overflow-hidden rounded-[1rem] shrink-0"
+      className="uno-card relative w-[220px] md:w-[260px] bg-white dark:bg-zinc-900 border-[3px] border-zinc-800 flex flex-col overflow-hidden rounded-[1rem] shrink-0"
     >
       {/* Participant A */}
       <div className="flex-1 flex justify-between items-center px-2 md:px-3 py-1.5 md:py-2 gap-2">

@@ -342,10 +342,10 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
               const finalMatches = groupedMatches.flatMap(group => group.map((m, idx) => ({ ...m, isTop: idx === 0, groupSize: group.length })));
 
               return (
-                <div key={round.id} className="flex flex-col gap-4 min-w-[210px] md:min-w-[240px]">
-                  <div className="relative flex items-center justify-center -mb-3">
+                <div key={round.id} className="flex flex-col gap-4 min-w-[240px] md:min-w-[280px]">
+                  <div className="relative flex items-center justify-center mb-2 md:mb-4">
                       <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent to-white/10" />
-                      <h2 className={cn("px-4 text-xs md:text-sm lg:text-base font-black tracking-[0.4em] uppercase italic transition-colors whitespace-nowrap", round.id === activeRoundId ? "text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" : "text-white/40")}>
+                      <h2 className={cn("px-4 text-sm md:text-base lg:text-lg font-black tracking-[0.4em] uppercase italic transition-colors whitespace-nowrap", round.id === activeRoundId ? "text-[#ffaa00] drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" : "text-white/40")}>
                         {roundName}
                       </h2>
                       <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent to-white/5" />
