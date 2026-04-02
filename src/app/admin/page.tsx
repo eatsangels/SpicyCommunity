@@ -14,7 +14,7 @@ import {
 import { createClient } from '@/lib/supabase/client';
 import { useEffect, useState } from 'react';
 
-export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default function AdminDashboard() {
   const t = useTranslations('Admin');
