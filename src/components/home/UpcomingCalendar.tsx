@@ -167,10 +167,14 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
     setIsPending(false);
   };
 
+  // Get the time component directly from the ISO string to avoid TZ drift
+  // tournament.scheduled_at looks like "2026-04-05T11:00:00Z" or similar
   const date = new Date(tournament.scheduled_at!);
   const day = format(date, 'dd');
   const month = format(date, 'MMMM', { locale });
-  const time = format(date, 'HH:mm');
+  
+  // Format the time as HH:mm directly from the date object
+  const time = format(date, 'HH:mm'); 
 
   return (
     <motion.div

@@ -213,18 +213,25 @@ export default function CreateTournamentForm({ initialData }: CreateTournamentFo
         }
         participantsPayload.push({ name: slot.name, logo_url: logoUrl, team_id: teamId });
       }
+      let finalScheduledAt = null;
+      if (formData.isScheduled && formData.scheduledAt) {
+        // Convert 'datetime-local' (which ignores TZ) to a real UTC Date object
+        const localDate = new Date(formData.scheduledAt);
+        finalScheduledAt = localDate.toISOString();
+      }
+
       let result;
       if (initialData) {
         result = await updateTournamentAction(initialData.id, { 
           ...formData, 
           participants: JSON.stringify(participantsPayload),
-          scheduledAt: formData.isScheduled ? formData.scheduledAt : null
+          scheduledAt: finalScheduledAt
         });
       } else {
         result = await createTournamentAction({ 
           ...formData, 
           participants: JSON.stringify(participantsPayload),
-          scheduledAt: formData.isScheduled ? formData.scheduledAt : null
+          scheduledAt: finalScheduledAt
         });
       }
 
