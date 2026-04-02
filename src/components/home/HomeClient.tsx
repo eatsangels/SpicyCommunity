@@ -224,7 +224,7 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </Button>
             </Link>
-            <a href="https://discord.gg/spicy" target="_blank" rel="noopener noreferrer">
+            <a href="https://discord.gg/z86C3DXpKq" target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 
                 bg-white/5 backdrop-blur-3xl text-white
                 shadow-[0_20px_50px_rgba(0,0,0,0.3),inset_0_2px_4px_rgba(255,255,255,0.1)] 
