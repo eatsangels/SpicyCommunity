@@ -80,7 +80,9 @@ export default function AdminSidebar() {
               SPICY
             </span>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] font-black tracking-widest text-[#ffaa00]/40 uppercase flex-shrink-0">ADMIN</span>
+              <span className="text-[10px] font-black tracking-widest text-[#ffaa00]/40 uppercase flex-shrink-0">
+                {role === 'moderator' ? 'MOD' : 'ADMIN'}
+              </span>
               <div className="h-px bg-[#ffaa00]/10 flex-1" />
             </div>
           </div>

@@ -154,7 +154,7 @@ export default function Navbar() {
                 </Link>
                 {(user && (role === 'admin' || role === 'moderator')) && (
                   <Link href={adminHref} className="text-[#ffaa00] hover:brightness-110 transition-all border-b border-[#ffaa00]/0 hover:border-[#ffaa00]/100">
-                    ADMIN
+                    {role === 'moderator' ? 'MOD' : 'ADMIN'}
                   </Link>
                 )}
               </div>
@@ -305,7 +305,7 @@ export default function Navbar() {
                 onClick={() => setShowMenu(false)}
                 className="text-3xl font-black uppercase italic tracking-tighter text-[#ffaa00] py-3 border-b border-white/5"
               >
-                {tc('admin_panel')}
+                {role === 'moderator' ? 'MOD PANEL' : tc('admin_panel')}
               </Link>
             )}
           </div>
