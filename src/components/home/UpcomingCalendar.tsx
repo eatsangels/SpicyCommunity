@@ -2,13 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { Trophy, Calendar as CalendarIcon, LucideIcon, MapPin, Users, Heart } from 'lucide-react';
+import { Trophy, Calendar as CalendarIcon, LucideIcon, MapPin, Users, Heart, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import { Tables } from '@/types/database.types';
 import { cn } from '@/lib/utils';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { toggleTournamentLikeAction } from '@/app/actions/tournament';
 
@@ -28,6 +28,15 @@ export default function UpcomingCalendar({ tournaments, locale, user, compact }:
   const t = useTranslations('Index');
   const tt = useTranslations('Tournament');
   const dateLocale = locale === 'es' ? es : enUS;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   if (!tournaments) return null;
 
@@ -65,9 +74,31 @@ export default function UpcomingCalendar({ tournaments, locale, user, compact }:
         </div>
 
         {/* Horizontal Feed or Empty State */}
-        <div className="relative overflow-visible pb-10">
+        <div className="relative overflow-visible pb-10 group/container">
           {tournaments.length > 0 ? (
-            <div className="flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-none">
+            <>
+              {/* Navigation Buttons */}
+              <div className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center gap-2 opacity-0 group-hover/container:opacity-100 transition-opacity">
+                <button 
+                  onClick={() => scroll('left')}
+                  className="w-12 h-12 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black hover:border-[#ffaa00] transition-all shadow-2xl backdrop-blur-xl"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+              </div>
+              <div className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center gap-2 opacity-0 group-hover/container:opacity-100 transition-opacity">
+                <button 
+                  onClick={() => scroll('right')}
+                  className="w-12 h-12 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black hover:border-[#ffaa00] transition-all shadow-2xl backdrop-blur-xl"
+                >
+                  <ChevronRight size={24} />
+                </button>
+              </div>
+
+              <div 
+                ref={scrollRef}
+                className="flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-none"
+              >
               {tournaments.map((tourney, index) => (
                 <CalendarCard 
                   key={tourney.id} 
@@ -79,6 +110,7 @@ export default function UpcomingCalendar({ tournaments, locale, user, compact }:
                 />
               ))}
             </div>
+          </>
           ) : (
             <div className="w-full flex items-center justify-center bg-zinc-900/40 border border-white/10 rounded-[1.5rem] p-12 backdrop-blur-xl">
               <div className="text-center space-y-4 max-w-sm">
@@ -108,6 +140,7 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
   }, [tournament, user]);
 
   const [isLiked, setIsLiked] = useState(isInitiallyLiked);
+  const [likesCount, setLikesCount] = useState(tournament.tournament_likes?.length || 0);
   const [isPending, setIsPending] = useState(false);
 
   const handleLike = async () => {
@@ -120,12 +153,14 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
 
     // Optimistic UI Update
     setIsLiked(!isLiked);
+    setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
     setIsPending(true);
 
     const result = await toggleTournamentLikeAction(tournament.id);
     if (!result.success) {
       // Revert if failed
       setIsLiked(isLiked);
+      setLikesCount(prev => !isLiked ? prev - 1 : prev + 1);
       toast(result.error || "Something went wrong", "error");
     }
     
@@ -186,24 +221,32 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
                 {tournament.name}
               </h3>
               
-              <button 
-                onClick={handleLike}
-                disabled={isPending}
-                className={cn(
-                  "flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center border transition-all group/btn",
-                   isLiked 
-                    ? "bg-[#ffaa00] border-[#ffaa00] text-black shadow-[0_0_20px_rgba(255,170,0,0.5)]" 
-                    : "bg-white/5 border-white/10 hover:bg-[#ffaa00]/10 hover:border-[#ffaa00]/50 text-white"
-                )}
-              >
-                 <Heart 
-                   size={14} 
-                   className={cn(
-                     "sm:size-[16px] transition-transform group-hover/btn:scale-110",
-                     isLiked ? "fill-black" : "fill-transparent text-white/40"
-                   )} 
-                 />
-              </button>
+                <div className="flex flex-col items-center gap-1">
+                  <button 
+                    onClick={handleLike}
+                    disabled={isPending}
+                    className={cn(
+                      "flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10 rounded-full flex items-center justify-center border transition-all group/btn",
+                       isLiked 
+                        ? "bg-[#ffaa00] border-[#ffaa00] text-black shadow-[0_0_20px_rgba(255,170,0,0.5)]" 
+                        : "bg-white/5 border-white/10 hover:bg-[#ffaa00]/10 hover:border-[#ffaa00]/50 text-white"
+                    )}
+                  >
+                     <Heart 
+                       size={14} 
+                       className={cn(
+                         "sm:size-[16px] transition-transform group-hover/btn:scale-110",
+                         isLiked ? "fill-black" : "fill-transparent text-white/40"
+                       )} 
+                     />
+                  </button>
+                  <span className={cn(
+                    "text-[8px] font-black uppercase tracking-widest",
+                    isLiked ? "text-[#ffaa00]" : "text-white/20"
+                  )}>
+                    {likesCount} {likesCount === 1 ? 'Like' : 'Likes'}
+                  </span>
+                </div>
             </div>
 
             <div className="flex flex-wrap gap-3 pt-2">
@@ -214,6 +257,10 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
               <div className="flex items-center gap-2 text-[10px] font-bold text-white/40 uppercase">
                 <MapPin size={12} />
                 <span>Online Arena</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] font-black text-[#ffaa00] border border-[#ffaa00]/20 bg-[#ffaa00]/5 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                <Clock size={10} className="animate-pulse" />
+                <span>{time}</span>
               </div>
             </div>
           </div>

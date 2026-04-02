@@ -5,8 +5,8 @@ import MatchNode from './MatchNode';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
-import { useTranslations } from 'next-intl';
-import { Trophy, Users, Zap, Radio } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
+import { Trophy, Users, Zap, Radio, ChevronLeft, ChevronRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function BracketView({ tournament, isAdmin = false }: { tournament: any, isAdmin?: boolean }) {
@@ -14,6 +14,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const t = useTranslations('Tournament');
   const tc = useTranslations('Common');
   const tWinner = useTranslations('WinnerCard');
+  const locale = useLocale();
   const [data, setData] = useState(tournament);
   const [isFinishing, setIsFinishing] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
@@ -248,6 +249,16 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
     .flatMap((r: any) => r.matches || [])
     .filter((m: any) => m.participant_a_id && m.participant_b_id)
     .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime());
+  
+  const tickerScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollTicker = (direction: 'left' | 'right') => {
+    if (tickerScrollRef.current) {
+      const { scrollLeft } = tickerScrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 300 : scrollLeft + 300;
+      tickerScrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div translate="no" className="fixed inset-0 bg-zinc-950 text-white selection:bg-[#ffaa00] flex flex-col pt-[88px] md:pt-[96px] p-2 md:p-4 overflow-hidden">
@@ -415,23 +426,41 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
 
         {/* RECENT MATCH TICKER (BOTTOM) */}
         {tickerMatches.length > 0 && (
-          <div className="shrink-0 border-t border-white/5 bg-black/40 backdrop-blur-md relative overflow-hidden py-4">
+          <div className="shrink-0 border-t border-white/5 bg-black/40 backdrop-blur-md relative overflow-hidden py-4 group/ticker">
+            {/* Navigation Buttons */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-4 z-30 flex gap-2 opacity-0 group-hover/ticker:opacity-100 transition-opacity">
+              <button 
+                onClick={() => scrollTicker('left')}
+                className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                onClick={() => scrollTicker('right')}
+                className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+
             {/* Label */}
             <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center gap-2 px-3 py-1 bg-black/60 border border-[#ffaa00]/20 rounded-md">
               <div className="w-1.5 h-1.5 bg-[#ffaa00] rounded-full animate-pulse" />
               <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ffaa00] italic">{tc('live_now')} / {tc('recent_results')}</span>
             </div>
 
-            <motion.div 
-              className="flex gap-8 items-center w-max"
-              animate={{ x: ["0%", "-50%"] }}
-              transition={{ duration: Math.max(30, tickerMatches.length * 8), repeat: Infinity, ease: "linear" }}
+            <div 
+              ref={tickerScrollRef}
+              className="w-full overflow-x-auto scrollbar-none scroll-smooth"
             >
-              {[...tickerMatches, ...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
-                <div
-                  key={`${match.id}-${idx}`}
-                  className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
-                >
+              <div 
+                className="flex gap-8 items-center shrink-0 animate-marquee hover:[animation-play-state:paused] px-6 lg:px-48 py-4 w-max"
+              >
+                {[...tickerMatches, ...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
+                  <div
+                    key={`${match.id}-${idx}`}
+                    className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
+                  >
                   <div className="flex items-center gap-4">
                     {/* Part A */}
                     <div className="flex items-center gap-2">
@@ -494,7 +523,8 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                   </div>
                 </div>
               ))}
-            </motion.div>
+              </div>
+            </div>
             
             {/* Overlays to hide start/end for the label */}
             <div className="absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 hidden lg:block" />

@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Link, useRouter } from "@/i18n/routing";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { Zap, Trophy, Radio, ChevronRight, Swords, Users } from "lucide-react";
+import { Zap, Trophy, Radio, ChevronRight, Swords, Users, ChevronLeft } from "lucide-react";
 import { Lightning } from "@/components/ui/hero-odyssey";
 import UpcomingCalendar from "@/components/home/UpcomingCalendar";
 import { useLocale } from "next-intl";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
 
@@ -30,6 +30,19 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
   const [scheduledTournaments, setScheduledTournaments] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const locale = useLocale();
+  const arenaScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const scrollArena = (direction: 'left' | 'right') => {
+    if (arenaScrollRef.current) {
+      const { scrollLeft, clientWidth } = arenaScrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 400 : scrollLeft + 400;
+      arenaScrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -358,28 +371,51 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
           <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter gradient-text">{t("live_arena")}</h2>
           <p className="text-[9px] uppercase font-black tracking-[0.4em] text-white/20">{t("joined_table")}</p>
         </div>
-        <div className="relative overflow-hidden group">
-          <div className="flex gap-5 shrink-0 w-max animate-marquee">
-            {[...recentTeams, ...recentTeams, ...recentTeams, ...recentTeams].map((team, i) => (
-              <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0 transform-gpu">
-                <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
-                  {team.logo_url
-                    ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
-                    : <span className="text-xl sm:text-3xl font-black text-[#ffaa00]">{team.name[0]}</span>
-                  }
+        <div className="relative group/arena">
+          {/* Navigation Buttons */}
+          <div className="absolute -left-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center gap-2 opacity-0 group-hover/arena:opacity-100 transition-opacity pl-8">
+            <button 
+              onClick={() => scrollArena('left')}
+              className="w-12 h-12 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black hover:border-[#ffaa00] transition-all shadow-2xl backdrop-blur-xl"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          </div>
+          <div className="absolute -right-4 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center gap-2 opacity-0 group-hover/arena:opacity-100 transition-opacity pr-8">
+            <button 
+              onClick={() => scrollArena('right')}
+              className="w-12 h-12 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black hover:border-[#ffaa00] transition-all shadow-2xl backdrop-blur-xl"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          <div 
+            ref={arenaScrollRef}
+            className="w-full flex gap-5 overflow-x-auto pb-12 px-8 md:px-16 scrollbar-none snap-x snap-mandatory scroll-smooth group"
+          >
+            <div className="flex gap-5 shrink-0 animate-marquee hover:[animation-play-state:paused]">
+              {[...recentTeams, ...recentTeams, ...recentTeams, ...recentTeams].map((team: any, i: number) => (
+                <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0 transform-gpu snap-center">
+                  <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
+                    {team.logo_url
+                      ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
+                      : <span className="text-xl sm:text-3xl font-black text-[#ffaa00]">{team.name[0]}</span>
+                    }
+                  </div>
+                  <div className="text-center flex flex-col items-center w-full">
+                    <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-[90%]">{team.name}</h3>
+                    <p className="text-[7px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate w-[90%]">{team.tournaments?.name || 'Local Duel'}</p>
+                  </div>
+                  <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30" suppressHydrationWarning>
+                    {isMounted ? tc('joined_at', { time: format(new Date(team.created_at), 'HH:mm') }) : '--:--'}
+                  </div>
                 </div>
-                <div className="text-center flex flex-col items-center w-full">
-                  <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-[90%]">{team.name}</h3>
-                  <p className="text-[7px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate w-[90%]">{team.tournaments?.name || 'Local Duel'}</p>
-                </div>
-                <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30" suppressHydrationWarning>
-                  {isMounted ? tc('joined_at', { time: format(new Date(team.created_at), 'HH:mm') }) : '--:--'}
-                </div>
-              </div>
-            ))}
-          {recentTeams.length === 0 && !loadingTeams && (
-            <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
-          )}
+              ))}
+            </div>
+            {recentTeams.length === 0 && !loadingTeams && (
+              <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
+            )}
           </div>
           <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
