@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Users, Search, Shield, User as UserIcon,
-  Trash2, Crown, UserX, Loader2, RefreshCw,
+  Users, Search, User as UserIcon,
+  Trash2, Crown, UserX, Loader2, RefreshCw, Shield,
 } from 'lucide-react';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { cn } from '@/lib/utils';
@@ -24,6 +24,11 @@ const roleBadge: Record<string, { label: string; style: string; icon: React.Reac
     label: 'Admin',
     style: 'bg-[#ffaa00]/20 text-[#ffaa00] border-[#ffaa00]/30',
     icon: <Crown size={10} />,
+  },
+  moderator: {
+    label: 'Moderator',
+    style: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+    icon: <Shield size={10} />,
   },
   user: {
     label: 'User',
@@ -54,9 +59,8 @@ export default function AdminUsersPage() {
   useEffect(() => { loadUsers(); }, [loadUsers]);
 
   // ── Change role ────────────────────────────────────────────────────────────
-  const toggleRole = async (user: Profile) => {
-    const newRole = user.role === 'admin' ? 'user' : 'admin';
-    const label = newRole === 'admin' ? 'Admin' : 'User';
+  const changeRole = async (user: Profile, newRole: string) => {
+    const label = newRole === 'admin' ? 'Admin' : newRole === 'moderator' ? 'Moderator' : 'User';
     const ok = await spicyConfirm(
       `¿Cambiar el rol de "${user.username || 'este usuario'}" a ${label}?`
     );
@@ -248,9 +252,10 @@ export default function AdminUsersPage() {
                         <Loader2 size={18} className="animate-spin text-[#ffaa00]" />
                       ) : (
                         <>
+                          {/* Botón Admin */}
                           <button
-                            onClick={() => toggleRole(user)}
-                            title={role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                            onClick={() => changeRole(user, role === 'admin' ? 'user' : 'admin')}
+                            title={role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
                             className={cn(
                               'w-full md:w-9 h-11 md:h-9 rounded-xl flex items-center justify-center gap-2 transition-all font-black uppercase text-[10px] tracking-widest',
                               role === 'admin'
@@ -259,7 +264,22 @@ export default function AdminUsersPage() {
                             )}
                           >
                             <Crown size={14} className={role === 'admin' ? 'md:text-[#ffaa00]' : ''} />
-                            <span className="md:hidden">{role === 'admin' ? 'Revoke Admin' : 'Make Admin'}</span>
+                            <span className="md:hidden">{role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}</span>
+                          </button>
+
+                          {/* Botón Moderador */}
+                          <button
+                            onClick={() => changeRole(user, role === 'moderator' ? 'user' : 'moderator')}
+                            title={role === 'moderator' ? 'Quitar Moderador' : 'Hacer Moderador'}
+                            className={cn(
+                              'w-full md:w-9 h-11 md:h-9 rounded-xl flex items-center justify-center gap-2 transition-all font-black uppercase text-[10px] tracking-widest',
+                              role === 'moderator'
+                                ? 'bg-cyan-500 text-black md:bg-cyan-500/10 md:text-cyan-400 hover:bg-cyan-500/20'
+                                : 'bg-white/5 text-white/50 hover:bg-cyan-500/10 hover:text-cyan-400'
+                            )}
+                          >
+                            <Shield size={14} className={role === 'moderator' ? 'md:text-cyan-400' : ''} />
+                            <span className="md:hidden">{role === 'moderator' ? 'Quitar Mod' : 'Hacer Mod'}</span>
                           </button>
 
                           <button

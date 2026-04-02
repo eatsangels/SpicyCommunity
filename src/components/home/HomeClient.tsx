@@ -216,14 +216,22 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-4 sm:gap-6 pt-12">
             <Link href="/tournaments">
-              <Button size="lg" className="h-14 sm:h-16 px-10 sm:px-14 rounded-full text-lg sm:text-xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#ffaa00] text-black hover:bg-[#ffaa00]/90 shadow-[0_0_40px_rgba(255,170,0,0.15)]">
-                {tc("tournaments")}
+              <Button size="lg" className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 
+                bg-white/5 backdrop-blur-3xl text-white
+                shadow-[0_20px_50px_rgba(0,0,0,0.3),inset_0_2px_4px_rgba(255,255,255,0.1)] 
+                border border-white/10 hover:bg-white/10 relative overflow-hidden group">
+                <span className="relative z-10">{tc("tournaments")}</span>
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </Button>
             </Link>
             <a href="https://discord.gg/spicy" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="h-14 sm:h-16 px-10 sm:px-14 rounded-full text-lg sm:text-xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95 bg-[#5865F2] text-white hover:bg-[#5865F2]/90 shadow-[0_0_40px_rgba(88,101,242,0.2)] flex items-center gap-3">
-                <MessageSquare size={24} className="fill-white" />
-                Discord
+              <Button size="lg" className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 
+                bg-white/5 backdrop-blur-3xl text-white
+                shadow-[0_20px_50px_rgba(0,0,0,0.3),inset_0_2px_4px_rgba(255,255,255,0.1)] 
+                border border-white/10 flex items-center gap-4 relative overflow-hidden group hover:bg-white/10">
+                <MessageSquare size={28} className="fill-white relative z-10" />
+                <span className="relative z-10">Discord</span>
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </Button>
             </a>
           </motion.div>
