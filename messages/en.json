@@ -107,7 +107,7 @@
     "logout": "Logout",
     "email": "Email",
     "username": "Username",
-    "team_name": "Team Name (Optional)",
+    "team_name": "Game Tag (Optional)",
     "password": "Password",
     "confirm_password": "Confirm Password",
     "submit_login": "Deal",
