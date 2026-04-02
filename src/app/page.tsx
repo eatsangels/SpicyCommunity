@@ -26,7 +26,7 @@ export default function HomePage() {
   const [user, setUser] = useState<any>(null);
   const [recentTeams, setRecentTeams] = useState<any[]>([]);
   const [loadingTeams, setLoadingTeams] = useState(true);
-  const [liveTournament, setLiveTournament] = useState<any>(null);
+  const [liveTournaments, setLiveTournaments] = useState<any[]>([]);
   const [liveMatch, setLiveMatch] = useState<any>(null);
   const [scheduledTournaments, setScheduledTournaments] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -47,9 +47,9 @@ export default function HomePage() {
       setLoadingTeams(false);
     };
 
-    const fetchLiveTournament = async () => {
-      // Try in_progress first
-      let { data: tournament } = await supabase
+    const fetchLiveTournaments = async () => {
+      // 1. Fetch all 'in_progress' tournaments
+      let { data: inProgress } = await supabase
         .from('tournaments')
         .select(`
           id, name, status, scheduled_at,
@@ -65,12 +65,12 @@ export default function HomePage() {
           )
         `)
         .eq('status', 'in_progress')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .order('created_at', { ascending: false });
 
-      // Fallback: show any non-completed tournament that IS ALREADY SCHEDULED / STARTED
-      if (!tournament) {
+      let list = inProgress || [];
+
+      // 2. Fallback: if list is empty, look for recently scheduled ones that should be started
+      if (list.length === 0) {
         const { data: fallback } = await supabase
           .from('tournaments')
           .select(`
@@ -87,17 +87,18 @@ export default function HomePage() {
             )
           `)
           .neq('status', 'completed')
-          .lte('scheduled_at', new Date().toISOString()) // ONLY show if time has reached or passed
+          .lte('scheduled_at', new Date().toISOString())
           .order('scheduled_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        tournament = fallback;
+          .limit(1);
+        if (fallback) list = fallback;
       }
 
-      if (tournament) {
-        setLiveTournament(tournament);
-        // Find the most recent ongoing or pending match in the latest round
-        const allRounds = tournament.rounds ?? [];
+      setLiveTournaments(list);
+      
+      if (list.length > 0) {
+        const primary = list[0];
+        // Find the most recent ongoing or pending match in the latest round of the featured tournament
+        const allRounds = primary.rounds ?? [];
         const latestRound = [...allRounds].sort((a: any, b: any) => b.round_number - a.round_number)[0];
         if (latestRound) {
           const activeMatch = latestRound.matches?.find((m: any) => m.status === 'ongoing')
@@ -118,14 +119,14 @@ export default function HomePage() {
     };
 
     fetchTeams();
-    fetchLiveTournament();
+    fetchLiveTournaments();
     fetchScheduledTournaments();
 
     // Real Time subscription for matches
     const channel = supabase
       .channel('live-matches')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
-        fetchLiveTournament();
+        fetchLiveTournaments();
       })
       .subscribe();
 
@@ -143,7 +144,7 @@ export default function HomePage() {
 
       {/* ─── LIVE TICKER BANNER ─── */}
       <AnimatePresence>
-        {liveTournament && (
+        {liveTournaments.length > 0 && (
           <motion.div
             initial={{ y: -60, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -151,7 +152,7 @@ export default function HomePage() {
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
             className="fixed top-20 left-0 right-0 z-40 flex justify-center pointer-events-none"
           >
-            <Link href={`/tournaments/${liveTournament.id}`} className="pointer-events-auto">
+            <Link href={`/tournaments/${liveTournaments[0].id}`} className="pointer-events-auto">
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 className="mx-4 flex items-center gap-3 bg-black/90 border border-[#ffaa00]/40 rounded-full px-5 py-2 shadow-[0_0_30px_rgba(255,170,0,0.15)] backdrop-blur-md cursor-pointer"
@@ -163,7 +164,7 @@ export default function HomePage() {
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#ffaa00]">{tc('live_now')}</span>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-white/50 max-w-[140px] sm:max-w-xs break-words">
-                  {liveTournament.name}
+                  {liveTournaments[0].name}
                 </span>
                 {liveMatch?.participant_a && liveMatch?.participant_b && (
                   <>
@@ -232,14 +233,14 @@ export default function HomePage() {
 
       {/* ─── LIVE TOURNAMENT CARD ─── */}
       <AnimatePresence>
-        {liveTournament && (
+        {liveTournaments.length > 0 && (
           <motion.section
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             className="relative z-10 px-4 sm:px-8 md:px-16 -mt-8 mb-16"
           >
-            <Link href={`/tournaments/${liveTournament.id}`}>
+            <Link href={`/tournaments/${liveTournaments[0].id}`}>
               <motion.div
                 whileHover={{ scale: 1.01 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
@@ -263,11 +264,11 @@ export default function HomePage() {
                       <span className="text-[#ffaa00] text-[10px] font-black uppercase tracking-[0.4em]">{tc('live_tournament')}</span>
                     </div>
                     <h2 className="text-2xl sm:text-4xl font-black italic uppercase tracking-tighter text-white group-hover:text-[#ffaa00] transition-colors break-words leading-tight">
-                      {liveTournament.name}
+                      {liveTournaments[0].name}
                     </h2>
                     <div className="flex items-center gap-4 mt-2 text-[10px] font-bold uppercase tracking-widest text-white/30">
                       <span className="flex items-center gap-1.5">
-                        <Users size={10} /> {tc('players', { count: liveTournament.participants?.length ?? 0 })}
+                        <Users size={10} /> {tc('players', { count: liveTournaments[0].participants?.length ?? 0 })}
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Radio size={10} className="text-[#ffaa00]" /> {tc('in_progress')}
@@ -330,6 +331,51 @@ export default function HomePage() {
             </Link>
           </motion.section>
         )}
+      </AnimatePresence>
+
+      {/* ─── ADDITIONAL LIVE ACTION GRID ─── */}
+      <AnimatePresence>
+         {liveTournaments.length > 1 && (
+           <motion.section 
+             initial={{ opacity: 0 }}
+             whileInView={{ opacity: 1 }}
+             className="relative z-10 px-8 lg:px-16 mb-20"
+           >
+              <div className="flex items-center gap-4 mb-8">
+                 <div className="h-px flex-1 bg-gradient-to-r from-transparent to-white/5" />
+                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-white/20">{tc('more_live_action')}</h2>
+                 <div className="h-px flex-1 bg-gradient-to-l from-transparent to-white/5" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {liveTournaments.slice(1).map((tourney) => (
+                  <Link key={tourney.id} href={`/tournaments/${tourney.id}`}>
+                    <motion.div 
+                      whileHover={{ y: -5 }}
+                      className="p-6 bg-zinc-900/50 border border-white/5 rounded-[2rem] hover:border-[#ffaa00]/30 transition-all group"
+                    >
+                       <div className="flex justify-between items-start mb-4">
+                          <div className="p-2 bg-white/5 rounded-xl text-[#ffaa00]">
+                             <Trophy size={16} />
+                          </div>
+                          <div className="flex items-center gap-2 px-2 py-0.5 bg-[#ffaa00]/10 rounded border border-[#ffaa00]/20">
+                             <div className="w-1 h-1 rounded-full bg-[#ffaa00] animate-pulse" />
+                             <span className="text-[7px] font-black text-[#ffaa00] tracking-widest uppercase italic">{tc('live')}</span>
+                          </div>
+                       </div>
+                       <h3 className="text-xl font-black uppercase italic tracking-tighter leading-tight group-hover:text-[#ffaa00] transition-colors mb-2">
+                         {tourney.name}
+                       </h3>
+                       <div className="flex items-center justify-between text-[9px] font-bold text-white/20 uppercase tracking-widest">
+                          <span>{tourney.participants?.length || 0} teams</span>
+                          <span className="text-[#ffaa00]/40 group-hover:text-[#ffaa00] transition-colors">Enter Arena →</span>
+                       </div>
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
+           </motion.section>
+         )}
       </AnimatePresence>
 
       {/* Live Community Feed */}

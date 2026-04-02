@@ -29,7 +29,7 @@ export default async function TournamentsPage() {
   const totalTeams = tournaments?.reduce((acc, t) => acc + (t.participants?.length || 0), 0) || 0;
 
   return (
-    <div className="relative min-h-screen bg-black text-white px-4 pt-32 pb-10 overflow-hidden">
+    <div className="relative min-h-screen bg-black text-white px-4 pt-24 pb-10 overflow-hidden">
       {/* BACKGROUND DECOR */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 opacity-20 blur-[2px] mix-blend-screen">
@@ -44,42 +44,42 @@ export default async function TournamentsPage() {
       {/* CONTENT WAPPER */}
       <div className="relative z-10">
         {/* Header */}
-      <div className="max-w-5xl mx-auto mb-12 text-center">
+      <div className="max-w-5xl mx-auto mb-6 text-center">
         <div className="inline-flex items-center gap-2 text-[#ffaa00] text-[10px] font-black uppercase tracking-[0.3em] mb-4 bg-[#ffaa00]/10 border border-[#ffaa00]/20 px-4 py-1.5 rounded-full shadow-[0_0_20px_rgba(255,170,0,0.1)]">
           <Zap size={10} className="animate-pulse" />
           SPICY COMMUNITY
         </div>
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black italic tracking-tighter uppercase mb-4 gradient-text-luxury" style={{ textShadow: "0 0 80px rgba(255,170,0,0.3)" }}>
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black italic tracking-tighter uppercase mb-4 gradient-text-luxury" style={{ textShadow: "0 0 80px rgba(255,170,0,0.3)" }}>
           {tc("tournaments") || "Tournaments"}
         </h1>
-        <p className="text-white/40 text-xs md:text-sm tracking-[0.4em] uppercase font-bold max-w-xl mx-auto mb-12">
+        <p className="text-white/40 text-[9px] md:text-[10px] tracking-[0.4em] uppercase font-bold max-w-xl mx-auto mb-6">
           {tc("live_now") || "Live Arena Updates"}
         </p>
 
         {/* Global Stats Grid */}
-        <div className="grid grid-cols-3 gap-3 md:gap-6 w-full max-w-3xl mx-auto">
-          <div className="flex flex-col items-center p-5 md:p-8 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
+        <div className="grid grid-cols-3 gap-3 md:gap-6 w-full max-w-3xl mx-auto mb-4">
+          <div className="flex flex-col items-center p-4 md:p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-3xl md:text-5xl font-black text-white leading-none mb-2">{totalTournaments}</span>
-            <span className="text-[9px] md:text-[11px] font-black uppercase tracking-widest text-[#ffaa00] text-center">TOTAL TOURNAMENTS</span>
+            <span className="text-2xl md:text-4xl font-black text-white leading-none mb-1">{totalTournaments}</span>
+            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-[#ffaa00] text-center">TOTALS</span>
           </div>
-          <div className="flex flex-col items-center p-5 md:p-8 bg-[#ffaa00]/5 border border-[#ffaa00]/20 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
+          <div className="flex flex-col items-center p-4 md:p-6 bg-[#ffaa00]/5 border border-[#ffaa00]/20 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-3xl md:text-5xl font-black text-[#ffaa00] leading-none mb-2">{active.length}</span>
-            <span className="text-[9px] md:text-[11px] font-black uppercase tracking-widest text-[#ffaa00]/70 text-center flex items-center gap-1">
-               <span className="w-1.5 h-1.5 rounded-full bg-[#ffaa00] animate-pulse" /> LIVE NOW
+            <span className="text-2xl md:text-4xl font-black text-[#ffaa00] leading-none mb-1">{active.length}</span>
+            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-[#ffaa00]/70 text-center flex items-center gap-1">
+               LIVE
             </span>
           </div>
-          <div className="flex flex-col items-center p-5 md:p-8 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
+          <div className="flex flex-col items-center p-4 md:p-6 bg-white/5 border border-white/10 rounded-[2rem] backdrop-blur-md shadow-xl relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="text-3xl md:text-5xl font-black text-white leading-none mb-2">{totalTeams}</span>
-            <span className="text-[9px] md:text-[11px] font-black uppercase tracking-widest text-white/40 text-center">COMPETING TEAMS</span>
+            <span className="text-2xl md:text-4xl font-black text-white leading-none mb-1">{totalTeams}</span>
+            <span className="text-[8px] md:text-[9px] font-black uppercase tracking-widest text-white/40 text-center">TEAMS</span>
           </div>
         </div>
       </div>
 
       {/* UPCOMING CALENDAR */}
-      <div className="max-w-5xl mx-auto -mt-6 mb-8">
+      <div className="max-w-5xl mx-auto mb-8">
         <UpcomingCalendar tournaments={scheduledTournaments as any} locale={locale} user={user} compact={true} />
       </div>
 

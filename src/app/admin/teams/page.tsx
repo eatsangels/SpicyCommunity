@@ -20,7 +20,7 @@ interface EditingState {
 
 export default function AdminTeamsPage() {
   const supabase = createClient();
-  const { toast, confirm } = useAlert();
+  const { toast, confirm: spicyConfirm } = useAlert();
   const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EditingState | null>(null);
@@ -110,7 +110,7 @@ export default function AdminTeamsPage() {
 
   // ── Delete team ──────────────────────────────────────────────────────────────
   const handleDelete = async (id: string) => {
-    const ok = await confirm('¿Eliminar este equipo del registro global? Esta acción no se puede deshacer.');
+    const ok = await spicyConfirm('¿Eliminar este equipo del registro global? Esta acción no se puede deshacer.');
     if (!ok) return;
     setDeleting(id);
     try {

@@ -11,10 +11,11 @@ export default function DeleteTournamentButton({ id }: { id: string }) {
   const [deleting, setDeleting] = useState(false);
   const t = useTranslations('Tournament');
   const router = useRouter();
-  const { toast } = useAlert();
+  const { toast, confirm: spicyConfirm } = useAlert();
 
   const handleDelete = async () => {
-    if (!confirm(t('delete_confirm_msg'))) return;
+    const ok = await spicyConfirm(t('delete_confirm_msg'));
+    if (!ok) return;
 
     setDeleting(true);
     try {

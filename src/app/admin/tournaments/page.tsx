@@ -22,14 +22,14 @@ import { deleteTournamentAction } from '@/app/actions/tournament';
 export default function AdminTournaments() {
   const t = useTranslations('Admin');
   const tt = useTranslations('Tournament');
-  const { confirm, toast } = useAlert();
+  const { confirm: spicyConfirm, toast } = useAlert();
   const supabase = createClient();
   const [tournaments, setTournaments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    const ok = await confirm(tt('delete_confirm_msg') || t('confirm_delete_tournament'));
+    const ok = await spicyConfirm(tt('delete_confirm_msg') || t('confirm_delete_tournament'));
     if (ok) {
        const res = await deleteTournamentAction(id);
        if (res.success) {

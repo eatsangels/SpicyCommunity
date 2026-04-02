@@ -164,86 +164,81 @@ function ConfirmModal({ dialog }: { dialog: ConfirmDialog }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-[10000] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
       onClick={() => dialog.resolve(false)}
     >
       <motion.div
-        initial={{ scale: 0.75, rotate: -3, opacity: 0 }}
-        animate={{ scale: 1, rotate: 0, opacity: 1 }}
-        exit={{ scale: 0.75, rotate: 3, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         onClick={e => e.stopPropagation()}
         className="
           relative w-full max-w-sm
-          bg-gradient-to-br from-zinc-900 to-black
-          border-4 border-[#ffaa00]
-          rounded-[2.5rem] overflow-hidden
-          shadow-[0_0_60px_rgba(255,170,0,0.3)]
+          bg-zinc-950 border border-white/10
+          rounded-[2rem] overflow-hidden
+          shadow-[0_20px_100px_rgba(0,0,0,0.8)]
         "
       >
-        {/* Top accent strip */}
-        <div className="bg-[#ffaa00] px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Zap size={22} className="text-black" fill="black" />
-            <span className="text-black font-black uppercase italic tracking-[0.2em] text-sm">
-              SpicyBracket
-            </span>
-          </div>
-          {/* UNO-style circle */}
-          <div className="w-8 h-8 rounded-full bg-black/20 border-2 border-black/30 flex items-center justify-center">
-            <span className="text-black font-black text-xs italic">!</span>
-          </div>
-        </div>
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-[#ffaa00]/10 blur-[50px] -z-10 rounded-full" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#ff5555]/10 blur-[50px] -z-10 rounded-full" />
 
-        {/* Body */}
-        <div className="px-8 py-8 space-y-6">
-          {/* Warning icon UNO card style */}
-          <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-[1.5rem] border-4 border-[#ffaa00] bg-[#ffaa00]/10 flex items-center justify-center rotate-6 shadow-[0_0_30px_rgba(255,170,0,0.2)]">
-              <AlertTriangle size={36} className="text-[#ffaa00] -rotate-6" />
-            </div>
+        {/* Content */}
+        <div className="px-10 pt-12 pb-10 space-y-8 flex flex-col items-center">
+          {/* Professional Warning Icon */}
+          <div className="relative group">
+             <div className="absolute inset-0 bg-[#ffaa00]/20 blur-2xl rounded-full scale-150 animate-pulse" />
+             <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-[#ffaa00]/20 to-black border border-[#ffaa00]/30 flex items-center justify-center shadow-inner">
+               <AlertTriangle size={32} className="text-[#ffaa00] drop-shadow-[0_0_10px_rgba(255,170,0,0.5)]" strokeWidth={1.5} />
+             </div>
           </div>
 
-          <p className="text-white/90 text-center font-bold leading-relaxed text-sm">
-            {dialog.message}
-          </p>
+          <div className="space-y-3 text-center">
+             <h3 className="text-xl font-black uppercase italic tracking-tighter text-white">
+                Arena Confirmation
+             </h3>
+             <p className="text-white/40 text-xs font-medium leading-relaxed tracking-wide px-2">
+                {dialog.message}
+             </p>
+          </div>
 
-          {/* Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Luxury Buttons */}
+          <div className="grid grid-cols-1 w-full gap-3">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => dialog.resolve(false)}
-              className="
-                h-12 rounded-2xl bg-white/5 border-2 border-white/10
-                text-white/50 font-black uppercase text-[10px] tracking-widest
-                hover:bg-white/10 hover:text-white transition-all
-                flex items-center justify-center gap-2
-              "
-            >
-              <X size={14} />
-              Cancel
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(239,68,68,0.5)' }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => dialog.resolve(true)}
               className="
-                h-12 rounded-2xl bg-[#ef4444] border-2 border-[#ef4444]
-                text-white font-black uppercase text-[10px] tracking-widest
-                hover:bg-[#dc2626] transition-all
-                flex items-center justify-center gap-2
+                h-14 rounded-2xl bg-[#ffaa00] text-black font-black uppercase text-[11px] tracking-[0.2em]
+                hover:bg-[#ffbb33] transition-all
+                flex items-center justify-center gap-3 shadow-[0_4px_20px_rgba(255,170,0,0.2)]
               "
             >
-              <Check size={14} />
-              Confirm
+              <Check size={16} strokeWidth={3} />
+              Confirm Action
             </motion.button>
+            
+            <button
+              onClick={() => dialog.resolve(false)}
+              className="
+                h-14 rounded-2xl bg-white/5 border border-white/5
+                text-white/30 font-black uppercase text-[11px] tracking-[0.2em]
+                hover:bg-white/10 hover:text-white transition-all
+                flex items-center justify-center gap-3
+              "
+            >
+              <X size={16} strokeWidth={3} />
+              Cancel
+            </button>
           </div>
         </div>
 
-        {/* Corner decorations */}
-        <div className="absolute top-3 left-3 text-[8px] font-black text-[#ffaa00]/30 italic rotate-180">UNO</div>
-        <div className="absolute bottom-3 right-3 text-[8px] font-black text-[#ffaa00]/30 italic">UNO</div>
+        {/* Branding accents */}
+        <div className="absolute top-4 left-4 flex items-center gap-2 opacity-20">
+           <Zap size={10} className="text-[#ffaa00]" fill="currentColor" />
+           <span className="text-[8px] font-black uppercase tracking-widest text-[#ffaa00]">Uno System</span>
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -34,7 +34,7 @@ const roleBadge: Record<string, { label: string; style: string; icon: React.Reac
 
 export default function AdminUsersPage() {
   const supabase = createClient();
-  const { toast, confirm } = useAlert();
+  const { toast, confirm: spicyConfirm } = useAlert();
 
   const [users, setUsers] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ export default function AdminUsersPage() {
   const toggleRole = async (user: Profile) => {
     const newRole = user.role === 'admin' ? 'user' : 'admin';
     const label = newRole === 'admin' ? 'Admin' : 'User';
-    const ok = await confirm(
+    const ok = await spicyConfirm(
       `¿Cambiar el rol de "${user.username || 'este usuario'}" a ${label}?`
     );
     if (!ok) return;
@@ -79,7 +79,7 @@ export default function AdminUsersPage() {
 
   // ── Delete user ────────────────────────────────────────────────────────────
   const deleteUser = async (user: Profile) => {
-    const ok = await confirm(
+    const ok = await spicyConfirm(
       `¿Eliminar permanentemente a "${user.username || 'este usuario'}"? Esta acción no se puede deshacer.`
     );
     if (!ok) return;
