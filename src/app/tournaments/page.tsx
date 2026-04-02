@@ -79,8 +79,8 @@ export default async function TournamentsPage() {
       </div>
 
       {/* UPCOMING CALENDAR */}
-      <div className="max-w-5xl mx-auto mb-14">
-        <UpcomingCalendar tournaments={scheduledTournaments as any} locale={locale} user={user} />
+      <div className="max-w-5xl mx-auto -mt-6 mb-8">
+        <UpcomingCalendar tournaments={scheduledTournaments as any} locale={locale} user={user} compact={true} />
       </div>
 
       {/* Active Tournaments */}

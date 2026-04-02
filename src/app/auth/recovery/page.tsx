@@ -35,73 +35,95 @@ export default function RecoveryPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto">
+    <div className="flex-1 w-full relative flex items-start justify-center p-6 pt-10 sm:pt-20 min-h-[70vh]">
+      {/* Background Winners Style */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2 }}
+        className="absolute inset-0 z-0 overflow-hidden"
+      >
+        <div className="absolute inset-0 bg-black/60 z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-b from-[#ffaa00]/20 to-[#ff5500]/5 blur-3xl" />
+        <div className="absolute top-[60%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle_at_25%_90%,_#3a2500_10%,_#000000cc_60%,_#000000f0_100%)] backdrop-blur-3xl" />
+      </motion.div>
+
+      <div className="relative z-20 w-full max-w-md mx-auto py-4 sm:py-8">
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={`uno-card p-10 bg-zinc-900 border-4 border-[#ffaa55] shadow-2xl relative overflow-hidden`}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="relative w-full max-h-[85vh] sm:max-h-none overflow-y-auto sm:overflow-visible rounded-[1.5rem] sm:rounded-[2rem] bg-black/60 backdrop-blur-xl border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.8)]"
         >
-          {/* Decorative corner numbers (UNO style) */}
-          <div className="absolute top-4 left-4 text-4xl font-black opacity-10">?</div>
-          <div className="absolute bottom-4 right-4 text-4xl font-black opacity-10">?</div>
+          {/* Decorative element */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#ffaa00] to-transparent opacity-50" />
 
-          <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-            <div className="text-center space-y-2">
-              <h2 className="text-4xl font-black italic uppercase gradient-text">
-                  {t('recover_password')}
-              </h2>
-            </div>
-
-            {error && (
-              <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-xl text-xs text-red-200 font-bold uppercase tracking-wider text-center">
-                {error}
-              </div>
-            )}
-
-            {success ? (
-              <div className="p-6 bg-green-500/20 border border-green-500/50 rounded-xl text-center space-y-4">
-                <p className="text-green-200 font-bold uppercase tracking-wider">
-                  {t('email_sent')}
-                </p>
-                <Link href="/auth/login" className="text-xs text-white/50 hover:text-white underline block pt-4 uppercase font-black tracking-widest">
-                  {t('login')}
-                </Link>
-              </div>
-            ) : (
-              <>
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-white/50 px-2">{t('email')}</label>
-                    <input
-                      type="email"
-                      required
-                      className="w-full h-14 bg-black/40 border-2 border-white/5 rounded-2xl px-5 font-bold outline-none focus:border-white/20 transition-all"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  disabled={loading}
-                  className={`w-full h-16 bg-[#ffaa55] hover:brightness-110 text-black font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95`}
+          <div className="relative z-20 px-6 sm:px-8 py-8 sm:py-12 flex flex-col items-center">
+            
+            <form onSubmit={handleSubmit} className="w-full space-y-6">
+              <div className="mb-6 sm:mb-8 text-center">
+                <h2 
+                  className="text-[#ffaa00] font-black italic uppercase text-3xl sm:text-4xl tracking-tighter drop-shadow-xl"
+                  style={{ textShadow: '0 0 30px rgba(255,170,0,0.2)' }}
                 >
-                  {loading ? "..." : t('send_recovery_link')}
-                </Button>
+                    {t('recover_password')}
+                </h2>
+                <div className="h-1 w-12 bg-[#ffaa00] mx-auto mt-2 sm:mt-3 rounded-full opacity-50" />
+              </div>
 
-                <div className="text-center pt-4">
-                  <Link 
-                    href="/auth/login"
-                    className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors block"
-                  >
-                    {t('cancel')}
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-[11px] text-red-200 font-bold uppercase tracking-widest text-center"
+                >
+                  {error}
+                </motion.div>
+              )}
+
+              {success ? (
+                <div className="p-6 bg-green-500/20 border border-green-500/30 rounded-xl text-center space-y-4">
+                  <p className="text-green-200 font-bold uppercase tracking-widest text-[11px]">
+                    {t('email_sent')}
+                  </p>
+                  <Link href="/auth/login" className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/10 transition-all mt-4">
+                    {t('login')}
                   </Link>
                 </div>
-              </>
-            )}
-          </form>
+              ) : (
+                <>
+                  <div className="space-y-4">
+                    <div className="group relative">
+                      <input
+                        type="email"
+                        required
+                        placeholder={t('email')}
+                        className="w-full h-14 bg-white/5 text-white placeholder-white/20 border border-white/10 rounded-2xl px-6 font-medium outline-none focus:border-[#ffaa00]/50 focus:bg-white/10 transition-all"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full h-16 mt-6 bg-[#ffaa00] hover:bg-[#ffbb11] text-black font-black uppercase text-[15px] italic tracking-widest rounded-2xl shadow-xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
+                  >
+                    {loading ? "..." : t('send_recovery_link')}
+                  </Button>
+
+                  <div className="text-center mt-8">
+                    <Link 
+                      href="/auth/login"
+                      className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/5 border border-white/10 text-[11px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                    >
+                      {t('cancel')}
+                    </Link>
+                  </div>
+                </>
+              )}
+            </form>
+          </div>
         </motion.div>
       </div>
     </div>

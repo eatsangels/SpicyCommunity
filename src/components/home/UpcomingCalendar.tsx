@@ -21,9 +21,10 @@ interface UpcomingCalendarProps {
   tournaments: TournamentWithParticipants[];
   locale: string;
   user?: any;
+  compact?: boolean;
 }
 
-export default function UpcomingCalendar({ tournaments, locale, user }: UpcomingCalendarProps) {
+export default function UpcomingCalendar({ tournaments, locale, user, compact }: UpcomingCalendarProps) {
   const t = useTranslations('Index');
   const tt = useTranslations('Tournament');
   const dateLocale = locale === 'es' ? es : enUS;
@@ -31,7 +32,7 @@ export default function UpcomingCalendar({ tournaments, locale, user }: Upcoming
   if (!tournaments) return null;
 
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className={cn("relative overflow-hidden", compact ? "py-4 md:py-8" : "py-20")}>
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#ffaa00]/10 blur-[150px] rounded-full -z-10" />
       
