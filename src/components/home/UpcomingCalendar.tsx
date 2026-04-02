@@ -28,7 +28,7 @@ export default function UpcomingCalendar({ tournaments, locale, user }: Upcoming
   const tt = useTranslations('Tournament');
   const dateLocale = locale === 'es' ? es : enUS;
 
-  if (!tournaments || tournaments.length === 0) return null;
+  if (!tournaments) return null;
 
   return (
     <section className="relative py-20 overflow-hidden">
@@ -63,20 +63,30 @@ export default function UpcomingCalendar({ tournaments, locale, user }: Upcoming
           </div>
         </div>
 
-        {/* Horizontal Feed */}
+        {/* Horizontal Feed or Empty State */}
         <div className="relative overflow-visible pb-10">
-          <div className="flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-none">
-            {tournaments.map((tourney, index) => (
-              <CalendarCard 
-                key={tourney.id} 
-                tournament={tourney} 
-                locale={dateLocale}
-                index={index}
-                tt={tt}
-                user={user}
-              />
-            ))}
-          </div>
+          {tournaments.length > 0 ? (
+            <div className="flex gap-8 overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-none">
+              {tournaments.map((tourney, index) => (
+                <CalendarCard 
+                  key={tourney.id} 
+                  tournament={tourney} 
+                  locale={dateLocale}
+                  index={index}
+                  tt={tt}
+                  user={user}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="w-full flex items-center justify-center bg-zinc-900/40 border border-white/10 rounded-[1.5rem] p-12 backdrop-blur-xl">
+              <div className="text-center space-y-4 max-w-sm">
+                <CalendarIcon size={48} className="mx-auto text-white/10" />
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white/40">No Events Scheduled</h3>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#ffaa00]/60">Check back later for new dates.</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

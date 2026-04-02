@@ -1,15 +1,29 @@
 import { TournamentService } from "@/lib/services/tournament-service";
 import Link from "next/link";
 import { Trophy, Zap, Users, Clock } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import UpcomingCalendar from "@/components/home/UpcomingCalendar";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function TournamentsPage() {
   const t = await getTranslations("Tournament");
   const tc = await getTranslations("Common");
-  const tournaments = await TournamentService.getAllTournaments();
+  const locale = await getLocale();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
+  // Fetch all tournaments for general stats
+  const tournaments = await TournamentService.getAllTournaments();
   const active = tournaments?.filter((t) => t.status === "in_progress") ?? [];
   const completedTournaments = tournaments?.filter((t) => t.status === "completed") ?? [];
+
+  // Specifically fetch scheduled tournaments with full relational data needed for the Calendar widget
+  const { data: scheduledTournaments } = await supabase
+    .from('tournaments')
+    .select('*, participants(id, name), tournament_likes(user_id)')
+    .eq('status', 'scheduled')
+    .gte('scheduled_at', new Date().toISOString())
+    .order('scheduled_at', { ascending: true });
 
   const totalTournaments = tournaments?.length || 0;
   const totalTeams = tournaments?.reduce((acc, t) => acc + (t.participants?.length || 0), 0) || 0;
@@ -62,6 +76,11 @@ export default async function TournamentsPage() {
             <span className="text-[9px] md:text-[11px] font-black uppercase tracking-widest text-white/40 text-center">COMPETING TEAMS</span>
           </div>
         </div>
+      </div>
+
+      {/* UPCOMING CALENDAR */}
+      <div className="max-w-5xl mx-auto mb-14">
+        <UpcomingCalendar tournaments={scheduledTournaments as any} locale={locale} user={user} />
       </div>
 
       {/* Active Tournaments */}
