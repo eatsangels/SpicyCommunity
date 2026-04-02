@@ -24,6 +24,8 @@ function SpicyFooter() {
         { label: tf("tournaments"), href: "/tournaments" },
         { label: tf("hall_of_fame"), href: "/winners" },
         { label: tf("home"), href: "/" },
+        { label: "Terms", href: "/terms" },
+        { label: "Privacy", href: "/privacy" },
       ],
     },
     {
