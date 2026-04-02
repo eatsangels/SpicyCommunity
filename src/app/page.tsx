@@ -184,7 +184,7 @@ export default function HomePage() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative min-h-[110vh] flex flex-col items-center justify-center py-32 px-4 shadow-none">
+      <section className="relative min-h-[100svh] flex flex-col items-center justify-center py-32 px-4 shadow-none">
         {/* Background */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <motion.div style={{ y: y2 }} className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -224,7 +224,7 @@ export default function HomePage() {
         </motion.div>
 
         {/* Scroll Indicator */}
-        <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-10 flex flex-col items-center gap-4 opacity-10">
+        <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 2 }} className="absolute bottom-24 md:bottom-12 flex flex-col items-center gap-4 opacity-10">
           <span className="text-[8px] uppercase font-black tracking-widest">{t("scroll_explore")}</span>
           <div className="w-px h-12 bg-white" />
         </motion.div>
