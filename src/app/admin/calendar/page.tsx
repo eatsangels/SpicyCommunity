@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { es, enUS } from 'date-fns/locale';
 import { deleteTournamentAction } from '@/app/actions/tournament';
 import DeleteTournamentButton from '@/components/admin/DeleteTournamentButton';
+import { toZonedTime } from 'date-fns-tz';
 
 export default async function AdminCalendarPage({ params: { locale } }: { params: { locale: string } }) {
   const t = await getTranslations('Admin');
@@ -75,7 +76,7 @@ export default async function AdminCalendarPage({ params: { locale } }: { params
                   <div className="flex items-center gap-3 bg-black/40 px-4 py-2 rounded-2xl border border-white/5">
                     <Clock size={16} className="text-[#ffaa00]" />
                     <span className="text-xs font-black uppercase text-white tracking-widest">
-                      {tourney.scheduled_at ? format(new Date(tourney.scheduled_at), 'HH:mm') : '--:--'}
+                      {tourney.scheduled_at ? format(toZonedTime(tourney.scheduled_at, 'America/Toronto'), 'HH:mm') : '--:--'}
                     </span>
                   </div>
                   <DeleteTournamentButton id={tourney.id} />

@@ -12,6 +12,7 @@ import { Tables } from '@/types/database.types';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 
 type Team = Tables<'teams'>;
 
@@ -215,9 +216,11 @@ export default function CreateTournamentForm({ initialData }: CreateTournamentFo
       }
       let finalScheduledAt = null;
       if (formData.isScheduled && formData.scheduledAt) {
-        // Convert 'datetime-local' (which ignores TZ) to a real UTC Date object
-        const localDate = new Date(formData.scheduledAt);
-        finalScheduledAt = localDate.toISOString();
+        // Explicitly treat the 'datetime-local' input as America/Toronto (Thunder Bay)
+        // Then convert it to UTC for the database
+        const timeZone = 'America/Toronto';
+        const zonedDate = fromZonedTime(formData.scheduledAt, timeZone);
+        finalScheduledAt = zonedDate.toISOString();
       }
 
       let result;

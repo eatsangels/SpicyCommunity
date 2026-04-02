@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { toggleTournamentLikeAction } from '@/app/actions/tournament';
+import { toZonedTime } from 'date-fns-tz';
 
 type TournamentWithParticipants = Tables<'tournaments'> & {
   participants: Array<{ id: string; name: string }>;
@@ -167,13 +168,13 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
     setIsPending(false);
   };
 
-  // Get the time component directly from the ISO string to avoid TZ drift
-  // tournament.scheduled_at looks like "2026-04-05T11:00:00Z" or similar
-  const date = new Date(tournament.scheduled_at!);
+  // Force America/Toronto timezone for display
+  const timeZone = 'America/Toronto';
+  const date = toZonedTime(tournament.scheduled_at!, timeZone);
   const day = format(date, 'dd');
   const month = format(date, 'MMMM', { locale });
   
-  // Format the time as HH:mm directly from the date object
+  // Format the time as HH:mm in the target timezone
   const time = format(date, 'HH:mm'); 
 
   return (
