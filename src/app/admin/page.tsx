@@ -32,7 +32,20 @@ export default function AdminDashboard() {
         .from('tournaments')
         .select('*', { count: 'exact', head: true });
 
-      // 2. Recent Activity
+      // 2. Active Tournaments (In Progress)
+      const { count: activeCount } = await supabase
+        .from('tournaments')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'in_progress');
+
+      // 3. Match Count (Total matches played today)
+      const today = new Date().toISOString().split('T')[0];
+      const { count: mCount } = await supabase
+        .from('matches')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', today);
+
+      // 4. Recent Activity
       const { data: recent } = await supabase
         .from('tournaments')
         .select('*')
@@ -41,8 +54,8 @@ export default function AdminDashboard() {
 
       setStatsData({
         totalTournaments: tCount || 0,
-        activeUsers: Math.floor((tCount || 0) * 1.5), // Simulated as we don't have a users table
-        gamesToday: 0 // Will connect matches later
+        activeUsers: activeCount || 0,
+        gamesToday: mCount || 0
       });
       setRecentActivity(recent || []);
       setLoading(false);

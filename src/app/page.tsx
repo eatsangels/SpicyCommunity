@@ -277,7 +277,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Center: Current Match */}
-                  {liveMatch?.participant_a && liveMatch?.participant_b ? (
+                  {liveMatch?.participant_a && liveMatch?.participant_b && (
                     <div className="flex items-center gap-4 bg-white/[0.03] border border-white/5 rounded-xl px-6 py-4 shrink-0">
                       {/* Player A */}
                       <div className="flex flex-col items-center gap-2 w-20 sm:w-28">
@@ -313,18 +313,18 @@ export default function HomePage() {
                         )}
                       </div>
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-2 bg-white/[0.03] border border-white/5 rounded-xl px-6 py-4 text-white/20 text-xs font-bold uppercase tracking-widest">
-                      <Trophy size={14} /> {tc('view_bracket')}
-                    </div>
                   )}
 
                   {/* Right: CTA */}
-                  <div className="shrink-0 flex flex-col items-center sm:items-end gap-2">
-                    <div className="flex items-center gap-2 text-[#ffaa00] text-[10px] font-black uppercase tracking-widest group-hover:gap-3 transition-all">
-                      {tc('view_bracket')} <ChevronRight size={12} />
+                  <div className="shrink-0 ml-auto group-hover:translate-x-1 sm:translate-x-0 transition-transform">
+                    <div className="flex items-center gap-2 sm:gap-3 bg-white/[0.03] border border-white/10 group-hover:border-[#ffaa00]/40 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-6 sm:py-4 transition-all group-hover:bg-[#ffaa00]/10">
+                       <Trophy size={14} className="text-[#ffaa00] sm:w-[18px] sm:h-[18px]" />
+                       <div className="flex flex-col items-start translate-y-0.5">
+                          <span className="text-[#ffaa00] text-[10px] sm:text-xs font-black uppercase tracking-widest leading-none mb-0.5 sm:mb-1">{tc('view_bracket')}</span>
+                          <span className="hidden sm:block text-[8px] text-white/20 uppercase font-black tracking-widest">{tc('real_time_update')}</span>
+                       </div>
+                       <ChevronRight size={12} className="text-[#ffaa00] sm:w-[16px] sm:h-[16px] ml-1 sm:ml-2" />
                     </div>
-                    <span className="text-[8px] text-white/20 uppercase tracking-widest">{tc('real_time_update')}</span>
                   </div>
                 </div>
               </motion.div>

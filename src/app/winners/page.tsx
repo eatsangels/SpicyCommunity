@@ -62,13 +62,19 @@ export default async function WinnersPage({ params }: { params: Promise<{ locale
     .select('*', { count: 'exact', head: true })
     .eq('status', 'completed');
 
+  // Count in_progress tournaments for live stat
+  const { count: liveCount } = await supabase
+    .from('tournaments')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'in_progress');
+
   const heroTranslations = {
     title: t('title'),
     subtitle: t('subtitle'),
     allTimeChampions: t('total_champions'),
-    tournamentsPlayed: "Tournaments Played", // Fallback if not in JSON
-    realTimeBrackets: "Brackets",
-    engine: "ENGINE"
+    tournamentsPlayed: "Arena Played",
+    realTimeBrackets: "LIVE",
+    engine: "UNO"
   };
 
   return (
@@ -78,6 +84,7 @@ export default async function WinnersPage({ params }: { params: Promise<{ locale
       <HallOfFameHero 
         totalChampions={totalChampions} 
         totalTournaments={totalTournaments ?? 0} 
+        liveCount={liveCount ?? 0}
         translations={heroTranslations}
       />
 
