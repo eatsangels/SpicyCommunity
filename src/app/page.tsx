@@ -139,7 +139,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-white selection:bg-[#ffaa00] selection:text-black overflow-x-hidden -mt-32">
+    <div className="relative min-h-screen bg-black text-white selection:bg-[#ffaa00] selection:text-black overflow-x-hidden">
 
       {/* ─── LIVE TICKER BANNER ─── */}
       <AnimatePresence>

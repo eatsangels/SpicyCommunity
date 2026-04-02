@@ -6,7 +6,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-      <div className="flex flex-col md:flex-row h-[calc(100vh-64px)] overflow-hidden bg-black">
+      <div className="flex flex-col md:flex-row h-screen pt-[80px] overflow-hidden bg-black">
         {/* Navigation - handles its own mobile/desktop views */}
         <AdminSidebar />
 

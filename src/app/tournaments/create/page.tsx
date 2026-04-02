@@ -12,7 +12,7 @@ export default async function CreateTournamentPage({ params }: { params: Promise
   }
 
   return (
-    <div className="container mx-auto py-12 px-4">
+    <div className="container mx-auto pt-32 pb-12 px-4">
       <CreateTournamentForm />
     </div>
   );

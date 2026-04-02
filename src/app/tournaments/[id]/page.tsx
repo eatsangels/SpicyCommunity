@@ -26,7 +26,7 @@ export default async function TournamentPage({ params }: { params: Promise<{ id:
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-slate-950 pt-24">
       <BracketView tournament={tournament} isAdmin={isAdmin} />
     </div>
   );

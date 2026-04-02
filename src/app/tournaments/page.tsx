@@ -12,8 +12,21 @@ export default async function TournamentsPage() {
   const other = tournaments?.filter((t) => t.status !== "in_progress") ?? [];
 
   return (
-    <div className="min-h-screen bg-black text-white px-4 py-10">
-      {/* Header */}
+    <div className="relative min-h-screen bg-black text-white px-4 pt-32 pb-10 overflow-hidden">
+      {/* BACKGROUND DECOR */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 opacity-20 blur-[2px] mix-blend-screen">
+          <img src="/hero-bg.png" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/60 to-black" />
+        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-[#ffaa00] blur-[150px] rounded-full opacity-10" />
+        <div className="absolute top-[40%] right-[-10%] w-[40%] h-[40%] bg-[#ff5555] blur-[150px] rounded-full opacity-10" />
+      </div>
+
+      {/* CONTENT WAPPER */}
+      <div className="relative z-10">
+        {/* Header */}
       <div className="max-w-5xl mx-auto mb-12 text-center">
         <div className="inline-flex items-center gap-2 text-[#ffaa00] text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
           <Zap size={12} className="animate-pulse" />
@@ -125,6 +138,7 @@ export default async function TournamentsPage() {
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }
