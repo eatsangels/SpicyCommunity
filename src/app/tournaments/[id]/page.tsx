@@ -10,8 +10,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   
   if (!tournament) return {};
 
-  const title = `${tournament.name} | Spicy Arena`;
-  const description = `Follow the ${tournament.name} tournament on Spicy Community. Live brackets, real-time results, and competitive arena updates.`;
+  const title = `${tournament.name} | Spicy Community`;
+  const description = `Follow the ${tournament.name} tournament on Spicy Community. Live brackets, real-time results, and community updates.`;
 
   return {
     title,

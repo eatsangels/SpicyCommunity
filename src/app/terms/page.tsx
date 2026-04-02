@@ -21,11 +21,11 @@ export default function TermsPage() {
             <Gavel size={12} />
             LEGAL ARENA
           </div>
-          <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase gradient-text-luxury">
+          <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase gradient-text-luxury pr-4">
             Terms of Service
           </h1>
           <p className="text-white/40 text-[10px] uppercase font-black tracking-widest leading-relaxed max-w-lg">
-            By entering the Spicy Arena, you agree to follow the rules of the community.
+            By entering the Spicy Community, you agree to follow the rules of our ecosystem.
           </p>
         </div>
 

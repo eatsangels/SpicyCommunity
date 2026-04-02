@@ -21,11 +21,11 @@ export default function PrivacyPage() {
             <Shield size={12} />
             SECURITY CENTER
           </div>
-          <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase gradient-text-luxury">
+          <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter uppercase gradient-text-luxury pr-4">
             Privacy Policy
           </h1>
           <p className="text-white/40 text-[10px] uppercase font-black tracking-widest leading-relaxed max-w-lg">
-            Last Updated: April 2026 • Your data protection is our priority in the Spicy Arena.
+            Last Updated: April 2026 • Your data protection is our priority in the Spicy Community.
           </p>
         </div>
 
@@ -50,10 +50,10 @@ export default function PrivacyPage() {
 
           <section className="space-y-4 bg-white/5 p-8 rounded-[2rem] border border-white/10 hover:border-[#ffaa00]/20 transition-all">
             <h2 className="text-[#ffaa00] font-black uppercase tracking-widest flex items-center gap-2 text-lg">
-              <Zap size={16} /> 3. Data Protection (Supabase)
+              <Zap size={16} /> 3. Data Protection & Encryption
             </h2>
             <p>
-              Your data is stored securely using Supabase infrastructure with standard Row-Level Security (RLS) policies. We do not sell your personal data to third parties. Public information like tournament results and usernames will be visible to other community members.
+              Your personal information is secured through advanced industrial-grade encryption and isolated database protocols. We implement strict internal access controls to ensure your data remains confidential. We do not monetize or share your private data with third-party entities. Public competitive data, such as tournament rankings and usernames, is displayed solely for community transparency.
             </p>
           </section>
 
