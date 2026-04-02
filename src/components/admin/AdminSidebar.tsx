@@ -13,13 +13,28 @@ import {
   Calendar
 } from 'lucide-react';
 
+import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export default function AdminSidebar() {
   const t = useTranslations('Admin');
   const pathname = usePathname();
+  const supabase = createClient();
+  const [role, setRole] = useState<string>('user');
 
-  const menuItems = [
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        supabase.from('profiles').select('role').eq('id', user.id).single()
+          .then(({ data }) => {
+            if (data) setRole(data.role as string);
+          });
+      }
+    });
+  }, [supabase]);
+
+  const allItems = [
     { id: 'dashboard', icon: LayoutDashboard, href: '/admin', label: t('dashboard') },
     { id: 'tournaments', icon: Trophy, href: '/admin/tournaments', label: t('tournaments') },
     { id: 'calendar', icon: Calendar, href: '/admin/calendar', label: t('calendar') },
@@ -27,6 +42,11 @@ export default function AdminSidebar() {
     { id: 'users', icon: Users, href: '/admin/users', label: t('users') },
     { id: 'settings', icon: Settings, href: '/admin/settings', label: t('settings') },
   ];
+
+  const menuItems = allItems.filter(item => {
+    if (role === 'moderator' && item.id === 'users') return false;
+    return true;
+  });
 
   return (
     <>
