@@ -255,7 +255,7 @@ export default function AdminUsersPage() {
                           {/* Botón Admin */}
                           <button
                             onClick={() => changeRole(user, role === 'admin' ? 'user' : 'admin')}
-                            title={role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
+                            title={role === 'admin' ? 'Quitar Admin' : 'Make Admin'}
                             className={cn(
                               'w-full md:w-9 h-11 md:h-9 rounded-xl flex items-center justify-center gap-2 transition-all font-black uppercase text-[10px] tracking-widest',
                               role === 'admin'
@@ -264,13 +264,13 @@ export default function AdminUsersPage() {
                             )}
                           >
                             <Crown size={14} className={role === 'admin' ? 'md:text-[#ffaa00]' : ''} />
-                            <span className="md:hidden">{role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}</span>
+                            <span className="md:hidden">{role === 'admin' ? 'Quitar Admin' : 'Make Admin'}</span>
                           </button>
 
                           {/* Botón Moderador */}
                           <button
                             onClick={() => changeRole(user, role === 'moderator' ? 'user' : 'moderator')}
-                            title={role === 'moderator' ? 'Quitar Moderador' : 'Hacer Moderador'}
+                            title={role === 'moderator' ? 'Quitar Moderador' : 'Make Moderator'}
                             className={cn(
                               'w-full md:w-9 h-11 md:h-9 rounded-xl flex items-center justify-center gap-2 transition-all font-black uppercase text-[10px] tracking-widest',
                               role === 'moderator'
@@ -279,7 +279,7 @@ export default function AdminUsersPage() {
                             )}
                           >
                             <Shield size={14} className={role === 'moderator' ? 'md:text-cyan-400' : ''} />
-                            <span className="md:hidden">{role === 'moderator' ? 'Quitar Mod' : 'Hacer Mod'}</span>
+                            <span className="md:hidden">{role === 'moderator' ? 'Quitar Mod' : 'Make Mod'}</span>
                           </button>
 
                           <button
