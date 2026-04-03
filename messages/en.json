@@ -129,6 +129,7 @@
     "uno_letter_login": "E",
     "uno_letter_register": "J",
     "uno_success_title": "SUCCESS!",
+    "no_account_text": "New team?",
     "cancel": "Cancel"
   },
   "Admin": {
@@ -163,5 +164,14 @@
     "status": "Legendary",
     "description": "This arena belongs to you forever.",
     "footer": "Legendary Status Achieved"
+  },
+  "Activity": {
+    "live_feed": "Live Activity Feed",
+    "waiting": "Waiting for arena events...",
+    "tournament_created": "New Tournament <name>\"{name}\"</name> has been created!",
+    "participant_joined": " <name>{name}</name> joined <tournament>\"{tournament}\"</tournament>",
+    "match_won": "<winner>{winner}</winner> won round {round} in <tournament>\"{tournament}\"</tournament>",
+    "tournament_champion": "We Have a Champion!",
+    "community_match": "Community Match"
   }
 }

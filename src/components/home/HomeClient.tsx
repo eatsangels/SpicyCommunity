@@ -9,6 +9,8 @@ import { Zap, Trophy, Radio, ChevronRight, Swords, Users, ChevronLeft, MessageSq
 import { Lightning } from "@/components/ui/hero-odyssey";
 import UpcomingCalendar from "@/components/home/UpcomingCalendar";
 import { useLocale } from "next-intl";
+import ActivityFeed from "@/components/home/ActivityFeed";
+
 
 import { useEffect, useState, useRef } from 'react';
 import { format } from 'date-fns';
@@ -17,6 +19,7 @@ import { createClient } from '@/lib/supabase/client';
 export default function HomeClient({ initialData }: { initialData?: any }) {
   const t = useTranslations("Index");
   const tc = useTranslations("Common");
+  const ta = useTranslations("Activity");
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, -100]);
   const y2 = useTransform(scrollY, [0, 500], [0, 60]);
@@ -243,6 +246,11 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
         </motion.div>
       </section>
 
+      {/* ─── GLOBAL ACTIVITY FEED ─── */}
+      <section className="relative z-10 px-4 mb-20">
+        <ActivityFeed />
+      </section>
+
       {/* ─── LIVE TOURNAMENT CARD ─── */}
       <AnimatePresence>
         {liveTournaments.length > 0 && (
@@ -419,7 +427,7 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
                   </div>
                   <div className="text-center flex flex-col items-center w-full">
                     <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate w-[90%]">{team.name}</h3>
-                    <p className="text-[7px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate w-[90%]">{team.tournaments?.name || 'Local Duel'}</p>
+                    <p className="text-[7px] sm:text-[8px] uppercase font-bold tracking-widest text-[#ffaa00] truncate w-[90%]">{team.tournaments?.name || ta('community_match')}</p>
                   </div>
                   <div className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 text-[6px] sm:text-[7px] font-black uppercase tracking-widest text-white/30" suppressHydrationWarning>
                     {isMounted ? tc('joined_at', { time: format(new Date(team.created_at), 'HH:mm') }) : '--:--'}

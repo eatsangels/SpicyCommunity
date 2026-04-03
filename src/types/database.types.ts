@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          type?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           box_score: Json | null
