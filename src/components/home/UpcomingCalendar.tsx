@@ -175,7 +175,7 @@ function CalendarCard({ tournament, locale, index, tt, user }: {
   const month = format(date, 'MMMM', { locale });
   
   // Format the time as HH:mm in the target timezone
-  const time = format(date, 'HH:mm'); 
+  const time = format(date, 'hh:mm a'); 
 
   return (
     <motion.div

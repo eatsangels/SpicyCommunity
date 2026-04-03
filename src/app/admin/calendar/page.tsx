@@ -76,7 +76,7 @@ export default async function AdminCalendarPage({ params: { locale } }: { params
                   <div className="flex items-center gap-3 bg-black/40 px-4 py-2 rounded-2xl border border-white/5">
                     <Clock size={16} className="text-[#ffaa00]" />
                     <span className="text-xs font-black uppercase text-white tracking-widest">
-                      {tourney.scheduled_at ? format(toZonedTime(tourney.scheduled_at, 'America/Toronto'), 'HH:mm') : '--:--'}
+                      {tourney.scheduled_at ? format(toZonedTime(tourney.scheduled_at, 'America/Toronto'), 'hh:mm a') : '--:--'}
                     </span>
                   </div>
                   <DeleteTournamentButton id={tourney.id} />
@@ -131,9 +131,12 @@ export default async function AdminCalendarPage({ params: { locale } }: { params
                 <span className="text-[9px] font-black uppercase text-zinc-500 tracking-widest">
                   Ready to deal
                 </span>
-                <button className="text-[9px] font-black uppercase text-[#ffaa00] hover:text-white transition-colors">
+                <a
+                  href={`/admin/tournaments/${tourney.id}/edit`}
+                  className="text-[9px] font-black uppercase text-[#ffaa00] hover:text-white transition-colors"
+                >
                   Edit Schedule →
-                </button>
+                </a>
               </div>
             </div>
           ))}
