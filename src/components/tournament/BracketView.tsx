@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { useTranslations, useLocale } from 'next-intl';
-import { Trophy, Users, Zap, Radio, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trophy, Users, Zap, Radio, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function BracketView({ tournament, isAdmin = false }: { tournament: any, isAdmin?: boolean }) {
@@ -21,6 +21,68 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const supabase = createClient();
   const syncTimers = useRef<Record<string, any>>({});
   const isEditing = useRef<Set<string>>(new Set());
+  const bracketRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const downloadBracket = async () => {
+    if (!bracketRef.current) return;
+    setIsDownloading(true);
+    try {
+      const { toPng } = await import('html-to-image');
+
+      // ── Inject tournament name banner for export ──
+      const nameBanner = document.createElement('div');
+      nameBanner.setAttribute('data-export-banner', 'true');
+      nameBanner.style.cssText = `
+        position: absolute;
+        top: 12px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: Inter, sans-serif;
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-style: italic;
+        color: #ffaa00;
+        z-index: 99;
+        text-shadow: 0 0 20px rgba(255,170,0,0.5);
+        pointer-events: none;
+      `;
+      nameBanner.textContent = data.name;
+      bracketRef.current.appendChild(nameBanner);
+
+      // ── Freeze animations for a clean snapshot ──
+      const animatedEls = bracketRef.current.querySelectorAll<HTMLElement>('[class*="animate-"]');
+      animatedEls.forEach(el => { el.style.animationPlayState = 'paused'; });
+
+      const dataUrl = await toPng(bracketRef.current, {
+        quality: 1,
+        pixelRatio: 2,
+        backgroundColor: '#09090b',
+        filter: (node) => {
+          if (node instanceof HTMLElement && node.dataset.noCapture) return false;
+          return true;
+        },
+      });
+
+      // ── Restore ──
+      nameBanner.remove();
+      animatedEls.forEach(el => { el.style.animationPlayState = ''; });
+
+      const link = document.createElement('a');
+      link.download = `${data.name.replace(/\s+/g, '_')}_bracket.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (e) {
+      console.error('Download failed:', e);
+      // Cleanup on error
+      bracketRef.current?.querySelector('[data-export-banner]')?.remove();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // ─── Supabase Realtime: auto-refresh bracket for all viewers ───
   const refreshTournament = useCallback(async () => {
@@ -327,11 +389,32 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     <Trophy size={10} className="text-[#ffaa00]" />
                     <span className="text-[10px] md:text-xs font-black uppercase text-white/80 tracking-tight leading-none">{activeStageName}</span>
                 </div>
+
+                {/* Download button — only when completed */}
+                {data.status === 'completed' && (
+                  <button
+                    data-no-capture
+                    onClick={downloadBracket}
+                    disabled={isDownloading}
+                    className="glass-pill px-3 py-1 flex items-center gap-1.5 border border-[#ffaa00]/30 bg-[#ffaa00]/10 backdrop-blur-xl rounded-md transition-all hover:bg-[#ffaa00]/20 hover:border-[#ffaa00]/60 active:scale-95 disabled:opacity-50"
+                  >
+                    {isDownloading
+                      ? <Zap size={10} className="text-[#ffaa00] animate-spin" />
+                      : <Download size={10} className="text-[#ffaa00]" />
+                    }
+                    <span className="text-[10px] font-black uppercase tracking-tight leading-none text-[#ffaa00]">
+                      {isDownloading ? 'Exporting...' : 'Download'}
+                    </span>
+                  </button>
+                )}
             </div>
         </header>
 
         {/* BRACKET VIEWPORT */}
-        <div ref={containerRef} className="flex-1 w-full overflow-hidden relative flex items-center justify-center">
+        <div
+          ref={(el) => { (containerRef as any).current = el; (bracketRef as any).current = el; }}
+          className="flex-1 w-full overflow-hidden relative flex items-center justify-center"
+        >
           <div ref={contentRef} className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-start transition-all duration-500 ease-out origin-center">
             {sortedRounds.map((round: any, rIdx: number) => {
               let roundName = `Round ${round.round_number}`;
