@@ -219,22 +219,40 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
           </motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-4 sm:gap-6 pt-12">
             <Link href="/tournaments">
-              <Button size="lg" className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 
-                bg-white/5 backdrop-blur-3xl text-white
-                shadow-[0_20px_50px_rgba(0,0,0,0.3),inset_0_2px_4px_rgba(255,255,255,0.1)] 
-                border border-white/10 hover:bg-white/10 relative overflow-hidden group">
+              <Button
+                size="lg"
+                className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 text-white relative overflow-hidden group"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(224, 131, 9, 0.55) 0%, rgba(10,10,25,0.75) 60%, rgba(10,10,25,0.60) 100%)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: '1px solid rgba(236, 185, 16, 0.07)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.02)',
+                }}
+              >
                 <span className="relative z-10">{tc("tournaments")}</span>
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Specular top edge */}
+                <div className="absolute top-0 left-6 right-6 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 50%, transparent)' }} />
               </Button>
             </Link>
             <a href="https://discord.gg/z86C3DXpKq" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 
-                bg-white/5 backdrop-blur-3xl text-white
-                shadow-[0_20px_50px_rgba(0,0,0,0.3),inset_0_2px_4px_rgba(255,255,255,0.1)] 
-                border border-white/10 flex items-center gap-4 relative overflow-hidden group hover:bg-white/10">
+              <Button
+                size="lg"
+                className="h-14 sm:h-20 px-10 sm:px-16 rounded-full text-lg sm:text-2xl font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 text-white flex items-center gap-4 relative overflow-hidden group"
+                style={{
+                  background: 'linear-gradient(145deg, rgba(224, 131, 9, 0.55) 0%, rgba(10,10,25,0.75) 60%, rgba(10,10,25,0.60) 100%)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: '1px solid rgba(236, 185, 16, 0.07)',
+                  boxShadow: '0 20px 60px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -1px 0 rgba(255,255,255,0.02)',
+                }}
+              >
                 <MessageSquare size={28} className="fill-white relative z-10" />
                 <span className="relative z-10">Discord</span>
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                {/* Specular top edge */}
+                <div className="absolute top-0 left-6 right-6 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 50%, transparent)' }} />
               </Button>
             </a>
           </motion.div>
