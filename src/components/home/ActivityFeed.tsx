@@ -40,7 +40,7 @@ function TeamAvatar({ name, logo, highlight }: { name: string; logo?: string; hi
 
 export default function ActivityFeed() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const supabase = createClient();
   const t = useTranslations('Activity');
 
