@@ -64,10 +64,27 @@ export default function HomeClient({ initialData }: HomeClientProps) {
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
 
     // ── Only keep realtime for live match updates ────────────────────────
+    // ── Surgical Realtime Updates for Scores ────────────────────────────
     const channel = supabase
       .channel('live-matches')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, async () => {
-        const now = new Date().toISOString();
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matches' }, (payload) => {
+        const updatedMatch = payload.new;
+        setLiveTournaments(prev => prev.map(t => {
+          // If this tournament has rounds, update matches within those rounds
+          if (!t.rounds) return t;
+          return {
+            ...t,
+            rounds: t.rounds.map((r: any) => ({
+              ...r,
+              matches: r.matches?.map((m: any) => 
+                m.id === updatedMatch.id ? { ...m, ...updatedMatch } : m
+              )
+            }))
+          };
+        }));
+      })
+      // For insertion/deletion, we still re-fetch to get the joins (names/logos)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'matches' }, async () => {
         const { data: inProgress } = await supabase
           .from('tournaments')
           .select(`
@@ -89,7 +106,7 @@ export default function HomeClient({ initialData }: HomeClientProps) {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, []);
+  }, [supabase]);
 
   const scrollArena = (direction: 'left' | 'right') => {
     if (arenaScrollRef.current) {
@@ -160,8 +177,22 @@ export default function HomeClient({ initialData }: HomeClientProps) {
             <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="px-6 py-2 bg-[#ff3333] rounded-full inline-block shadow-[0_0_40px_rgba(255,51,51,0.4)]">
               <span className="text-[10px] uppercase font-black tracking-[0.5em] text-white">{t("hero_badge")}</span>
             </motion.div>
-            <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-8xl md:text-[11rem] font-black tracking-tighter leading-[0.85] uppercase italic">
-              {t("hero_title_1")} <br /><span className="text-[#ffaa00]">{t("hero_title_2")}</span>
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: 0.2 }} 
+              className="text-8xl md:text-[11rem] font-black tracking-tighter leading-[0.85] uppercase italic relative group"
+            >
+              <span className="relative inline-block overflow-hidden pb-4 pr-8">
+                {t("hero_title_1")}
+                {/* CSS Shimmer Overlay (High Performance) */}
+                <span className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-[#ffaa00] to-transparent animate-shimmer" />
+              </span>
+              <br />
+              <span className="text-[#ffaa00] relative [text-shadow:0_0_80px_rgba(255,170,0,0.4)]">
+                {t("hero_title_2")}
+                <span className="absolute -inset-2 bg-[#ffaa00]/10 blur-[120px] rounded-full pointer-events-none" />
+              </span>
             </motion.h1>
           </div>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }} className="max-w-2xl text-xl md:text-2xl text-white/40 font-medium italic">

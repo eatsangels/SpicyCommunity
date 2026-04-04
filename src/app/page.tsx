@@ -22,37 +22,48 @@ export default async function HomePage() {
   const now = new Date().toISOString();
 
   // ── Fetch all data in parallel on the server ──────────────────────────────
-  const [teamsResult, liveResult, scheduledResult] = await Promise.all([
-    supabase
-      .from('participants')
-      .select('id, name, logo_url, created_at, tournaments(name)')
-      .order('created_at', { ascending: false }),
+  let teamsResult: any = { data: [] };
+  let liveResult: any = { data: [] };
+  let scheduledResult: any = { data: [] };
 
-    supabase
-      .from('tournaments')
-      .select(`
-        id, name, status, scheduled_at,
-        participants (id, name, logo_url),
-        rounds (
-          id, round_number,
-          matches (
-            id, status,
-            score_a, score_b,
-            participant_a:participants!participant_a_id(id, name, logo_url),
-            participant_b:participants!participant_b_id(id, name, logo_url)
+  try {
+    const results = await Promise.all([
+      supabase
+        .from('participants')
+        .select('id, name, logo_url, created_at, tournaments(name)')
+        .order('created_at', { ascending: false }),
+
+      supabase
+        .from('tournaments')
+        .select(`
+          id, name, status, scheduled_at,
+          participants (id, name, logo_url),
+          rounds (
+            id, round_number,
+            matches (
+              id, status,
+              score_a, score_b,
+              participant_a:participants!participant_a_id(id, name, logo_url),
+              participant_b:participants!participant_b_id(id, name, logo_url)
+            )
           )
-        )
-      `)
-      .eq('status', 'in_progress')
-      .order('created_at', { ascending: false }),
+        `)
+        .eq('status', 'in_progress')
+        .order('created_at', { ascending: false }),
 
-    supabase
-      .from('tournaments')
-      .select('*, participants(id, name), tournament_likes(user_id)')
-      .eq('status', 'scheduled')
-      .gte('scheduled_at', now)
-      .order('scheduled_at', { ascending: true }),
-  ]);
+      supabase
+        .from('tournaments')
+        .select('*, participants(id, name), tournament_likes(user_id)')
+        .eq('status', 'scheduled')
+        .gte('scheduled_at', now)
+        .order('scheduled_at', { ascending: true }),
+    ]);
+    teamsResult = results[0];
+    liveResult = results[1];
+    scheduledResult = results[2];
+  } catch (error) {
+    console.error("Critical: Failed to fetch homepage data", error);
+  }
 
   let liveTournaments = liveResult.data || [];
 

@@ -164,15 +164,6 @@
   100% { background-position: 0% center; }
 }
 
-@keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 200s linear infinite;
-  will-change: transform;
-}
-
 .gradient-text-luxury {
   background: linear-gradient(135deg, #fff 10%, #ffaa00 40%, #ff5555 60%, #5555ff 90%);
   -webkit-background-clip: text;
@@ -201,4 +192,14 @@
 
 .animate-marquee {
   animation: marquee 40s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
 }

@@ -203,8 +203,14 @@ export default function ActivityFeed() {
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#ffaa00] shadow-[0_0_8px_rgba(255,170,0,0.8)]" />
             </div>
 
-            <h2 className="text-[11px] font-black uppercase tracking-[0.35em] text-white/50 group-hover:text-white/80 transition-colors flex-1 text-left">
+            <h2 className="text-[11px] font-black uppercase tracking-[0.35em] text-white/50 group-hover:text-white/80 transition-colors flex-1 text-left flex items-center gap-2">
               {t('live_feed')}
+              {!isOpen && (
+                <span className="flex items-center gap-1.5 px-2 py-0.5 bg-[#ffaa00]/10 border border-[#ffaa00]/20 rounded-full">
+                  <span className="size-1 bg-[#ffaa00] rounded-full animate-pulse" />
+                  <span className="text-[8px] text-[#ffaa00] font-black tracking-widest">{t('live_badge') || 'LIVE'}</span>
+                </span>
+              )}
             </h2>
 
             <motion.div

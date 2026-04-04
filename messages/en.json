@@ -167,6 +167,7 @@
   },
   "Activity": {
     "live_feed": "Live Activity Feed",
+    "live_badge": "LIVE",
     "waiting": "Waiting for arena events...",
     "tournament_created": "New Tournament <name>\"{name}\"</name> has been created!",
     "participant_joined": " <name>{name}</name> joined <tournament>\"{tournament}\"</tournament>",
