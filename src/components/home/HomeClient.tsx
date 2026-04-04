@@ -148,9 +148,6 @@ export default function HomeClient({ initialData }: HomeClientProps) {
         <div className="absolute inset-0 z-0 overflow-hidden">
           <motion.div style={{ y: y2 }} className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <Image src="/hero-bg.png" alt="Arena Background" fill priority className="object-cover opacity-30 scale-150 blur-[1px]" />
-            <div className="relative w-[1000px] h-[1000px] opacity-10 blur-[2px] mix-blend-screen">
-              <Image src="/logo.png" alt="Logo Watermark" fill sizes="1000px" className="object-contain" />
-            </div>
           </motion.div>
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
