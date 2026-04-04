@@ -26,8 +26,7 @@ export default async function HomePage() {
     supabase
       .from('participants')
       .select('id, name, logo_url, created_at, tournaments(name)')
-      .order('created_at', { ascending: false })
-      .limit(12),
+      .order('created_at', { ascending: false }),
 
     supabase
       .from('tournaments')
