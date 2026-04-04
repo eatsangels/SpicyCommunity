@@ -6,37 +6,96 @@ import { Link, useRouter } from "@/i18n/routing";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import { Zap, Trophy, Radio, ChevronRight, Swords, Users, ChevronLeft, MessageSquare } from "lucide-react";
-import { Lightning } from "@/components/ui/hero-odyssey";
-import UpcomingCalendar from "@/components/home/UpcomingCalendar";
 import { useLocale } from "next-intl";
-import ActivityFeed from "@/components/home/ActivityFeed";
-
-
 import { useEffect, useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { createClient } from '@/lib/supabase/client';
+import dynamic from 'next/dynamic';
 
-export default function HomeClient({ initialData }: { initialData?: any }) {
+// ── Lazy-load heavy/below-fold components ──────────────────────────────────
+const Lightning = dynamic(
+  () => import('@/components/ui/hero-odyssey').then(m => ({ default: m.Lightning })),
+  { ssr: false, loading: () => null }
+);
+
+const ActivityFeed = dynamic(() => import('@/components/home/ActivityFeed'), { ssr: false });
+const UpcomingCalendar = dynamic(() => import('@/components/home/UpcomingCalendar'), { ssr: false });
+
+interface HomeClientProps {
+  initialData?: {
+    recentTeams: any[];
+    liveTournaments: any[];
+    scheduledTournaments: any[];
+  };
+}
+
+export default function HomeClient({ initialData }: HomeClientProps) {
   const t = useTranslations("Index");
   const tc = useTranslations("Common");
   const ta = useTranslations("Activity");
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, -100]);
-  const y2 = useTransform(scrollY, [0, 500], [0, 60]);
   const router = useRouter();
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
-  const [recentTeams, setRecentTeams] = useState<any[]>([]);
-  const [loadingTeams, setLoadingTeams] = useState(true);
-  const [liveTournaments, setLiveTournaments] = useState<any[]>([]);
-  const [liveMatch, setLiveMatch] = useState<any>(null);
-  const [scheduledTournaments, setScheduledTournaments] = useState<any[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const locale = useLocale();
   const arenaScrollRef = useRef<HTMLDivElement>(null);
 
+  // ── Use server-fetched data, hydrate state once ──────────────────────────
+  const [recentTeams, setRecentTeams] = useState<any[]>(initialData?.recentTeams || []);
+  const [liveTournaments, setLiveTournaments] = useState<any[]>(initialData?.liveTournaments || []);
+  const [scheduledTournaments, setScheduledTournaments] = useState<any[]>(initialData?.scheduledTournaments || []);
+
+  // ── Derive liveMatch from live tournament ────────────────────────────────
+  const liveMatch = (() => {
+    const primary = liveTournaments[0];
+    if (!primary) return null;
+    const allRounds = primary.rounds ?? [];
+    const latestRound = [...allRounds].sort((a: any, b: any) => b.round_number - a.round_number)[0];
+    if (!latestRound) return null;
+    return (
+      latestRound.matches?.find((m: any) => m.status === 'ongoing') ??
+      latestRound.matches?.find((m: any) => m.status === 'pending' && m.participant_a && m.participant_b) ??
+      null
+    );
+  })();
+
+  // ── Parallax (desktop only) ──────────────────────────────────────────────
+  const { scrollY } = useScroll();
+  const [isDesktop, setIsDesktop] = useState(false);
+  const y1 = useTransform(scrollY, [0, 500], isDesktop ? [0, -100] : [0, 0]);
+  const y2 = useTransform(scrollY, [0, 500], isDesktop ? [0, 60] : [0, 0]);
+
   useEffect(() => {
     setIsMounted(true);
+    setIsDesktop(window.innerWidth >= 768);
+    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
+
+    // ── Only keep realtime for live match updates ────────────────────────
+    const channel = supabase
+      .channel('live-matches')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, async () => {
+        const now = new Date().toISOString();
+        const { data: inProgress } = await supabase
+          .from('tournaments')
+          .select(`
+            id, name, status, scheduled_at,
+            participants (id, name, logo_url),
+            rounds (
+              id, round_number,
+              matches (
+                id, status, score_a, score_b,
+                participant_a:participants!participant_a_id(id, name, logo_url),
+                participant_b:participants!participant_b_id(id, name, logo_url)
+              )
+            )
+          `)
+          .eq('status', 'in_progress')
+          .order('created_at', { ascending: false });
+        if (inProgress) setLiveTournaments(inProgress);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   const scrollArena = (direction: 'left' | 'right') => {
@@ -46,103 +105,6 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
       arenaScrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
   };
-
-  useEffect(() => {
-    setIsMounted(true);
-    supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
-
-    const fetchTeams = async () => {
-      setLoadingTeams(true);
-      const { data, error } = await supabase
-        .from('participants')
-        .select('*, tournaments(name)')
-        .order('created_at', { ascending: false })
-        .limit(12);
-      if (!error) setRecentTeams(data || []);
-      setLoadingTeams(false);
-    };
-
-    const fetchLiveTournaments = async () => {
-      let { data: inProgress } = await supabase
-        .from('tournaments')
-        .select(`
-          id, name, status, scheduled_at,
-          participants (id, name, logo_url),
-          rounds (
-            id, round_number,
-            matches (
-              id, status,
-              score_a, score_b,
-              participant_a:participants!participant_a_id(id, name, logo_url),
-              participant_b:participants!participant_b_id(id, name, logo_url)
-            )
-          )
-        `)
-        .eq('status', 'in_progress')
-        .order('created_at', { ascending: false });
-
-      let list = inProgress || [];
-
-      if (list.length === 0) {
-        const { data: fallback } = await supabase
-          .from('tournaments')
-          .select(`
-            id, name, status, scheduled_at,
-            participants (id, name, logo_url),
-            rounds (
-              id, round_number,
-              matches (
-                id, status,
-                score_a, score_b,
-                participant_a:participants!participant_a_id(id, name, logo_url),
-                participant_b:participants!participant_b_id(id, name, logo_url)
-              )
-            )
-          `)
-          .neq('status', 'completed')
-          .lte('scheduled_at', new Date().toISOString())
-          .order('scheduled_at', { ascending: false })
-          .limit(1);
-        if (fallback) list = fallback;
-      }
-
-      setLiveTournaments(list);
-      
-      if (list.length > 0) {
-        const primary = list[0];
-        const allRounds = primary.rounds ?? [];
-        const latestRound = [...allRounds].sort((a: any, b: any) => b.round_number - a.round_number)[0];
-        if (latestRound) {
-          const activeMatch = latestRound.matches?.find((m: any) => m.status === 'ongoing')
-            ?? latestRound.matches?.find((m: any) => m.status === 'pending' && m.participant_a && m.participant_b);
-          setLiveMatch(activeMatch ?? null);
-        }
-      }
-    };
-
-    const fetchScheduledTournaments = async () => {
-      const { data } = await supabase
-        .from('tournaments')
-        .select('*, participants(id, name), tournament_likes(user_id)')
-        .eq('status', 'scheduled')
-        .gte('scheduled_at', new Date().toISOString())
-        .order('scheduled_at', { ascending: true });
-      setScheduledTournaments(data || []);
-    };
-
-    fetchTeams();
-    fetchLiveTournaments();
-    fetchScheduledTournaments();
-
-    const channel = supabase
-      .channel('live-matches')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => {
-        fetchLiveTournaments();
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [supabase]);
 
   return (
     <div className="relative min-h-screen bg-black text-white selection:bg-[#ffaa00] selection:text-black overflow-x-hidden">
@@ -200,9 +162,12 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
           <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-          <div className="absolute inset-0 z-[1] mix-blend-screen opacity-80">
-            <Lightning hue={10} xOffset={0} speed={1.3} intensity={0.5} size={2} />
-          </div>
+          {/* Lightning only on desktop to save mobile GPU */}
+          {isDesktop && (
+            <div className="absolute inset-0 z-[1] mix-blend-screen opacity-80">
+              <Lightning hue={10} xOffset={0} speed={1.3} intensity={0.5} size={2} />
+            </div>
+          )}
         </div>
 
         <motion.div style={{ y: y1 }} className="relative z-10 flex flex-col items-center text-center space-y-8 max-w-5xl">
@@ -232,7 +197,6 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
               >
                 <span className="relative z-10">{tc("tournaments")}</span>
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/15 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                {/* Specular top edge */}
                 <div className="absolute top-0 left-6 right-6 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 50%, transparent)' }} />
               </Button>
             </Link>
@@ -251,7 +215,6 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
                 <MessageSquare size={28} className="fill-white relative z-10" />
                 <span className="relative z-10">Discord</span>
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#ffaa00]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                {/* Specular top edge */}
                 <div className="absolute top-0 left-6 right-6 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3) 50%, transparent)' }} />
               </Button>
             </a>
@@ -366,6 +329,7 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
            <motion.section 
              initial={{ opacity: 0 }}
              whileInView={{ opacity: 1 }}
+             viewport={{ once: true }}
              className="relative z-10 px-8 lg:px-16 mb-20"
            >
               <div className="flex items-center gap-4 mb-8">
@@ -405,7 +369,7 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
          )}
       </AnimatePresence>
 
-      {/* Live Community Feed */}
+      {/* Live Community Feed – teams marquee */}
       <section className="relative z-10 py-20 space-y-12">
         <div className="px-8 md:px-16 space-y-3">
           <h2 className="text-3xl md:text-5xl font-black uppercase italic tracking-tighter gradient-text">{t("live_arena")}</h2>
@@ -434,12 +398,13 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
             ref={arenaScrollRef}
             className="w-full flex gap-5 overflow-x-auto pb-12 px-8 md:px-16 scrollbar-none snap-x snap-mandatory scroll-smooth group"
           >
+            {/* Reduced from 4x to 2x duplication */}
             <div className="flex gap-5 shrink-0 animate-marquee hover:[animation-play-state:paused]">
-              {[...recentTeams, ...recentTeams, ...recentTeams, ...recentTeams].map((team: any, i: number) => (
+              {[...recentTeams, ...recentTeams].map((team: any, i: number) => (
                 <div key={`${team.id}-${i}`} className="w-36 h-48 sm:w-52 sm:h-64 bg-zinc-900 border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 flex flex-col items-center justify-between group/card hover:border-[#ffaa00]/40 transition-all hover:scale-105 shrink-0 transform-gpu snap-center">
                   <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-black border border-white/5 shadow-xl overflow-hidden flex items-center justify-center p-2 sm:p-2.5">
                     {team.logo_url
-                      ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} />
+                      ? <img src={team.logo_url} className="w-full h-full object-contain" alt={team.name} loading="lazy" />
                       : <span className="text-xl sm:text-3xl font-black text-[#ffaa00]">{team.name[0]}</span>
                     }
                   </div>
@@ -453,7 +418,7 @@ export default function HomeClient({ initialData }: { initialData?: any }) {
                 </div>
               ))}
             </div>
-            {recentTeams.length === 0 && !loadingTeams && (
+            {recentTeams.length === 0 && (
               <div className="text-white/10 font-black uppercase text-lg italic tracking-tighter px-20">{t("waiting_challengers")}</div>
             )}
           </div>
