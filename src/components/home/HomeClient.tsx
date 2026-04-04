@@ -13,11 +13,6 @@ import { createClient } from '@/lib/supabase/client';
 import dynamic from 'next/dynamic';
 
 // ── Lazy-load heavy/below-fold components ──────────────────────────────────
-const Lightning = dynamic(
-  () => import('@/components/ui/hero-odyssey').then(m => ({ default: m.Lightning })),
-  { ssr: false, loading: () => null }
-);
-
 const ActivityFeed = dynamic(() => import('@/components/home/ActivityFeed'), { ssr: false });
 const UpcomingCalendar = dynamic(() => import('@/components/home/UpcomingCalendar'), { ssr: false });
 
@@ -59,15 +54,13 @@ export default function HomeClient({ initialData }: HomeClientProps) {
     );
   })();
 
-  // ── Parallax (desktop only) ──────────────────────────────────────────────
+  // ── Parallax (disabled — kept hooks to avoid order changes) ────────────
   const { scrollY } = useScroll();
-  const [isDesktop, setIsDesktop] = useState(false);
-  const y1 = useTransform(scrollY, [0, 500], isDesktop ? [0, -100] : [0, 0]);
-  const y2 = useTransform(scrollY, [0, 500], isDesktop ? [0, 60] : [0, 0]);
+  const y1 = useTransform(scrollY, [0, 500], [0, 0]);
+  const y2 = useTransform(scrollY, [0, 500], [0, 0]);
 
   useEffect(() => {
     setIsMounted(true);
-    setIsDesktop(window.innerWidth >= 768);
     supabase.auth.getUser().then(({ data: { user } }) => setUser(user));
 
     // ── Only keep realtime for live match updates ────────────────────────
@@ -162,12 +155,7 @@ export default function HomeClient({ initialData }: HomeClientProps) {
           <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black via-black/90 to-transparent z-10" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
           <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-          {/* Lightning only on desktop to save mobile GPU */}
-          {isDesktop && (
-            <div className="absolute inset-0 z-[1] mix-blend-screen opacity-80">
-              <Lightning hue={10} xOffset={0} speed={1.3} intensity={0.5} size={2} />
-            </div>
-          )}
+
         </div>
 
         <motion.div style={{ y: y1 }} className="relative z-10 flex flex-col items-center text-center space-y-8 max-w-5xl">
