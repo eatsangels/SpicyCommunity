@@ -267,9 +267,7 @@ export default function ActivityFeed() {
 
                           <div className="flex-1 min-w-0 space-y-1">
                             {renderContent(activity)}
-                            <span className="text-[9px] uppercase font-bold tracking-widest text-white/20">
-                              {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true, locale: enUS })}
-                            </span>
+                          
                           </div>
 
                           {/* Hover zap */}
