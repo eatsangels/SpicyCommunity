@@ -178,13 +178,58 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   }, [tournament.id, refreshTournament, supabase]);
 
   // ─── Zoom & Pan Handlers ───
+  const handleAutoFit = useCallback(() => {
+    if (!containerRef.current || !contentRef.current) return;
+    
+    // Use requestAnimationFrame to ensure children are rendered and measured
+    requestAnimationFrame(() => {
+      const container = containerRef.current!.getBoundingClientRect();
+      const content = contentRef.current!.getBoundingClientRect();
+      
+      // Calculate raw content size (before zoom)
+      // Since motion.div is scaled, content.width is already zoomed
+      const currentZoom = zoom; // Capture current zoom
+      const rawWidth = content.width / currentZoom;
+      const rawHeight = content.height / currentZoom;
+      
+      if (rawWidth === 0 || rawHeight === 0) return;
+
+      const padding = 60; 
+      const availableWidth = container.width - padding * 2;
+      const availableHeight = container.height - padding * 2;
+      
+      const scaleX = availableWidth / rawWidth;
+      const scaleY = availableHeight / rawHeight;
+      
+      // Target zoom: fit the smaller dimension, but cap at 1.0 (don't over-zoom small brackets)
+      let newZoom = Math.min(scaleX, scaleY);
+      if (newZoom > 1) newZoom = 1;
+      if (newZoom < 0.2) newZoom = 0.2; // Cap minimum zoom
+
+      setZoom(newZoom);
+      setOffset({ x: 0, y: 0 }); // Center origin
+    });
+  }, [zoom]);
+
+  // Initial Auto-Fit
+  const hasAutoFitted = useRef(false);
+  useEffect(() => {
+    if (data.rounds?.length > 0 && !hasAutoFitted.current) {
+      // Small delay to ensure layout has settled
+      const timer = setTimeout(() => {
+        handleAutoFit();
+        hasAutoFitted.current = true;
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [data.rounds, handleAutoFit]);
+
   const handleZoom = (delta: number) => {
     setZoom(prev => Math.min(Math.max(0.1, prev + delta), 3));
   };
 
   const resetView = () => {
-    setZoom(1);
-    setOffset({ x: 0, y: 0 });
+    handleAutoFit();
   };
 
   const sortedRounds = [...(data.rounds || [])].sort((a: any, b: any) => a.round_number - b.round_number);
@@ -474,16 +519,16 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
             drag
             dragMomentum={false}
             animate={{ scale: zoom, x: offset.x, y: offset.y }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             onDragEnd={(_, info) => {
                setOffset(prev => ({
                  x: prev.x + info.offset.x,
                  y: prev.y + info.offset.y
                }));
             }}
-            className="absolute inset-0 flex items-center justify-start origin-center px-48"
+            className="absolute inset-0 flex items-center justify-center origin-center"
           >
-            <div className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-start py-48">
+            <div ref={contentRef} className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-center py-48 px-48">
             {sortedRounds.map((round: any, rIdx: number) => {
               let roundName = `Round ${round.round_number}`;
               if (rIdx === totalRounds - 1) roundName = "Final";
