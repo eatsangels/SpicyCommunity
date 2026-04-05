@@ -117,9 +117,9 @@ export default function ActivityFeed() {
               <p className="text-[9px] uppercase font-bold tracking-widest text-white/25 mb-2">
                 Round {payload.round_number} &bull; <span className="text-[#ffaa00]/40">{tournamentName}</span>
               </p>
-              <div className="flex items-center justify-between gap-1">
+              <div className="flex items-start justify-between gap-1">
                 <TeamAvatar name={payload.winner_name} logo={payload.winner_logo} highlight />
-                <div className="flex flex-col items-center gap-0.5 shrink-0 pb-3">
+                <div className="flex flex-col items-center gap-0.5 shrink-0 pt-2.5">
                   <Swords size={13} className="text-[#ffaa00]/80" />
                   <span className="text-[7px] font-black uppercase tracking-widest text-white/20">beat</span>
                 </div>
