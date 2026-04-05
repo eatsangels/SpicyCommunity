@@ -82,6 +82,7 @@
     "waiting": "Waiting",
     "finish_match": "Finish Match",
     "update_match": "Update",
+    "reset_result": "Reset Result",
     "advances": "Advances!",
     "status": {
       "completed": "Completed",
@@ -89,6 +90,17 @@
       "draft": "Draft",
       "scheduled": "Scheduled"
     },
+    "disqualify_title": "Disqualify Participant",
+    "disqualify_both_title": "Double Disqualification",
+    "disqualify_confirm": "Are you sure you want to disqualify {name}? This will grant a walkover victory to the opponent.",
+    "disqualify_both_confirm": "CRITICAL: Are you sure you want to disqualify BOTH participants? This match will have no winner and no one will advance to the next round.",
+    "disqualified_label": "DISQUALIFIED",
+    "double_disqualified_label": "DOUBLE DQ",
+    "reset_match_title": "Reset Match Result",
+    "reset_match_confirm": "This will clear scores and disqualification status. Are you sure?",
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out",
+    "reset_view": "Reset View",
     "schedule_label": "Schedule for later",
     "delete_confirm_msg": "Are you sure you want to delete this tournament? This action cannot be undone.",
     "confirm_delete_tournament": "Are you sure you want to delete this tournament?",
@@ -98,8 +110,14 @@
       "same_score": "Both teams have the same score or are at zero. You must set a higher score for the winner to advance.",
       "missing_participants": "Missing teams in this match to be able to close it.",
       "error_advancing": "Something went wrong while trying to advance the round.",
-      "shuffled": "Battle order randomized successfully!"
-    }
+      "shuffled": "Battle order randomized successfully!",
+      "error_resetting": "Something went wrong while resetting the match."
+    },
+    "confirm_reset": "Resetting this match will revert its results and remove the advancing team from subsequent rounds. This action is definitive and will affect the bracket flow. Do you wish to proceed?",
+    "confirm_disqualify": "Confirm technical disqualification for",
+    "disqualified": "Disqualified",
+    "disqualify_success": "Participant disqualified successfully.",
+    "match_reset_success": "Match result reset successfully."
   },
   "Auth": {
     "login": "Log In",

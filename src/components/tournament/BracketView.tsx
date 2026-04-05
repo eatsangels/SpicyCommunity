@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAlert } from '@/components/ui/UnoAlertSystem';
 import { useTranslations, useLocale } from 'next-intl';
-import { Trophy, Users, Zap, Radio, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { Trophy, Users, Zap, Radio, ChevronLeft, ChevronRight, Download, Plus, Minus, RotateCcw, Maximize, Ban } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function BracketView({ tournament, isAdmin = false }: { tournament: any, isAdmin?: boolean }) {
@@ -17,7 +17,12 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const locale = useLocale();
   const [data, setData] = useState(tournament);
   const [isFinishing, setIsFinishing] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const supabase = createClient();
   const syncTimers = useRef<Record<string, any>>({});
   const isEditing = useRef<Set<string>>(new Set());
@@ -172,38 +177,15 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
     };
   }, [tournament.id, refreshTournament, supabase]);
 
-  // Auto-Adjustment / Dual-Axis Scaling Logic
-  const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
+  // ─── Zoom & Pan Handlers ───
+  const handleZoom = (delta: number) => {
+    setZoom(prev => Math.min(Math.max(0.1, prev + delta), 3));
+  };
 
-  useEffect(() => {
-    if (!containerRef.current || !contentRef.current) return;
-
-    const observer = new ResizeObserver(() => {
-      const parent = containerRef.current;
-      const content = contentRef.current;
-      if (!parent || !content) return;
-
-      const viewportWidth = parent.clientWidth;
-      const viewportHeight = parent.clientHeight;
-      
-      content.style.transform = 'none';
-      const actualWidth = content.scrollWidth;
-      const actualHeight = content.scrollHeight;
-      
-      // Use 16px safety margin (2rem combined)
-      const widthScale = (viewportWidth - 32) / actualWidth;
-      const heightScale = (viewportHeight - 32) / actualHeight;
-      
-      const newScale = Math.min(1, widthScale, heightScale);
-      setScale(newScale);
-      content.style.transform = `scale(${newScale})`;
-    });
-
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [data]);
+  const resetView = () => {
+    setZoom(1);
+    setOffset({ x: 0, y: 0 });
+  };
 
   const sortedRounds = [...(data.rounds || [])].sort((a: any, b: any) => a.round_number - b.round_number);
   const activeRound = sortedRounds.find((r: any) => 
@@ -299,6 +281,79 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
     setIsFinishing(matchId);
     await handleSetWinner(matchId, winnerId);
     setIsFinishing(null);
+  };
+
+  const handleResetMatch = async (matchId: string) => {
+    const confirmed = await confirm(t('alerts.confirm_reset'));
+    if (!confirmed) return;
+
+    setIsResetting(matchId);
+    try {
+      const resp = await fetch(`/api/matches/${matchId}/reset`, {
+        method: 'POST',
+      });
+      
+      if (resp.ok) {
+        toast(t('alerts.match_reset_success') || 'Match reset successfully', 'success');
+        await refreshTournament();
+      } else {
+        const errorData = await resp.json();
+        toast(errorData.error || t('alerts.error_resetting'), 'error');
+      }
+    } catch (error: any) {
+      toast(error.message, 'error');
+    } finally {
+      setIsResetting(null);
+      refreshTournament();
+    }
+  };
+  
+  const handleDisqualifyParticipant = async (matchId: string, participantId: string, participantName: string) => {
+    const confirmed = await confirm(`${t('disqualify_confirm').replace('{name}', participantName)}`);
+    if (!confirmed) return;
+
+    setIsResetting(matchId);
+    try {
+      const response = await fetch(`/api/matches/${matchId}/disqualify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ disqualifiedId: participantId }),
+      });
+
+      if (response.ok) {
+        toast(t('alerts.disqualify_success') || 'Participant disqualified successfully.', 'success');
+      } else {
+        toast(t('alerts.error_resetting'), 'error');
+      }
+    } catch (error) {
+      toast(t('alerts.error_resetting'), 'error');
+    }
+    setIsResetting(null);
+    refreshTournament();
+  };
+
+  const handleDisqualifyBoth = async (matchId: string) => {
+    const confirmed = await confirm(t('disqualify_both_confirm'));
+    if (!confirmed) return;
+
+    setIsResetting(matchId);
+    try {
+      const response = await fetch(`/api/matches/${matchId}/disqualify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ disqualifiedId: 'both' }),
+      });
+
+      if (response.ok) {
+        toast(t('alerts.disqualify_success') || 'Both participants disqualified.', 'success');
+      } else {
+        toast(t('alerts.error_resetting'), 'error');
+      }
+    } catch (error) {
+      toast(t('alerts.error_resetting'), 'error');
+    }
+    setIsResetting(null);
+    refreshTournament();
   };
 
   const finalRound = sortedRounds[totalRounds - 1];
@@ -412,10 +467,23 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
 
         {/* BRACKET VIEWPORT */}
         <div
-          ref={(el) => { (containerRef as any).current = el; (bracketRef as any).current = el; }}
-          className="flex-1 w-full overflow-hidden relative flex items-center justify-center"
+          ref={containerRef}
+          className="flex-1 w-full overflow-hidden relative cursor-grab active:cursor-grabbing select-none"
         >
-          <div ref={contentRef} className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-start transition-all duration-500 ease-out origin-center">
+          <motion.div 
+            drag
+            dragMomentum={false}
+            animate={{ scale: zoom, x: offset.x, y: offset.y }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            onDragEnd={(_, info) => {
+               setOffset(prev => ({
+                 x: prev.x + info.offset.x,
+                 y: prev.y + info.offset.y
+               }));
+            }}
+            className="absolute inset-0 flex items-center justify-start origin-center px-48"
+          >
+            <div className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-start py-48">
             {sortedRounds.map((round: any, rIdx: number) => {
               let roundName = `Round ${round.round_number}`;
               if (rIdx === totalRounds - 1) roundName = "Final";
@@ -456,7 +524,17 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
 
                       return (
                         <div key={match.id} className="relative flex items-center justify-center shrink-0" style={{ height: cellHeight }}>
-                            <MatchNode match={match} isAdmin={isAdmin} onUpdateScore={isAdmin ? handleUpdateScore : undefined} onFinishMatch={isAdmin ? handleFinishMatch : undefined} isFinishing={isFinishing === match.id} />
+                            <MatchNode 
+                               match={match} 
+                               isAdmin={isAdmin} 
+                               onUpdateScore={isAdmin ? handleUpdateScore : undefined} 
+                               onFinishMatch={isAdmin ? handleFinishMatch : undefined} 
+                               onResetMatch={handleResetMatch}
+                               onDisqualify={handleDisqualifyParticipant}
+                               onDisqualifyBoth={handleDisqualifyBoth}
+                               isFinishing={isFinishing === match.id} 
+                               isResetting={isResetting === match.id}
+                             />
                             {rIdx < totalRounds - 1 && match.next_match_id && match.groupSize > 0 && (
                                 <div className="absolute left-[calc(100%+0.5rem)] top-1/2 w-10 md:w-16 lg:w-24 pointer-events-none overflow-visible z-0">
                                     <svg className="w-full h-[400%] overflow-visible">
@@ -475,91 +553,118 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                 </div>
               );
             })}
-
-            {/* GRAND CHAMPION CARD */}
-            {winner && (
-              <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center min-w-[320px] md:min-w-[380px] relative self-center py-6" >
-                <div className="absolute inset-0 bg-[#ffaa00]/10 blur-[60px] rounded-full animate-pulse" />
-                <div className="relative z-10 uno-card border-2 border-[#ffaa00]/50 bg-gradient-to-b from-zinc-900 to-black p-8 flex flex-col items-center text-center shadow-[0_0_40px_rgba(255,170,0,0.15)] min-h-[450px] rounded-xl">
-                    <div className="absolute top-3 right-3">
-                        <div className="w-10 h-10 rounded-full bg-[#ffaa00] flex items-center justify-center text-black font-black italic shadow-lg rotate-12 text-[12px]">W</div>
-                    </div>
-                    <motion.div animate={{ y: [0, -8, 0], rotate: [-0.5, 0.5, -0.5] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="relative w-48 h-48 mb-6 mt-1" >
-                        <img src="/tourney_winner_trophy_uno.png" alt="Grand Trophy" className="w-full h-full object-contain filter drop-shadow-[0_0_20px_#ffaa00]" />
-                    </motion.div>
-                    <div className="space-y-1.5 mb-6">
-                        <p className="text-[#ffaa00] text-[10px] font-black uppercase tracking-[0.3em] italic leading-tight">{tWinner('title')}</p>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase italic tracking-tighter gradient-text-luxury leading-none">{winner.name}</h2>
-                    </div>
-                    {winner.logo_url && (
-                        <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-6 p-3 shadow-lg">
-                            <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-contain" />
-                        </div>
-                    )}
-                    <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-6" />
-                    <div className="space-y-1.5">
-                        <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
-                        <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
-                    </div>
-                </div>
-              </motion.div>
-            )}
           </div>
+          </motion.div>
         </div>
 
-        {/* RECENT MATCH TICKER (BOTTOM) */}
-        {tickerMatches.length > 0 && (
-          <div className="shrink-0 border-t border-white/5 bg-black/40 backdrop-blur-md relative overflow-hidden py-4 group/ticker">
-            {/* Navigation Buttons */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-4 z-30 flex gap-2 opacity-0 group-hover/ticker:opacity-100 transition-opacity">
-              <button 
-                onClick={() => scrollTicker('left')}
-                className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button 
-                onClick={() => scrollTicker('right')}
-                className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
+        {/* ZOOM CONTROLS */}
+        <div className="absolute bottom-6 right-6 z-[100] flex flex-col gap-2 p-2 bg-black/80 border border-white/10 rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-white/20 glass-pill">
+          <button
+            onClick={() => handleZoom(0.1)}
+            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            title={t('zoom_in')}
+          >
+            <Plus size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+          </button>
+          <div className="h-px w-8 mx-auto bg-white/5" />
+          <button
+            onClick={() => handleZoom(-0.1)}
+            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            title={t('zoom_out')}
+          >
+            <Minus size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+          </button>
+          <div className="h-px w-8 mx-auto bg-white/5" />
+          <button
+            onClick={resetView}
+            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            title={t('reset_view')}
+          >
+            <RotateCcw size={20} className="group-hover:rotate-[-45deg] transition-transform group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+          </button>
+        </div>
 
-            {/* Label */}
-            <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center gap-2 px-3 py-1 bg-black/60 border border-[#ffaa00]/20 rounded-md">
-              <div className="w-1.5 h-1.5 bg-[#ffaa00] rounded-full animate-pulse" />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ffaa00] italic">{tc('live_now')} / {tc('recent_results')}</span>
-            </div>
+        {/* GRAND CHAMPION CARD */}
+        {winner && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8, y: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-10 bg-black/90 border-2 border-[#ffaa00]/30 rounded-[32px] backdrop-blur-3xl shadow-[0_0_100px_rgba(255,170,0,0.15)] z-[110] text-center max-w-sm w-full mx-4 overflow-hidden group"
+          >
+              <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/5 to-transparent pointer-none" />
+              <div className="relative z-10 flex flex-col items-center">
+                  <Trophy className="text-[#ffaa00] w-20 h-20 mb-8 drop-shadow-[0_0_30px_rgba(255,170,0,0.6)] animate-bounce" />
+                  <h3 className="text-4xl font-black uppercase tracking-tighter italic mb-2 gradient-text-luxury">{winner.name}</h3>
+                  <p className="text-[#ffaa00] text-xs font-black uppercase tracking-[0.4em] mb-10 opacity-70 italic">{tWinner('champion')}</p>
+                  
+                  {winner.logo_url && (
+                      <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-6 p-3 shadow-lg">
+                          <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-contain" />
+                      </div>
+                  )}
+                  <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-6" />
+                  <div className="space-y-1.5">
+                      <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
+                      <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
+                  </div>
+              </div>
+          </motion.div>
+        )}
+      </div>
 
-            <div 
-              ref={tickerScrollRef}
-              className="w-full overflow-x-auto scrollbar-none scroll-smooth"
+      {/* RECENT MATCH TICKER (BOTTOM) */}
+      {tickerMatches.length > 0 && (
+        <div className="shrink-0 border-t border-white/5 bg-black/40 backdrop-blur-md relative overflow-hidden py-4 group/ticker">
+          {/* Navigation Buttons */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-4 z-30 flex gap-2 opacity-0 group-hover/ticker:opacity-100 transition-opacity">
+            <button 
+              onClick={() => scrollTicker('left')}
+              className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
             >
-              <div 
-                className="flex gap-8 items-center shrink-0 animate-marquee hover:[animation-play-state:paused] px-6 lg:px-48 py-4 w-max"
-              >
-                {[...tickerMatches, ...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
-                  <div
-                    key={`${match.id}-${idx}`}
-                    className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
-                  >
+              <ChevronLeft size={20} />
+            </button>
+            <button 
+              onClick={() => scrollTicker('right')}
+              className="w-10 h-10 bg-black/80 border border-white/10 rounded-full flex items-center justify-center text-[#ffaa00] hover:bg-[#ffaa00] hover:text-black transition-all shadow-xl backdrop-blur-xl"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+
+          {/* Label */}
+          <div className="absolute left-6 top-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center gap-2 px-3 py-1 bg-black/60 border border-[#ffaa00]/20 rounded-md">
+            <div className="w-1.5 h-1.5 bg-[#ffaa00] rounded-full animate-pulse" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ffaa00] italic">{tc('live_now')} / {tc('recent_results')}</span>
+          </div>
+
+          <div 
+            ref={tickerScrollRef}
+            className="w-full overflow-x-auto scrollbar-none scroll-smooth"
+          >
+            <div 
+              className="flex gap-8 items-center shrink-0 animate-marquee hover:[animation-play-state:paused] px-6 lg:px-48 py-4 w-max"
+            >
+              {[...tickerMatches, ...tickerMatches, ...tickerMatches, ...tickerMatches].map((match: any, idx) => (
+                <div
+                  key={`${match.id}-${idx}`}
+                  className="shrink-0 flex items-center gap-6 px-6 border-r border-white/5 last:border-0"
+                >
                   <div className="flex items-center gap-4">
                     {/* Part A */}
                     <div className="flex items-center gap-2">
-                       <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
-                         {match.participant_a?.logo_url ? (
-                           <img src={match.participant_a.logo_url} className="w-full h-full object-contain" alt="" />
-                         ) : (
-                           <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_a?.name?.[0]}</span>
-                         )}
-                       </div>
-                       <span className={cn(
-                         "text-[10px] font-black uppercase tracking-widest whitespace-nowrap",
-                         match.winner_id === match.participant_a_id ? 'text-white' : 'text-white/20'
-                       )}>
-                         {match.participant_a?.name}
-                       </span>
+                      <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+                        {match.participant_a?.logo_url ? (
+                          <img src={match.participant_a.logo_url} className="w-full h-full object-contain" alt="" />
+                        ) : (
+                          <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_a?.name?.[0]}</span>
+                        )}
+                      </div>
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-widest whitespace-nowrap",
+                        match.winner_id === match.participant_a_id ? 'text-white' : 'text-white/20'
+                      )}>
+                        {match.participant_a?.name}
+                      </span>
                     </div>
 
                     {/* Scores */}
@@ -577,19 +682,19 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
 
                     {/* Part B */}
                     <div className="flex items-center gap-2">
-                       <span className={cn(
-                         "text-[10px] font-black uppercase tracking-widest whitespace-nowrap text-right",
-                         match.winner_id === match.participant_b_id ? 'text-white' : 'text-white/20'
-                       )}>
-                         {match.participant_b?.name}
-                       </span>
-                       <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
-                         {match.participant_b?.logo_url ? (
-                           <img src={match.participant_b.logo_url} className="w-full h-full object-contain" alt="" />
-                         ) : (
-                           <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_b?.name?.[0]}</span>
-                         )}
-                       </div>
+                      <span className={cn(
+                        "text-[10px] font-black uppercase tracking-widest whitespace-nowrap text-right",
+                        match.winner_id === match.participant_b_id ? 'text-white' : 'text-white/20'
+                      )}>
+                        {match.participant_b?.name}
+                      </span>
+                      <div className="w-5 h-5 rounded bg-black/40 border border-white/5 flex items-center justify-center p-0.5 overflow-hidden shrink-0">
+                        {match.participant_b?.logo_url ? (
+                          <img src={match.participant_b.logo_url} className="w-full h-full object-contain" alt="" />
+                        ) : (
+                          <span className="text-[8px] font-black text-white/10 uppercase">{match.participant_b?.name?.[0]}</span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Compact Box Score for Ticker */}
@@ -606,15 +711,14 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                   </div>
                 </div>
               ))}
-              </div>
             </div>
-            
-            {/* Overlays to hide start/end for the label */}
-            <div className="absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 hidden lg:block" />
-            <div className="absolute right-0 top-0 bottom-0 w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-10" />
           </div>
-        )}
-      </div>
+          
+          {/* Overlays to hide start/end for the label */}
+          <div className="absolute left-0 top-0 bottom-0 w-48 bg-gradient-to-r from-black via-black/80 to-transparent z-10 hidden lg:block" />
+          <div className="absolute right-0 top-0 bottom-0 w-48 bg-gradient-to-l from-black via-black/80 to-transparent z-10" />
+        </div>
+      )}
 
       <style jsx global>{`
         .gradient-text-luxury {

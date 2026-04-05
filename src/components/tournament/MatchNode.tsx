@@ -4,12 +4,14 @@ import { Tables } from "@/types/database.types";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Crown, RotateCcw } from "lucide-react";
+import { Crown, RotateCcw, Gavel, Ban } from "lucide-react";
 
 type Participant = Tables<'participants'>;
 type Match = Tables<'matches'> & {
   participant_a: Participant | null;
   participant_b: Participant | null;
+  disqualified_id?: string | null;
+  is_double_dq?: boolean;
   box_score?: any;
 };
 
@@ -19,7 +21,11 @@ interface MatchNodeProps {
   onUpdateScore?: (matchId: string, scoreA: number, scoreB: number, boxScore?: any[]) => void;
   onSetWinner?: (matchId: string, winnerId: string) => void;
   onFinishMatch?: (matchId: string) => void;
+  onResetMatch?: (matchId: string) => void;
+  onDisqualify?: (matchId: string, participantId: string, participantName: string) => void;
+  onDisqualifyBoth?: (matchId: string) => void;
   isFinishing?: boolean;
+  isResetting?: boolean;
 }
 
 export default function MatchNode({
@@ -27,13 +33,21 @@ export default function MatchNode({
   isAdmin = false,
   onUpdateScore,
   onFinishMatch,
+  onResetMatch,
+  onDisqualify,
+  onDisqualifyBoth,
   isFinishing = false,
+  isResetting = false,
 }: MatchNodeProps) {
   const t = useTranslations('Tournament');
 
   const isCompleted = match.status === 'completed';
   const isAWinner = !!(match.winner_id && match.winner_id === match.participant_a_id);
   const isBWinner = !!(match.winner_id && match.winner_id === match.participant_b_id);
+  
+  const isADisqualified = !!match.disqualified_id && match.disqualified_id === match.participant_a_id;
+  const isBDisqualified = !!match.disqualified_id && match.disqualified_id === match.participant_b_id;
+  const isDoubleDq = !!match.is_double_dq;
 
   const winner = isAWinner ? match.participant_a : isBWinner ? match.participant_b : null;
   const boxScore = (match.box_score as any[]) || [];
@@ -71,7 +85,7 @@ export default function MatchNode({
           {winner.name}
         </span>
         <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.15em] text-[#ffaa00]/60 italic leading-none">
-          {t('advances')}
+          {match.disqualified_id ? (match.disqualified_id === match.participant_a_id ? `Opponent DQ'd` : `Opponent DQ'd`) : t('advances')}
         </span>
         {isAdmin && (
           <button
@@ -81,6 +95,16 @@ export default function MatchNode({
           >
             <RotateCcw size={7} className="md:w-[8px] md:h-[8px]" />
             {isFinishing ? '...' : t('update_match')}
+          </button>
+        )}
+        {isAdmin && (
+          <button
+            onClick={() => onResetMatch?.(match.id)}
+            disabled={isResetting}
+            className="mt-1 flex items-center gap-1 text-[6px] md:text-[7px] font-black uppercase tracking-wider text-red-500/40 hover:text-red-500 transition-colors"
+          >
+            <RotateCcw size={7} className="md:w-[8px] md:h-[8px]" />
+            {isResetting ? '...' : t('reset_result') || 'Reset Result'}
           </button>
         )}
       </motion.div>
@@ -110,12 +134,30 @@ export default function MatchNode({
             <span className="text-[6px] md:text-[7px] font-black uppercase tracking-widest opacity-40">T1</span>
             <span className={cn(
               "font-black text-[11px] md:text-xs uppercase truncate w-full",
-              match.participant_a ? "text-white/90" : "text-white/20 italic"
+              match.participant_a ? "text-white/90" : "text-white/20 italic",
+              isADisqualified && "text-red-500 line-through decoration-2"
             )}>
               {match.participant_a?.name || t('waiting')}
             </span>
+            {(isADisqualified || isDoubleDq) && (
+              <div className="absolute inset-0 bg-red-900/10 flex items-center justify-center z-10">
+                <span className="text-[10px] font-bold text-red-500 animate-pulse bg-zinc-950/80 px-2 py-0.5 rounded-full border border-red-500/50">
+                  {isDoubleDq ? t('double_disqualified_label') : t('disqualified_label')}
+                </span>
+              </div>
+            )}
           </div>
         </div>
+
+        {isAdmin && match.participant_a_id && !isCompleted && (
+           <button
+             onClick={() => onDisqualify?.(match.id, match.participant_a_id!, match.participant_a?.name || '')}
+             className="text-white/20 hover:text-red-500 transition-colors p-1.5"
+             title="Disqualify"
+           >
+             <Gavel size={12} />
+           </button>
+        )}
 
         {isAdmin ? (
           <input
@@ -150,12 +192,28 @@ export default function MatchNode({
             <span className="text-[6px] md:text-[7px] font-black uppercase tracking-widest opacity-40">T2</span>
             <span className={cn(
               "font-black text-[11px] md:text-xs uppercase truncate w-full",
-              match.participant_b ? "text-white/90" : "text-white/20 italic"
+              match.participant_b ? "text-white/90" : "text-white/20 italic",
+              isBDisqualified && "text-red-500 line-through decoration-2"
             )}>
               {match.participant_b?.name || t('waiting')}
             </span>
+            {isBDisqualified && (
+              <span className="text-[6px] font-black text-red-500 uppercase tracking-tighter animate-pulse">
+                {t('disqualified') || 'Disqualified'}
+              </span>
+            )}
           </div>
         </div>
+
+        {isAdmin && match.participant_b_id && !isCompleted && (
+           <button
+             onClick={() => onDisqualify?.(match.id, match.participant_b_id!, match.participant_b?.name || '')}
+             className="text-white/20 hover:text-red-500 transition-colors p-1.5"
+             title="Disqualify"
+           >
+             <Gavel size={12} />
+           </button>
+        )}
 
         {isAdmin ? (
           <input
@@ -207,6 +265,18 @@ export default function MatchNode({
               </div>
             ))}
           </div>
+                  {isAdmin && !isCompleted && match.participant_a_id && match.participant_b_id && (
+                    <div className="mt-2 pt-2 border-t border-white/5">
+                      <button
+                        onClick={() => onDisqualifyBoth?.(match.id)}
+                        className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition-all active:scale-95 group shadow-lg shadow-red-900/5"
+                        title={t('disqualify_both_title')}
+                      >
+                        <Ban size={14} className="group-hover:rotate-12 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] italic">Double DQ</span>
+                      </button>
+                    </div>
+                  )}
         </div>
       )}
 
