@@ -18,7 +18,7 @@ interface ActivityItem extends Omit<ActivityLog, 'type' | 'payload'> {
 
 function TeamAvatar({ name, logo, highlight }: { name: string; logo?: string; highlight?: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-1 w-14">
+    <div className="flex flex-col items-center gap-1 w-20">
       <div
         className={`w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shrink-0 shadow-lg border transition-all ${
           highlight
@@ -31,7 +31,7 @@ function TeamAvatar({ name, logo, highlight }: { name: string; logo?: string; hi
           : <span className={`text-sm font-black ${highlight ? 'text-[#ffaa00]' : 'text-white/30'}`}>{name?.[0]?.toUpperCase() ?? '?'}</span>
         }
       </div>
-      <span className={`text-[9px] font-black uppercase tracking-wider text-center truncate w-full ${highlight ? 'text-[#ffaa00]' : 'text-white/30'}`}>
+      <span className={`text-[9px] font-black uppercase tracking-wider text-center leading-[1.1] ${highlight ? 'text-[#ffaa00]' : 'text-white/30'}`}>
         {name}
       </span>
     </div>
@@ -152,7 +152,7 @@ export default function ActivityFeed() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black text-yellow-300 truncate leading-tight">{payload.champion_name}</p>
+                  <p className="text-sm font-black text-yellow-300 leading-tight">{payload.champion_name}</p>
                   <p className="text-[10px] text-white/40 font-medium mt-0.5">Congratulations, Champion! 🎉</p>
                 </div>
               </div>
