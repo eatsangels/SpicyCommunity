@@ -558,29 +558,29 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         </div>
 
         {/* ZOOM CONTROLS */}
-        <div className="absolute bottom-6 right-6 z-[100] flex flex-col gap-2 p-2 bg-black/80 border border-white/10 rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-white/20 glass-pill">
+        <div className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 z-[100] flex flex-col gap-1 lg:gap-2 p-1.5 lg:p-2 bg-black/80 border border-white/10 rounded-xl lg:rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-white/20 glass-pill transition-all overflow-hidden">
           <button
             onClick={() => handleZoom(0.1)}
-            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            className="p-2 lg:p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-lg lg:rounded-xl transition-all active:scale-95 group"
             title={t('zoom_in')}
           >
-            <Plus size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+            <Plus className="w-4 h-4 lg:w-5 lg:h-5 group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
           </button>
-          <div className="h-px w-8 mx-auto bg-white/5" />
+          <div className="h-px w-6 lg:w-8 mx-auto bg-white/5" />
           <button
             onClick={() => handleZoom(-0.1)}
-            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            className="p-2 lg:p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-lg lg:rounded-xl transition-all active:scale-95 group"
             title={t('zoom_out')}
           >
-            <Minus size={20} className="group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+            <Minus className="w-4 h-4 lg:w-5 lg:h-5 group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
           </button>
-          <div className="h-px w-8 mx-auto bg-white/5" />
+          <div className="h-px w-6 lg:w-8 mx-auto bg-white/5" />
           <button
             onClick={resetView}
-            className="p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-xl transition-all active:scale-95 group"
+            className="p-2 lg:p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-lg lg:rounded-xl transition-all active:scale-95 group"
             title={t('reset_view')}
           >
-            <RotateCcw size={20} className="group-hover:rotate-[-45deg] transition-transform group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
+            <RotateCcw className="w-4 h-4 lg:w-5 lg:h-5 group-hover:rotate-[-45deg] transition-transform group-hover:drop-shadow-[0_0_8px_rgba(255,170,0,0.5)]" />
           </button>
         </div>
 
