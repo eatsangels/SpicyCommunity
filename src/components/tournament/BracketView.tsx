@@ -528,7 +528,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
             }}
             className="absolute inset-0 flex items-center justify-center origin-center"
           >
-            <div ref={contentRef} className="flex gap-10 md:gap-16 lg:gap-24 items-center justify-center py-48 px-48">
+            <div ref={contentRef} className="flex gap-6 md:gap-16 lg:gap-24 items-center justify-center py-20 px-10 md:py-48 md:px-48">
             {sortedRounds.map((round: any, rIdx: number) => {
               let roundName = `Round ${round.round_number}`;
               if (rIdx === totalRounds - 1) roundName = "Final";
@@ -634,23 +634,23 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: 50 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-10 bg-black/90 border-2 border-[#ffaa00]/30 rounded-[32px] backdrop-blur-3xl shadow-[0_0_100px_rgba(255,170,0,0.15)] z-[110] text-center max-w-sm w-full mx-4 overflow-hidden group"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 md:p-10 bg-black/95 border-2 border-[#ffaa00]/30 rounded-[24px] md:rounded-[32px] backdrop-blur-3xl shadow-[0_0_100px_rgba(255,170,0,0.25)] z-[110] text-center max-w-[300px] md:max-w-sm w-[calc(100%-2rem)] mx-auto overflow-hidden group"
           >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/5 to-transparent pointer-none" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/10 to-transparent pointer-none" />
               <div className="relative z-10 flex flex-col items-center">
-                  <Trophy className="text-[#ffaa00] w-20 h-20 mb-8 drop-shadow-[0_0_30px_rgba(255,170,0,0.6)] animate-bounce" />
-                  <h3 className="text-4xl font-black uppercase tracking-tighter italic mb-2 gradient-text-luxury">{winner.name}</h3>
-                  <p className="text-[#ffaa00] text-xs font-black uppercase tracking-[0.4em] mb-10 opacity-70 italic">{tWinner('champion')}</p>
+                  <Trophy className="text-[#ffaa00] w-12 h-12 md:w-20 md:h-20 mb-4 md:mb-8 drop-shadow-[0_0_30px_rgba(255,170,0,0.6)] animate-bounce" />
+                  <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter italic mb-1 md:mb-2 gradient-text-luxury">{winner.name}</h3>
+                  <p className="text-[#ffaa00] text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-6 md:mb-10 opacity-70 italic">{tWinner('champion')}</p>
                   
                   {winner.logo_url && (
-                      <div className="w-20 h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-6 p-3 shadow-lg">
+                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-4 md:mb-6 p-2 md:p-3 shadow-lg">
                           <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-contain" />
                       </div>
                   )}
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-6" />
-                  <div className="space-y-1.5">
-                      <p className="text-white text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
-                      <p className="text-white/20 text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
+                  <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-4 md:mb-6" />
+                  <div className="space-y-1 md:space-y-1.5">
+                      <p className="text-white text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
+                      <p className="text-white/20 text-[7px] md:text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
                   </div>
               </div>
           </motion.div>
