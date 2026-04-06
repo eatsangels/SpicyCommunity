@@ -4,7 +4,7 @@ import { Tables } from "@/types/database.types";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Crown, RotateCcw, Gavel, Ban } from "lucide-react";
+import { Crown, RotateCcw, Gavel, Ban, Trophy } from "lucide-react";
 
 type Participant = Tables<'participants'>;
 type Match = Tables<'matches'> & {
@@ -80,11 +80,19 @@ export default function MatchNode({
         animate={{ opacity: 1, scale: 1 }}
         className="uno-card relative w-40 md:w-48 bg-zinc-900 border-[3px] border-[#ffaa00] shadow-[0_0_20px_rgba(255,170,0,0.2)] rounded-xl flex flex-col items-center justify-center gap-0.5 py-1.5 md:py-2 px-2"
       >
-        <Crown size={12} className="text-[#ffaa00] md:w-[14px] md:h-[14px]" />
-        <span className="font-black text-xs md:text-sm uppercase text-[#ffaa00] text-center truncate max-w-[120px] md:max-w-[140px]">
-          {winner.name}
-        </span>
-        <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.15em] text-[#ffaa00]/60 italic leading-none">
+        <div className="flex items-center gap-2 mb-0.5">
+          <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-black/40 border border-white/10 overflow-hidden flex-shrink-0 flex items-center justify-center p-0.5">
+            {winner.logo_url ? (
+              <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-cover" />
+            ) : (
+              <Trophy size={10} className="text-[#ffaa00]/20" />
+            )}
+          </div>
+          <span className="font-black text-[11px] md:text-xs uppercase text-[#ffaa00] text-center truncate max-w-[90px] md:max-w-[110px]">
+            {winner.name}
+          </span>
+        </div>
+        <span className="text-[6px] md:text-[7px] font-black uppercase tracking-[0.15em] text-[#ffaa00]/60 italic leading-none">
           {match.disqualified_id ? (match.disqualified_id === match.participant_a_id ? `Opponent DQ'd` : `Opponent DQ'd`) : t('advances')}
         </span>
         {isAdmin && (
