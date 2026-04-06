@@ -28,62 +28,194 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
   const isEditing = useRef<Set<string>>(new Set());
   const bracketRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showWinnerCard, setShowWinnerCard] = useState(true);
 
   const downloadBracket = async () => {
     if (!bracketRef.current) return;
     setIsDownloading(true);
+    
     try {
       const { toPng } = await import('html-to-image');
+      
+      // 1. Create a deep clone for normalized capture
+      const original = bracketRef.current;
+      const clone = original.cloneNode(true) as HTMLElement;
+      
+      // 2. Prepare the sandbox container (off-screen)
+      const sandbox = document.createElement('div');
+      sandbox.style.position = 'fixed';
+      sandbox.style.left = '-9999px';
+      sandbox.style.top = '0';
+      sandbox.style.width = 'max-content';
+      sandbox.style.height = 'max-content';
+      sandbox.style.background = '#09090b';
+      sandbox.style.padding = '80px';
+      sandbox.className = 'bracket-capture-sandbox';
+      
+      // 3. Attach clone to sandbox
+      sandbox.appendChild(clone);
+      document.body.appendChild(sandbox);
 
-      // ── Inject tournament name banner for export ──
-      const nameBanner = document.createElement('div');
-      nameBanner.setAttribute('data-export-banner', 'true');
-      nameBanner.style.cssText = `
-        position: absolute;
-        top: 12px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        font-family: Inter, sans-serif;
-        font-size: 22px;
-        font-weight: 900;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-style: italic;
-        color: #ffaa00;
-        z-index: 99;
-        text-shadow: 0 0 20px rgba(255,170,0,0.5);
-        pointer-events: none;
-      `;
-      nameBanner.textContent = data.name;
-      bracketRef.current.appendChild(nameBanner);
+      // 4. Reset scale and layout of the clone to capture everything side-by-side
+      clone.style.width = 'max-content';
+      clone.style.height = 'max-content';
+      clone.style.display = 'inline-block'; // Shrink-wrap content
+      clone.style.backgroundColor = '#09090b';
 
-      // ── Freeze animations for a clean snapshot ──
-      const animatedEls = bracketRef.current.querySelectorAll<HTMLElement>('[class*="animate-"]');
-      animatedEls.forEach(el => { el.style.animationPlayState = 'paused'; });
+      const viewport = clone.querySelector('.motion-viewport') as HTMLElement;
+      if (viewport) {
+        viewport.style.transform = 'none';
+        viewport.style.position = 'relative';
+        viewport.style.width = 'max-content';
+        viewport.style.height = 'max-content';
+        viewport.style.display = 'flex';
+        viewport.style.justifyContent = 'flex-start';
+        viewport.style.alignItems = 'center';
+        viewport.style.padding = '0'; 
+      }
 
-      const dataUrl = await toPng(bracketRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: '#09090b',
-        filter: (node) => {
-          if (node instanceof HTMLElement && node.dataset.noCapture) return false;
-          return true;
-        },
+      const container = clone.querySelector('.container-viewport') as HTMLElement;
+      if (container) {
+        container.style.overflow = 'visible';
+        container.style.width = 'max-content'; // Ensure it doesn't stretch to full screen
+        container.style.height = 'auto';
+        container.style.display = 'block';
+        container.style.flex = '0 0 auto';
+      }
+
+      // CREATE A CLEAN SIDE-BY-SIDE WRAPPER (Bracket | Winner Card)
+      const contentWrapper = document.createElement('div');
+      contentWrapper.style.display = 'flex';
+      contentWrapper.style.flexDirection = 'row';
+      contentWrapper.style.alignItems = 'center';
+      contentWrapper.style.gap = '100px';
+      contentWrapper.style.marginTop = '60px'; // Space from header
+      
+      const winnerCard = clone.querySelector('.winner-card-export') as HTMLElement;
+      if (winnerCard && container) {
+        // Move container and winnerCard into the new wrapper
+        const parent = container.parentElement;
+        if (parent) {
+          parent.appendChild(contentWrapper);
+          contentWrapper.appendChild(container);
+          
+          // Reposition winner card
+          winnerCard.style.position = 'relative'; 
+          winnerCard.style.top = '0';
+          winnerCard.style.left = '0';
+          winnerCard.style.transform = 'none';
+          winnerCard.style.margin = '0';
+          winnerCard.style.display = 'block'; 
+          winnerCard.style.flexShrink = '0';
+          winnerCard.style.width = '420px';
+          winnerCard.style.opacity = '1';
+          winnerCard.style.animation = 'none';
+          winnerCard.style.transition = 'none';
+          
+          contentWrapper.appendChild(winnerCard);
+        }
+      }
+
+      // Hide other interactive UI
+      clone.querySelectorAll('[id="zoom-controls"], .zoom-controls, button, .glass-pill').forEach((el: any) => {
+         el.style.display = 'none';
       });
 
-      // ── Restore ──
-      nameBanner.remove();
-      animatedEls.forEach(el => { el.style.animationPlayState = ''; });
+      // Header normalization for perfectly sharp tournament name
+      const header = clone.querySelector('header') as HTMLElement;
+      if (header) {
+        header.style.width = 'max-content';
+        header.style.display = 'flex';
+        header.style.flexDirection = 'column';
+        header.style.alignItems = 'flex-start';
+        header.style.justifyContent = 'flex-start';
+        header.style.paddingBottom = '30px';
+        header.style.borderBottom = '2px solid rgba(255,255,255,0.05)';
+        header.style.marginBottom = '20px';
+        
+        // Target the Title specifically for PRO Style
+        const title = header.querySelector('h1') as HTMLElement;
+        if (title) {
+          title.style.lineHeight = '1.2';
+          title.style.paddingTop = '20px';
+          title.style.paddingBottom = '10px';
+          title.style.marginBottom = '0';
+          title.style.whiteSpace = 'nowrap';
+          title.style.overflow = 'visible';
+          title.style.fontWeight = '900';
+          title.style.fontStyle = 'italic';
+          title.style.display = 'flex';
+          title.style.alignItems = 'center';
+          title.style.gap = '15px';
+          
+          // Split for Dual Gradient (Brand Style)
+          const nameText = title.innerText.trim();
+          const parts = nameText.split(' ');
+          if (parts.length >= 2) {
+            const firstPart = parts[0].toUpperCase();
+            const restPart = parts.slice(1).join(' ').toUpperCase();
+            
+            title.innerHTML = `
+              <span style="
+                background: linear-gradient(to right, #818cf8, #c084fc, #e879f9);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                display: inline-block;
+              ">${firstPart}</span>
+              <span style="
+                background: linear-gradient(to right, #fbbf24, #f59e0b, #ea580c);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                display: inline-block;
+              ">${restPart}</span>
+            `;
+          } else {
+            title.style.background = 'linear-gradient(to right, #818cf8, #fbbf24)';
+            title.style.webkitBackgroundClip = 'text';
+            title.style.webkitTextFillColor = 'transparent';
+          }
+        }
 
+        // Target the Metadata (Live/Teams badge)
+        const badges = header.querySelector('.flex.items-center.gap-2') as HTMLElement;
+        if (badges) {
+          badges.style.marginTop = '10px';
+          badges.style.opacity = '0.9';
+        }
+      }
+
+      // Final cleanup of styles that break captures
+      clone.querySelectorAll('[class*="backdrop-blur"]').forEach((el: any) => {
+        el.style.backdropFilter = 'none';
+        el.style.webkitBackdropFilter = 'none';
+        el.style.backgroundColor = 'rgba(24, 24, 27, 0.98)';
+      });
+
+      clone.querySelectorAll('*').forEach((el: any) => {
+        el.style.animationPlayState = 'paused';
+        el.style.transition = 'none';
+      });
+
+      // 5. Capture the normalized clone
+      await new Promise(resolve => setTimeout(resolve, 800)); // More time for layout to settle
+
+      const dataUrl = await toPng(clone, {
+        pixelRatio: 2,
+        backgroundColor: '#09090b',
+        skipFonts: false,
+      });
+
+      // 6. Finish & Download
       const link = document.createElement('a');
       link.download = `${data.name.replace(/\s+/g, '_')}_bracket.png`;
       link.href = dataUrl;
       link.click();
+
+      // 7. Cleanup sandbox
+      document.body.removeChild(sandbox);
     } catch (e) {
       console.error('Download failed:', e);
-      // Cleanup on error
-      bracketRef.current?.querySelector('[data-export-banner]')?.remove();
+      toast(t('alerts.download_error') || 'Error downloading image', 'error');
     } finally {
       setIsDownloading(false);
     }
@@ -430,7 +562,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
           <div className="absolute top-[-20%] right-[-20%] w-[60%] h-[60%] bg-[#ffaa00] blur-[150px] rounded-full" />
       </div>
 
-      <div className="relative z-10 flex flex-col h-full overflow-hidden">
+      <div ref={bracketRef} className="relative z-10 flex flex-col h-full overflow-hidden bg-[#09090b]">
         {/* RESTORED LUXURY LIVE HEADER */}
         <header className="flex flex-col md:flex-row justify-between items-end gap-1.5 border-b border-white/5 pb-2 shrink-0">
             <div className="flex flex-col gap-0 items-center md:items-start text-center md:text-left w-full md:w-auto">
@@ -490,22 +622,39 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                     <span className="text-[10px] md:text-xs font-black uppercase text-white/80 tracking-tight leading-none">{activeStageName}</span>
                 </div>
 
-                {/* Download button — only when completed */}
+                {/* Download and Toggle Winner buttons — only when completed */}
                 {data.status === 'completed' && (
-                  <button
-                    data-no-capture
-                    onClick={downloadBracket}
-                    disabled={isDownloading}
-                    className="glass-pill px-3 py-1 flex items-center gap-1.5 border border-[#ffaa00]/30 bg-[#ffaa00]/10 backdrop-blur-xl rounded-md transition-all hover:bg-[#ffaa00]/20 hover:border-[#ffaa00]/60 active:scale-95 disabled:opacity-50"
-                  >
-                    {isDownloading
-                      ? <Zap size={10} className="text-[#ffaa00] animate-spin" />
-                      : <Download size={10} className="text-[#ffaa00]" />
-                    }
-                    <span className="text-[10px] font-black uppercase tracking-tight leading-none text-[#ffaa00]">
-                      {isDownloading ? 'Exporting...' : 'Download'}
-                    </span>
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setShowWinnerCard(!showWinnerCard)}
+                      className={cn(
+                        "glass-pill px-3 py-1 flex items-center gap-1.5 border backdrop-blur-xl rounded-md transition-all active:scale-95",
+                        showWinnerCard 
+                          ? "border-[#ffaa00]/30 bg-[#ffaa00]/10 text-[#ffaa00] hover:bg-[#ffaa00]/20" 
+                          : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+                      )}
+                      title={showWinnerCard ? tWinner('hide_champion') : tWinner('show_champion')}
+                    >
+                      <Trophy size={10} className={showWinnerCard ? "text-[#ffaa00]" : "text-white/40"} />
+                      <span className="text-[10px] font-black uppercase tracking-tight leading-none">
+                        {showWinnerCard ? tWinner('hide_champion') : tWinner('show_champion')}
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={downloadBracket}
+                      disabled={isDownloading}
+                      className="glass-pill px-3 py-1 flex items-center gap-1.5 border border-[#ffaa00]/30 bg-[#ffaa00]/10 backdrop-blur-xl rounded-md transition-all hover:bg-[#ffaa00]/20 hover:border-[#ffaa00]/60 active:scale-95 disabled:opacity-50"
+                    >
+                      {isDownloading
+                        ? <Zap size={10} className="text-[#ffaa00] animate-spin" />
+                        : <Download size={10} className="text-[#ffaa00]" />
+                      }
+                      <span className="text-[10px] font-black uppercase tracking-tight leading-none text-[#ffaa00]">
+                        {isDownloading ? 'Exporting...' : 'Download'}
+                      </span>
+                    </button>
+                  </div>
                 )}
             </div>
         </header>
@@ -513,7 +662,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         {/* BRACKET VIEWPORT */}
         <div
           ref={containerRef}
-          className="flex-1 w-full overflow-hidden relative cursor-grab active:cursor-grabbing select-none"
+          className="container-viewport flex-1 w-full overflow-hidden relative cursor-grab active:cursor-grabbing select-none"
         >
           <motion.div 
             drag
@@ -526,7 +675,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
                  y: prev.y + info.offset.y
                }));
             }}
-            className="absolute inset-0 flex items-center justify-center origin-center"
+            className="motion-viewport absolute inset-0 flex items-center justify-center origin-center"
           >
             <div ref={contentRef} className="flex gap-6 md:gap-16 lg:gap-24 items-center justify-center py-20 px-10 md:py-48 md:px-48">
             {sortedRounds.map((round: any, rIdx: number) => {
@@ -603,7 +752,7 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         </div>
 
         {/* ZOOM CONTROLS */}
-        <div className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 z-[100] flex flex-col gap-1 lg:gap-2 p-1.5 lg:p-2 bg-black/80 border border-white/10 rounded-xl lg:rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-white/20 glass-pill transition-all overflow-hidden">
+        <div id="zoom-controls" className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 z-[100] flex flex-col gap-1 lg:gap-2 p-1.5 lg:p-2 bg-black/80 border border-white/10 rounded-xl lg:rounded-2xl backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t border-white/20 glass-pill transition-all overflow-hidden">
           <button
             onClick={() => handleZoom(0.1)}
             className="p-2 lg:p-3 text-white/40 hover:text-[#ffaa00] hover:bg-[#ffaa00]/10 rounded-lg lg:rounded-xl transition-all active:scale-95 group"
@@ -630,31 +779,34 @@ export default function BracketView({ tournament, isAdmin = false }: { tournamen
         </div>
 
         {/* GRAND CHAMPION CARD */}
-        {winner && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 md:p-10 bg-black/95 border-2 border-[#ffaa00]/30 rounded-[24px] md:rounded-[32px] backdrop-blur-3xl shadow-[0_0_100px_rgba(255,170,0,0.25)] z-[110] text-center max-w-[300px] md:max-w-sm w-[calc(100%-2rem)] mx-auto overflow-hidden group"
-          >
-              <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/10 to-transparent pointer-none" />
-              <div className="relative z-10 flex flex-col items-center">
-                  <Trophy className="text-[#ffaa00] w-12 h-12 md:w-20 md:h-20 mb-4 md:mb-8 drop-shadow-[0_0_30px_rgba(255,170,0,0.6)] animate-bounce" />
-                  <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter italic mb-1 md:mb-2 gradient-text-luxury">{winner.name}</h3>
-                  <p className="text-[#ffaa00] text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-6 md:mb-10 opacity-70 italic">{tWinner('champion')}</p>
-                  
-                  {winner.logo_url && (
-                      <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-4 md:mb-6 p-2 md:p-3 shadow-lg">
-                          <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-contain" />
-                      </div>
-                  )}
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-4 md:mb-6" />
-                  <div className="space-y-1 md:space-y-1.5">
-                      <p className="text-white text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
-                      <p className="text-white/20 text-[7px] md:text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
-                  </div>
-              </div>
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {winner && showWinnerCard && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 50 }}
+              className="winner-card-export absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-6 md:p-10 bg-black/95 border-2 border-[#ffaa00]/30 rounded-[24px] md:rounded-[32px] backdrop-blur-3xl shadow-[0_0_100px_rgba(255,170,0,0.25)] z-[110] text-center max-w-[300px] md:max-w-sm w-[calc(100%-2rem)] mx-auto overflow-hidden group"
+            >
+                <div className="absolute inset-0 bg-gradient-to-b from-[#ffaa00]/10 to-transparent pointer-none" />
+                <div className="relative z-10 flex flex-col items-center">
+                    <Trophy className="text-[#ffaa00] w-12 h-12 md:w-20 md:h-20 mb-4 md:mb-8 drop-shadow-[0_0_30px_rgba(255,170,0,0.6)] animate-bounce" />
+                    <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter italic mb-1 md:mb-2 gradient-text-luxury">{winner.name}</h3>
+                    <p className="text-[#ffaa00] text-[10px] md:text-xs font-black uppercase tracking-[0.4em] mb-6 md:mb-10 opacity-70 italic">{tWinner('champion')}</p>
+                    
+                    {winner.logo_url && (
+                        <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white/5 border border-white/10 overflow-hidden mb-4 md:mb-6 p-2 md:p-3 shadow-lg">
+                            <img src={winner.logo_url} alt={winner.name} className="w-full h-full object-contain" />
+                        </div>
+                    )}
+                    <div className="w-full h-px bg-gradient-to-r from-transparent via-[#ffaa00]/20 to-transparent mb-4 md:mb-6" />
+                    <div className="space-y-1 md:space-y-1.5">
+                        <p className="text-white text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] italic leading-tight">{tWinner('congrats')}</p>
+                        <p className="text-white/20 text-[7px] md:text-[9px] font-bold uppercase tracking-widest">{tWinner('description')}</p>
+                    </div>
+                </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* RECENT MATCH TICKER (BOTTOM) */}

@@ -91,7 +91,10 @@ export async function POST(
         // Es el partido final del torneo, marcar torneo como completado
         await supabase
             .from('tournaments')
-            .update({ status: 'completed' })
+            .update({ 
+              status: 'completed',
+              completed_at: new Date().toISOString()
+            })
             .eq('id', match.tournament_id);
     }
 

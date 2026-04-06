@@ -146,25 +146,39 @@ export default async function TournamentsPage() {
               <Link
                 key={tournament.id}
                 href={`/tournaments/${tournament.id}`}
-                className="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.05] transition-all duration-300 p-6 flex flex-col gap-5"
+                className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] hover:border-[#ffaa00]/30 hover:bg-[#ffaa00]/5 transition-all duration-500 p-6 flex flex-col gap-5 shadow-lg hover:shadow-[0_0_40px_rgba(255,170,0,0.1)] active:scale-[0.98]"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-lg font-black italic tracking-tight uppercase text-white/40 group-hover:text-white transition-colors break-words leading-tight">
+                {/* Top Glimmer */}
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:via-[#ffaa00]/30 transition-all" />
+                
+                <div className="flex items-start justify-between gap-2 relative">
+                  <h3 className="text-xl font-black italic tracking-tighter uppercase text-white/80 group-hover:gradient-text-luxury transition-all break-words leading-tight">
                     {tournament.name}
                   </h3>
-                  <Trophy size={18} className="text-white/10 shrink-0 mt-0.5" />
+                  <div className="p-2 bg-white/5 rounded-xl border border-white/5 text-[#ffaa00] group-hover:bg-[#ffaa00]/10 group-hover:border-[#ffaa00]/20 transition-all shadow-[0_0_15px_rgba(255,170,0,0)] group-hover:shadow-[0_0_15px_rgba(255,170,0,0.2)]">
+                    <Trophy size={18} />
+                  </div>
                 </div>
-                <div className="flex items-center gap-4 text-[10px] text-white/30 font-bold uppercase tracking-widest">
-                  <span className="flex items-center gap-1.5">
-                    <Users size={10} />
-                    {tournament.participants?.length ?? 0} TEAMS
+                
+                <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest relative">
+                  <span className="flex items-center gap-1.5 text-white/40">
+                    <Users size={10} className="text-[#ffaa00]" />
+                    {tournament.participants?.length ?? 0} {tc("teams")}
                   </span>
-                  <span className="text-white/20 font-black">
-                    {tournament.status === "completed" ? t("status.completed") : t("status.draft")}
+                  <div className="h-1 w-1 rounded-full bg-white/10" />
+                  <span className="text-[#ffaa00] font-black italic flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#ffaa00] shadow-[0_0_8px_#ffaa00]" />
+                    {t("status.completed")}
                   </span>
                 </div>
-                <div className="mt-auto text-[9px] font-black uppercase tracking-[0.2em] text-white/20 group-hover:text-white/50 transition-colors">
-                  {tc("view_results")} →
+
+                <div className="mt-auto flex items-center justify-between relative pt-4 border-t border-white/5">
+                   <div className="text-[9px] font-black uppercase tracking-[0.2em] text-[#ffaa00] opacity-0 group-hover:opacity-100 transform -translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                     {tc("view_results")} 
+                   </div>
+                   <div className="text-white/20 group-hover:text-[#ffaa00] transition-colors">
+                     <Zap size={14} className="group-hover:animate-pulse" />
+                   </div>
                 </div>
               </Link>
             ))}

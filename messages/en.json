@@ -43,6 +43,7 @@
     "view_bracket": "View Bracket",
     "real_time_update": "Real Time updates",
     "players": "{count} teams",
+    "teams": "Teams",
     "in_progress": "In Progress",
     "joined_at": "Joined {time}",
     "menu": "Menu",
@@ -178,10 +179,13 @@
   },
   "WinnerCard": {
     "title": "Tournament Champion",
+    "champion": "CHAMPION",
     "congrats": "CONGRATULATIONS TO THE WINNER!",
     "status": "Legendary",
     "description": "This arena belongs to you forever.",
-    "footer": "Legendary Status Achieved"
+    "footer": "Legendary Status Achieved",
+    "show_champion": "Show Champion",
+    "hide_champion": "Hide Champion"
   },
   "Activity": {
     "live_feed": "Live Activity Feed",

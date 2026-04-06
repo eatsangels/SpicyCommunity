@@ -43,6 +43,7 @@
     "view_bracket": "Ver Llave",
     "real_time_update": "Actualizaciones en Tiempo Real",
     "players": "{count} equipos",
+    "teams": "Equipos",
     "in_progress": "En Progreso",
     "joined_at": "Se unió {time}",
     "menu": "Menú",
@@ -167,10 +168,13 @@
   },
   "WinnerCard": {
     "title": "Campeón del Torneo",
+    "champion": "CAMPEÓN",
     "congrats": "¡FELICIDADES AL GANADOR!",
     "status": "Legendario",
     "description": "Esta arena te pertenece para siempre.",
-    "footer": "Estado Legendario Alcanzado"
+    "footer": "Estado Legendario Alcanzado",
+    "show_champion": "Ver Campeón",
+    "hide_champion": "Ocultar Campeón"
   },
   "Activity": {
     "live_feed": "Feed de Actividad en Vivo",
